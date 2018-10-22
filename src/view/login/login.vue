@@ -27,10 +27,28 @@
             <div :class = "[!selectPassword ? 'login-select' : '' , 'verify-login']"  @click = "verifySelected">验证码登录</div>
         </div>
         <Input v-model.trim="userName" :placeholder="userNamePlaceholder" number autofocus :maxlength="11" class = "login-input"/>
-        <Input v-model.trim="password" placeholder="请输入密码" autofocus  class = "login-input" v-if = "selectPassword" :maxlength = "16"/>
+        <!-- <Input v-model.trim="password" placeholder="请输入密码" autofocus  class = "login-input" v-if = "selectPassword" :maxlength = "16"/> -->
         <!-- <Input v-model="verifyCode" placeholder="请输入验证码" autofocus  class = "verify-input" v-else  search :enter-button="getVerifyCode" on-search="getVerify"/> -->
+        <!-- <vue-password v-model="password" v-if = "selectPassword" classes = "login-input" disableStrength/>
+            <template slot="password-toggle" scope="props">
+                <button class="VuePassword__Toggle" type   = "button" v-on:click  = "props.toggle" v-text = "props.type === 'password' ? 'SHOW' : 'HIDE'" > </button>
+            </template>
+        </vue-password> -->
+        <vue-password v-model="password" v-if = "selectPassword" classes = "login-input" disableStrength>
+            <div
+                slot       = "password-input"
+                slot-scope = "props"
+                class      = "control has-icons-left"
+            >
+                <input class = "login-input" type = "password" placeholder = "请输入密码" :value = "props.value" oninput = "if(value.length > 11)value = value.slice(0, 11)" >
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+        </vue-password>
         <div v-else class = "login-get-verify">
             <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/>
+            <!-- <input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify" v-number-only/> -->
             <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
                 getVerifyCode
@@ -50,7 +68,7 @@
                 记住密码
               </p>
             </div>
-            <div class = "forgotten-password" @click = "resetPassord">
+            <div class = "forgotten-password" @click = "resetPassword">
               忘记密码
             </div>
         </div>
@@ -82,11 +100,11 @@
                 class      = "control has-icons-left"
             >
                 <input
-                                                                                                                                                                                                                        class       = "login-input"
-                                                                                                                                                                                                                        type        = "password"
-                                                                                                                                                                                                                        placeholder = "Text input"
-                                                                                                                                                                                                                      :value        = "props.value"
-                                                                                                                                                                                                                        @input      = "props.updatePassword($event.target.value)"
+                                                                                                                                                                                                                                                            class       = "login-input"
+                                                                                                                                                                                                                                                            type        = "password"
+                                                                                                                                                                                                                                                            placeholder = "Text input"
+                                                                                                                                                                                                                                                          :value        = "props.value"
+                                                                                                                                                                                                                                                            @input      = "props.updatePassword($event.target.value)"
                 >
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
@@ -463,7 +481,7 @@ export default {
       console.log('focusPassword')
     },
     // 忘记密码
-    resetPassord () {
+    resetPassword () {
       this.registerShow     = true
       this.registerOrReset  = '找回密码'
       this.registerOrSubmit = '确定'
@@ -471,7 +489,14 @@ export default {
       this.password    = ''
       this.loginVerify = ''
       // 及时携带用户已经输入的手机号
-      this.registerUsername = this.userName
+      this.registerUsername = this.userName;
+      //及时更新获取验证码定时器的状态
+      if(this.timer) {
+        clearInterval(this.timer);
+        this.timer         = null;
+        this.countDown     = false;
+        this.getVerifyCode = '获取验证码'
+      }
     },
     handleSubmit ({ userName, password }) {
       this.handleLogin({ userName, password }).then(res => {
@@ -816,6 +841,8 @@ export default {
         }
       }
     },200)
+  },
+  mounted() {
   }
 }
 </script>
