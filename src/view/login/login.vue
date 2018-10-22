@@ -34,7 +34,7 @@
                 <button class="VuePassword__Toggle" type   = "button" v-on:click  = "props.toggle" v-text = "props.type === 'password' ? 'SHOW' : 'HIDE'" > </button>
             </template>
         </vue-password> -->
-        <vue-password v-model="password" v-if = "selectPassword" classes = "login-input" disableStrength>
+        <vue-password v-model="password" v-if = "selectPassword" classes = "login-input" disableStrength >
             <div
                 slot       = "password-input"
                 slot-scope = "props"
@@ -47,8 +47,8 @@
             </div>
         </vue-password>
         <div v-else class = "login-get-verify">
-            <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/>
-            <!-- <input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify" v-number-only/> -->
+            <!-- <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/> -->
+            <input type="text" :value="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
             <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
                 getVerifyCode
@@ -841,8 +841,6 @@ export default {
         }
       }
     },200)
-  },
-  mounted() {
   }
 }
 </script>
