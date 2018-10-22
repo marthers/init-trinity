@@ -15,6 +15,11 @@
             自助设备运营管理平台
         </p>
     </div>
+    <div class = "login-footer">
+      <p>
+        <span>© 2009-2018</span> <a href="shunxiang.com" class = "trinity-url">shunxiang.com</a> <span>版权所有</span><span>ICP证: </span><span>京: B2-20080101</span>
+      </p>
+    </div>
     <div class="login-con" v-if = "!registerShow">
         <div class = "tabs-con">
             <div :class = "[!selectPassword ? '' : 'login-select' , 'password-login']" @click = "passwordSelected">密码登录</div>
@@ -77,11 +82,11 @@
                 class      = "control has-icons-left"
             >
                 <input
-                                                                                                                                                                                                            class       = "login-input"
-                                                                                                                                                                                                            type        = "password"
-                                                                                                                                                                                                            placeholder = "Text input"
-                                                                                                                                                                                                          :value        = "props.value"
-                                                                                                                                                                                                            @input      = "props.updatePassword($event.target.value)"
+                                                                                                                                                                                                                        class       = "login-input"
+                                                                                                                                                                                                                        type        = "password"
+                                                                                                                                                                                                                        placeholder = "Text input"
+                                                                                                                                                                                                                      :value        = "props.value"
+                                                                                                                                                                                                                        @input      = "props.updatePassword($event.target.value)"
                 >
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
