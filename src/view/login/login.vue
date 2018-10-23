@@ -48,7 +48,7 @@
         </vue-password>
         <div v-else class = "login-get-verify">
             <!-- <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/> -->
-            <input type="text" :value="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
+            <input type="text" v-model="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
             <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
                 getVerifyCode
@@ -93,24 +93,6 @@
               }}
             </div>
         </div>
-        <!-- <vue-password v-model="registerPassword" disableStrength classes = "password-input">
-            <div
-                slot       = "password-input"
-                slot-scope = "props"
-                class      = "control has-icons-left"
-            >
-                <input
-                                                                                                                                                                                                                                                                      class       = "login-input"
-                                                                                                                                                                                                                                                                      type        = "password"
-                                                                                                                                                                                                                                                                      placeholder = "Text input"
-                                                                                                                                                                                                                                                                    :value        = "props.value"
-                                                                                                                                                                                                                                                                      @input      = "props.updatePassword($event.target.value)"
-                >
-                <span class="icon is-small is-left">
-                    <i class="fas fa-user"></i>
-                </span>
-            </div>
-        </vue-password> -->
         <Input v-model.trim="registerPassword" placeholder="请设置密码(8-16位字母数字组合)" autofocus  class = "login-input" v-if = "!changeDevice" @on-change = "passwordChange" @on-focus = "focusPassword" :maxlength="16"/>
         <Input v-model.trim="confirmRegisterPassword" placeholder="请再次输入密码" autofocus  class = "login-input" v-if = "!changeDevice" :maxlength="16"/>
         <div class = "login-button main-button" @click="registerOrResetPassword">
@@ -169,7 +151,8 @@ export default {
       graphValidateCodeShow  : false,
       graphCode              : '',
       graphCodeSrc           : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
-      user_info              : {}
+      user_info              : {},
+      identifyVerificationCode : 3
     }
   },
   methods: {
@@ -195,6 +178,7 @@ export default {
     // 注册
     registerClicked () {
       this.getVerifyCode = '获取验证码'
+      this.identifyVerificationCode = 0
       this.countDown     = false
       if (this.timer) {
         console.log(`this.timer=${this.timer}`)
@@ -229,7 +213,7 @@ export default {
         console.log('账号密码登录')
         //账号密码登录合法
         if (validateMobilephone(this.userName)) {
-          console.log(`this.password=${this.password}`);
+          console.log(`this.$refs.loginPassword.value=${this.$refs.loginPassword.value}`);
           // if (validatePassword(this.password)) {
           if (validatePassword(this.$refs.loginPassword.value)) {
             console.log('baseConfig:')
@@ -261,53 +245,60 @@ export default {
               console.log(res)
               //请求成功
               if(res.status && res.status == 200) {
-                // 登录成功
-                if(res.data.code == 0 || res.data.success) {
-                  //登录成功的数据包
-                  if(res.data.data) {
-                    let resData = res.data.data;
-                    localStorage.setItem('token',resData.token)
-                    localStorage.setItem('password',resData.password);
-                    this.user_info = resData.user_info;
-                    console.log("this.user_info:");
-                    console.log(this.user_info);
-                    this.$Message.success({
-                        content : '登录成功',
-                        duration: 5,
-                        closable: true
-                    });
-                    this.$router.push({
-                      name: 'home'
-                    });
-                  }else {
-                    this.$Message.error({
-                        content : '登录失败',
-                        duration: 5,
-                        closable: true
-                    });
-                  }
-                }
-                //登录失败
-                else{
-                  if(res.data.code) {
-                    if(res.data.code == 105) {
-                      this.$Message.info({
-                          content : res.data.msg ? res.data.msg: '更换设备需要验证',
-                          duration: 5,
-                          closable: true
-                      });
-                      this.changeDevice     = true;
-                      this.registerOrReset  = '设备验证';
-                      this.registerOrSubmit = '验证'
-                      this.registerShow     = true;
+                if(res.data.code) {
+                    // 登录成功
+                    if(res.data.code == 0 ) {
+                      //登录成功的数据包
+                      if(res.data.data) {
+                        let resData = res.data.data;
+                        localStorage.setItem('token',resData.token)
+                        localStorage.setItem('password',resData.password);
+                        this.user_info = resData.user_info;
+                        console.log("this.user_info:");
+                        console.log(this.user_info);
+                        this.$Message.success({
+                            content : '登录成功',
+                            duration: 5,
+                            closable: true
+                        });
+                        this.$router.push({
+                          name: 'home'
+                        });
+                      }else {
+                        this.$Message.error({
+                            content : '登录失败',
+                            duration: 5,
+                            closable: true
+                        });
+                      }
                     }
-                  }else {
+                    //登录失败
+                    else{
+                        if(res.data.code == 405) {
+                          this.$Message.info({
+                              content : res.data.msg ? res.data.msg: '更换设备需要验证',
+                              duration: 5,
+                              closable: true
+                          });
+                          this.changeDevice     = true;
+                          this.registerOrReset  = '设备验证';
+                          this.registerOrSubmit = '验证'
+                          this.registerShow     = true;
+                        }
+                        else if (res.data.code == 401) {
+                          this.$Message.warning({
+                              content : res.data.msg ? res.data.msg: '密码错误',
+                              duration: 5,
+                              closable: true
+                          });
+                        }
+                    }
+                }else {
                     this.$Message.error({
                         content : res.data.msg ? res.data.msg: '登录失败',
                         duration: 5,
                         closable: true
                     });
-                  }
                 }
                 console.log("res.data:");
                 console.log(res.data);
@@ -317,7 +308,7 @@ export default {
               //请求失败
               else{
                 this.$Message.error({
-                    content : res.status,
+                    content : '网络异常，请及时联系管理员',
                     duration: 5,
                     closable: true
                 });
@@ -365,6 +356,8 @@ export default {
         console.log('手机验证码登录')
         //手机验证码登录,手机号合法
         if (validateMobilephone(this.userName)) {
+          // debugger
+          console.log(`this.loginVerify=${this.loginVerify}`)
           if (validateVerificationCode(this.loginVerify)) {
             this.ifNotUuid();
             // 注册或者重置密码
@@ -399,11 +392,12 @@ export default {
                   //登录成功的数据包
                   if(res.data.data) {
                     let resData = res.data.data;
-                    localStorage.setItem('token',resData.token)
+                    localStorage.setItem('Trinity-Token',resData.token)
                     localStorage.setItem('password',resData.password);
                     this.user_info = resData.user_info;
                     console.log("this.user_info:");
                     console.log(this.user_info);
+                    debugger
                     this.$Message.success({
                         content : '登录成功',
                         duration: 5,
@@ -458,7 +452,8 @@ export default {
                   closable: true
               });
             })
-          } else {
+          } 
+          else {
             console.log('loginVerify is invalidate')
             this.$Message.error({
               content : '验证码格式有误！',
@@ -471,7 +466,7 @@ export default {
         else {
           console.log('username is invalidate')
           this.$Message.error({
-            content : '用户名有误!',
+            content : '手机号格式有误!',
             duration: 3,
             closable: true
           })
@@ -486,6 +481,7 @@ export default {
     },
     // 忘记密码
     resetPassword () {
+      this.identifyVerificationCode = 2
       this.registerShow     = true
       this.registerOrReset  = '找回密码'
       this.registerOrSubmit = '确定'
@@ -625,7 +621,9 @@ export default {
               duration: 5,
               closable: true
             })
-          }else if(!validateVerificationCode(this.registerVerifyCode)){
+          }else if(!validateVerificationCode(this.loginVerify)){
+            console.log(`validateVerificationCode(this.loginVerify)=${validateVerificationCode(this.loginVerify)}`);
+            console.log(`this.loginVerify=${this.loginVerify}`)
             this.$Message.warning({
               content : '验证码格式有误',
               duration: 5,
@@ -661,7 +659,8 @@ export default {
           duration: 3,
           closable: true
         })
-      }else {
+      }
+      else {
         // 当前登录获取验验证码
         if(this.registerShow) {
           if(!validateMobilephone(this.registerUsername)) {
@@ -677,20 +676,8 @@ export default {
               this.countDown     = false
             }
           }else{
-                if (!this.timer) {
-                  this.count = TIME_COUNT
-                  this.timer = setInterval(() => {
-                    if (this.count > 0 && this.count <= TIME_COUNT) {
-                      this.count--
-                      this.getVerifyCode = '重新发送' + this.count + 'S'
-                      this.countDown     = true
-                    } else {
-                      clearInterval(this.timer)
-                      this.timer         = null
-                      this.getVerifyCode = '获取验证码'
-                      this.countDown     = false
-                    }
-                  }, 1000);
+
+
                   this.ifNotUuid();
                   axios.request({
                     url    : baseConfig.baseUrl.dev + 'verify_code/send',
@@ -704,7 +691,8 @@ export default {
                       'priority': '3',
                       'group'   : '',
                       'data'    : {
-                        'phone': !this.registerShow ? this.userName: this.registerUsername
+                        'phone': !this.registerShow ? this.userName: this.registerUsername,
+                        'type' : 3
                       }
                     }
                   })
@@ -714,12 +702,29 @@ export default {
                     if(res.status && res.status == 200) {
                       //获取验证码
                       if(res.data.success && res.data.msg == 'success') {
+                        if (!this.timer) {
+                          this.count = TIME_COUNT
+                          this.timer = setInterval(() => {
+                            if (this.count > 0 && this.count <= TIME_COUNT) {
+                              this.count--
+                              this.getVerifyCode = '重新发送' + this.count + 'S'
+                              this.countDown     = true
+                            } else {
+                              clearInterval(this.timer)
+                              this.timer         = null
+                              this.getVerifyCode = '获取验证码'
+                              this.countDown     = false
+                            }
+                          }, 1000);
+                        } else {
+                          console.log(this.timer)
+                        }
                         //获取验证码的数据包
                         this.$Message.success({
                           content : '验证码已发送',
                           duration: 5,
                           closable: true
-                        })
+                        });
                       }
                       //获取验证码失败
                       else{
@@ -744,11 +749,14 @@ export default {
                     }
                   })
                   .catch(err => {
-                    console.log(err)
+                    console.log(err);
+                    this.$Message.error({
+                        content : res.status,
+                        duration: 5,
+                        closable: true
+                    });
                   })
-                } else {
-                  console.log(this.timer)
-                }
+
           }
         }
         //当前登录获取验验证码
@@ -769,20 +777,8 @@ export default {
           }
           // /当前并非登录获取验验证码，如果输入的手机号合法
           else{
-                if (!this.timer) {
-                  this.count = TIME_COUNT
-                  this.timer = setInterval(() => {
-                    if (this.count > 0 && this.count <= TIME_COUNT) {
-                      this.count--
-                      this.getVerifyCode = '重新发送' + this.count + 'S'
-                      this.countDown     = true
-                    } else {
-                      clearInterval(this.timer)
-                      this.timer         = null
-                      this.getVerifyCode = '获取验证码'
-                      this.countDown     = false
-                    }
-                  }, 1000);
+
+
                   this.ifNotUuid();
                   axios.request({
                     url    : baseConfig.baseUrl.dev + 'verify_code/send',
@@ -792,13 +788,14 @@ export default {
                       'Trinity-Token'   : '',
                       'Request-Datatime': new Date().getTime()
                     },
-                    data: {
+                    data: JSON.stringify({
                       'priority': '3',
                       'group'   : '',
                       'data'    : {
-                        'phone': !this.registerShow ? this.userName: this.registerUsername
+                        'phone': !this.registerShow ? this.userName: this.registerUsername,
+                        'type' : 3 //手机验证码登录接口
                       }
-                    }
+                    })
                   })
                   .then(res => {
                     console.log(res);
@@ -806,6 +803,23 @@ export default {
                     if(res.status && res.status == 200) {
                       //获取验证码
                       if(res.data.success && res.data.msg == 'success') {
+                        if (!this.timer) {
+                          this.count = TIME_COUNT
+                          this.timer = setInterval(() => {
+                            if (this.count > 0 && this.count <= TIME_COUNT) {
+                              this.count--
+                              this.getVerifyCode = '重新发送' + this.count + 'S'
+                              this.countDown     = true
+                            } else {
+                              clearInterval(this.timer)
+                              this.timer         = null
+                              this.getVerifyCode = '获取验证码'
+                              this.countDown     = false
+                            }
+                          }, 1000);
+                        } else {
+                          console.log(this.timer)
+                        }
                         //获取验证码的数据包
                         this.$Message.success({
                           content : '获取验证码成功',
@@ -837,10 +851,12 @@ export default {
                   })
                   .catch(err => {
                     console.log(err)
+                    this.$Message.error({
+                        content : '网络异常，请联系管理员',
+                        duration: 5,
+                        closable: true
+                    });
                   })
-                } else {
-                  console.log(this.timer)
-                }
           }
         }
       }
