@@ -40,7 +40,7 @@
                 slot-scope = "props"
                 class      = "control has-icons-left"
             >
-                <input class = "login-input" type = "password" placeholder = "请输入密码" :value = "props.value" oninput = "if(value.length > 11)value = value.slice(0, 11)" >
+                <input class = "login-input" type = "password" placeholder = "请输入密码" :value = "props.value" oninput = "if(value.length > 11)value = value.slice(0, 11)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -48,11 +48,6 @@
         </vue-password>
         <div v-else class = "login-get-verify">
             <!-- <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/> -->
-            /**
-             * @msg: 
-             * @param {type} 
-             * @return: 
-             */
             <input type="text" :value="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
             <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
@@ -105,11 +100,11 @@
                 class      = "control has-icons-left"
             >
                 <input
-                                                                                                                                                                                                                                                                class       = "login-input"
-                                                                                                                                                                                                                                                                type        = "password"
-                                                                                                                                                                                                                                                                placeholder = "Text input"
-                                                                                                                                                                                                                                                              :value        = "props.value"
-                                                                                                                                                                                                                                                                @input      = "props.updatePassword($event.target.value)"
+                                                                                                                                                                                                                                                                      class       = "login-input"
+                                                                                                                                                                                                                                                                      type        = "password"
+                                                                                                                                                                                                                                                                      placeholder = "Text input"
+                                                                                                                                                                                                                                                                    :value        = "props.value"
+                                                                                                                                                                                                                                                                      @input      = "props.updatePassword($event.target.value)"
                 >
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
@@ -234,7 +229,9 @@ export default {
         console.log('账号密码登录')
         //账号密码登录合法
         if (validateMobilephone(this.userName)) {
-          if (validatePassword(this.password)) {
+          console.log(`this.password=${this.password}`);
+          // if (validatePassword(this.password)) {
+          if (validatePassword(this.$refs.loginPassword.value)) {
             console.log('baseConfig:')
             console.log(baseConfig);
             this.ifNotUuid();
@@ -342,8 +339,10 @@ export default {
                   closable: true
               });
             })
-          } else {
-            console.log('password is invalidate')
+          } 
+          else {
+            console.log('password is invalidate');
+            console.log(this.$refs.loginPassword.value)
             this.$Message.error({
               content : '密码不正确，须输入8-16位数字字母',
               duration: 5,
