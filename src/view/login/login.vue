@@ -48,6 +48,11 @@
         </vue-password>
         <div v-else class = "login-get-verify">
             <!-- <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/> -->
+            /**
+             * @msg: 
+             * @param {type} 
+             * @return: 
+             */
             <input type="text" :value="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
             <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
@@ -100,11 +105,11 @@
                 class      = "control has-icons-left"
             >
                 <input
-                                                                                                                                                                                                                                                            class       = "login-input"
-                                                                                                                                                                                                                                                            type        = "password"
-                                                                                                                                                                                                                                                            placeholder = "Text input"
-                                                                                                                                                                                                                                                          :value        = "props.value"
-                                                                                                                                                                                                                                                            @input      = "props.updatePassword($event.target.value)"
+                                                                                                                                                                                                                                                                class       = "login-input"
+                                                                                                                                                                                                                                                                type        = "password"
+                                                                                                                                                                                                                                                                placeholder = "Text input"
+                                                                                                                                                                                                                                                              :value        = "props.value"
+                                                                                                                                                                                                                                                                @input      = "props.updatePassword($event.target.value)"
                 >
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>

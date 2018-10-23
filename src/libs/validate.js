@@ -1,8 +1,8 @@
 /*
- * @Description : validate
+ * @Description : 正则校验工具
  * @Author      : zhangyg
  * @Date        : 2018-10-18 15: 35: 48
- * @LastEditTime: 2018-10-18 16: 38: 00
+ * @LastEditTime: 2018-10-23 09: 50: 31
  * @LastEditors : your name
  */
 
