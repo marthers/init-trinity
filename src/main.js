@@ -7,6 +7,8 @@ import iView from 'iview';
 // import importDirective from './directives/index';
 console.log(iView)
 Vue.use(iView);
+import VueParticles from 'vue-particles'  
+Vue.use(VueParticles)  
 import 'iview/dist/styles/iview.css'
 // import './index.less'
 Vue.config.productionTip = false

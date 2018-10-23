@@ -12,6 +12,11 @@ const router = new Router({
 const LOGIN_PAGE_NAME = 'login'
 router.beforeEach((to,from,next) => {
   iView.LoadingBar.start();
+  iView.LoadingBar.config({
+      color      : 'pink',
+      failedColor: '#f0ad4e',
+      height     : 5
+  });
   if(localStorage.getItem('Trinity-Token') != null) {
     //当前已登录
     console.log('当前已登录')

@@ -4,6 +4,25 @@
 
 <template>
   <div class="login">
+
+     <vue-particles
+                                                                                           color          = "#3BA5B2"
+                                                                                         :particleOpacity = ".7"
+                                                                                         :particlesNumber = "88"
+                                                                                           shapeType      = "circle"
+                                                                                         :particleSize    = "4"
+                                                                                           linesColor     = "#48A8DA"
+                                                                                         :linesWidth      = "1"
+                                                                                         :lineLinked      = "true"
+                                                                                         :lineOpacity     = "0.4"
+                                                                                         :linesDistance   = "150"
+                                                                                         :moveSpeed       = "3"
+                                                                                         :hoverEffect     = "true"
+                                                                                           hoverMode      = "grab"
+                                                                                         :clickEffect     = "true"
+                                                                                           clickMode      = "push"
+     >
+     </vue-particles>
     <div class = "login-left">
         <div class = "login-logo-name">
             <div class = "login-logo" src="./../../assets/images/ShunXiangLogo.png" alt="舜翔众邦"></div>
@@ -17,7 +36,7 @@
     </div>
     <div class = "login-footer">
       <p>
-        <span>© 2009-2018</span> <a href="shunxiang.com" class = "trinity-url">shunxiang.com</a> <span>版权所有</span><span>ICP证: </span><span>京: B2-20080101</span>
+        <span>© 2009-2018</span> <a href="http://www.trinitytech.com.cn" target = "_blank" class = "trinity-url">www.trinitytech.com.cn</a> <span>版权所有</span><span>ICP证: </span><span>京: B2-20080101</span>
       </p>
     </div>
     <div class="login-con" v-if = "!registerShow">
@@ -180,7 +199,7 @@ export default {
       graphCodeSrc            : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
       user_info               : {},
       identifyVerificationCode: 3,
-      captchaUrl : '' //图形验证码接口path
+      captchaUrl              : ''                                                                        //图形验证码接口path
     }
   },
   methods: {
@@ -268,10 +287,11 @@ export default {
                 'priority': '3',
                 'group'   : '',
                 'data'    : {
-                  'phone'      : this.userName,
-                  'password'   : md5(this.password),
+                  'phone'   : this.userName,
+                  'password': md5(this.password),
+                  // 'new_password': md5(this.password),
                   'verify_code': '',
-                  'captcha'    : this.graphValidateCodeShow ? this.graphCode : '',
+                  'captcha'    : this.graphValidateCodeShow ? this.graphCode                        : '',
                   'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                   'device_name': window.navigator.userAgent
                 }
@@ -301,7 +321,8 @@ export default {
                         this.$router.push({
                           name: 'home'
                         });
-                      }else {
+                      }
+                      else {
                         this.$Message.error({
                             content : '登录失败',
                             duration: 5,
@@ -311,7 +332,7 @@ export default {
                     }
                     //登录失败
                     else{
-                        if(res.data.code == 405) {
+                        if(res.data.code == 105) {
                           // this.$Message.info({
                           //     content : res.data.msg ? res.data.msg: '更换设备需要验证',
                           //     duration: 5,
@@ -332,7 +353,7 @@ export default {
                         }
                         else if(res.data.code == 101 || res.data.code == 102) {
                           this.graphValidateCodeShow = true;
-                          this.captchaUrl = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
+                          this.captchaUrl            = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
                           this.getCaptcha();
                         }
                     }
@@ -419,7 +440,7 @@ export default {
                   'phone'      : this.userName,
                   'password'   : '',
                   'verify_code': this.loginVerify,
-                  'captcha'    : this.graphValidateCodeShow ? this.graphCode : '',
+                  'captcha'    : this.graphValidateCodeShow ? this.graphCode                        : '',
                   'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                   'device_name': window.navigator.userAgent
                 }
@@ -621,220 +642,350 @@ export default {
       this.loginVerify = ''
     },
     registerOrResetPassword () {
-        //如果注册时手机号合法、验证码合法、两次密码合法且相等
-        if(validateMobilephone(this.registerUsername) && validateVerificationCode(this.registerVerifyCode) && validatePassword(this.registerPassword) && validatePassword(this.confirmRegisterPassword) && this.registerPassword === this.confirmRegisterPassword ){
-            if (this.registerOrReset == '找回密码') {
-                console.log('找回密码')
+      if(this.registerOrSubmit != '验证') {
+        console.log('非更换新设备校验')
+          //如果注册时手机号合法、验证码合法、两次密码合法且相等
+          if(validateMobilephone(this.registerUsername) && validateVerificationCode(this.registerVerifyCode) && validatePassword(this.registerPassword) && validatePassword(this.confirmRegisterPassword) && this.registerPassword === this.confirmRegisterPassword ){
+              if (this.registerOrReset == '找回密码') {
+                  console.log('找回密码')
 
 
-                axios.request({
-                  url    : baseConfig.baseUrl.dev + 'user/forget_password',
-                  method : 'post',
-                  headers: {
-                    'Content-Type'    : 'application/json; charset=utf-8',
-                    'Trinity-Token'   : '',
-                    'Request-Datatime': new Date().getTime()
-                  },
-                  data: {
-                    'priority': '3',
-                    'group'   : '',
-                    'data'    : {
-                      'phone': this.registerUsername,
-                      // 'new_password'   : md5(this.confirmRegisterPassword),
-                      'verify_code': this.registerVerifyCode,
-                      'password'   : md5(this.registerPassword),
-                      // 'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
-                      // 'device_name': window.navigator.userAgent
-                    }
-                  }
-                })
-                .then(res => {
-                    console.log("res:");
-                    console.log(res);
-                    //请求成功
-                    if(res.status && res.status == 200) {
-                      //重置成功
-                      if(res.data.code == 0) {
-                        this.$Message.success({
-                            content : '密码重置成功',
-                            duration: 5,
-                            closable: true
-                        });
-
-                        this.identifyVerificationCode = 3
-                        this.registerShow             = false
-                        // this.registerOrReset  = '找回密码'
-                        // this.registerOrSubmit = '确定'
-                        // 将已经修改成功的手机号携带过去给非注册界面
-                        // this.password    = this.registerUsername
-                        // this.loginVerify = ''
-                        // 及时携带用户已经输入的手机号
-                        this.userName = this.registerUsername;
-                        //及时更新获取验证码定时器的状态
-                        if(this.timer) {
-                          clearInterval(this.timer);
-                          this.timer         = null;
-                          this.countDown     = false;
-                          this.getVerifyCode = '获取验证码'
-                        }
-                      }
-                      //登录失败
-                      else{
-                        this.$Message.error({
-                            content : res.data.msg ? res.data.msg: '登录失败',
-                            duration: 5,
-                            closable: true
-                        });
+                  axios.request({
+                    url    : baseConfig.baseUrl.dev + 'user/forget_password',
+                    method : 'post',
+                    headers: {
+                      'Content-Type'    : 'application/json; charset=utf-8',
+                      'Trinity-Token'   : '',
+                      'Request-Datatime': new Date().getTime()
+                    },
+                    data: {
+                      'priority': '3',
+                      'group'   : '',
+                      'data'    : {
+                        'phone'       : this.registerUsername,
+                        'new_password': md5(this.confirmRegisterPassword),
+                        'verify_code' : this.registerVerifyCode,
+                        'password'    : md5(this.registerPassword),
+                        // 'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
+                        // 'device_name': window.navigator.userAgent
                       }
                     }
-                    //请求失败
-                    else{
-                      this.$Message.error({
-                          content : res.status,
-                          duration: 5,
-                          closable: true
-                      });
-                    }
-                    console.log(res);
-                    console.log("this.$config:");
-                    console.log(this.$config);
-                    console.log("this.$route:");
-                    console.log(this.$route);
-                    console.log("this.$router:")
-                    console.log(this.$router)
-                    console.log("res.data:");
-                    console.log(res.data);
-                    console.log("res.data.data:")
-                    console.log(res.data.data)
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-
-            } else {
-                console.log('用户注册');
-                this.ifNotUuid();
-                axios.request({
-                  url    : baseConfig.baseUrl.dev + 'user/sign_up_web',
-                  method : 'post',
-                  headers: {
-                    'Content-Type'    : 'application/json; charset=utf-8',
-                    'Trinity-Token'   : '',
-                    'Request-Datatime': new Date().getTime()
-                  },
-                  data: {
-                    'priority': '3',
-                    'group'   : '',
-                    'data'    : {
-                      'phone'      : this.registerUsername,
-                      'password'   : md5(this.confirmRegisterPassword),
-                      'verify_code': this.registerVerifyCode,
-                      'captcha'    : '',
-                      'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
-                      'device_name': window.navigator.userAgent
-                    }
-                  }
-                })
-                .then(res => {
-                    console.log("res:");
-                    console.log(res);
-                    //请求成功
-                    if(res.status && res.status == 200) {
-                      // 登录成功
-                      if(res.data.code == 0) {
-                        //登录成功的数据包
-                        if(res.data.data) {
-                          let resData = res.data.data;
-                          localStorage.setItem('Trinity-Token',resData.token)
-                          localStorage.setItem('password',resData.password);
-                          this.user_info = resData.user_info;
-                          console.log("this.user_info:");
-                          console.log(this.user_info);
+                  })
+                  .then(res => {
+                      console.log("res:");
+                      console.log(res);
+                      //请求成功
+                      if(res.status && res.status == 200) {
+                        //重置成功
+                        if(res.data.code == 0) {
                           this.$Message.success({
-                              content : '登录成功',
+                              content : '密码重置成功',
                               duration: 5,
                               closable: true
                           });
-                          this.$router.push({
-                            name: 'home'
-                          });
-                        }else {
+
+                          this.identifyVerificationCode = 3
+                          this.registerShow             = false
+                          // this.registerOrReset  = '找回密码'
+                          // this.registerOrSubmit = '确定'
+                          // 将已经修改成功的手机号携带过去给非注册界面
+                          // this.password    = this.registerUsername
+                          // this.loginVerify = ''
+                          // 及时携带用户已经输入的手机号
+                          this.userName = this.registerUsername;
+                          //及时更新获取验证码定时器的状态
+                          if(this.timer) {
+                            clearInterval(this.timer);
+                            this.timer         = null;
+                            this.countDown     = false;
+                            this.getVerifyCode = '获取验证码'
+                          }
+                        }
+                        // //登录失败
+                        // else{
+                        //   this.$Message.error({
+                        //       content : res.data.msg ? res.data.msg: '网络异常，请及时联系管理员',
+                        //       duration: 5,
+                        //       closable: true
+                        //   });
+                        // }
+                      }
+                      //请求失败
+                      else{
+                        this.$Message.error({
+                            content : res.status,
+                            duration: 5,
+                            closable: true
+                        });
+                      }
+                      console.log(res);
+                      console.log("this.$config:");
+                      console.log(this.$config);
+                      console.log("this.$route:");
+                      console.log(this.$route);
+                      console.log("this.$router:")
+                      console.log(this.$router)
+                      console.log("res.data:");
+                      console.log(res.data);
+                      console.log("res.data.data:")
+                      console.log(res.data.data)
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
+
+              } else {
+                  console.log('用户注册');
+                  this.ifNotUuid();
+                  axios.request({
+                    url    : baseConfig.baseUrl.dev + 'user/sign_up_web',
+                    method : 'post',
+                    headers: {
+                      'Content-Type'    : 'application/json; charset=utf-8',
+                      'Trinity-Token'   : '',
+                      'Request-Datatime': new Date().getTime()
+                    },
+                    data: {
+                      'priority': '3',
+                      'group'   : '',
+                      'data'    : {
+                        'phone'      : this.registerUsername,
+                        'password'   : md5(this.confirmRegisterPassword),
+                        'verify_code': this.registerVerifyCode,
+                        'captcha'    : '',
+                        'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
+                        'device_name': window.navigator.userAgent
+                      }
+                    }
+                  })
+                  .then(res => {
+                      console.log("res:");
+                      console.log(res);
+                      //请求成功
+                      if(res.status && res.status == 200) {
+                        // 登录成功
+                        if(res.data.code == 0) {
+                          //登录成功的数据包
+                          if(res.data.data) {
+                            let resData = res.data.data;
+                            localStorage.setItem('Trinity-Token',resData.token)
+                            localStorage.setItem('password',resData.password);
+                            this.user_info = resData.user_info;
+                            console.log("this.user_info:");
+                            console.log(this.user_info);
+                            this.$Message.success({
+                                content : '登录成功',
+                                duration: 5,
+                                closable: true
+                            });
+                            this.$router.push({
+                              name: 'home'
+                            });
+                          }else {
+                            this.$Message.error({
+                                content : '登录失败',
+                                duration: 5,
+                                closable: true
+                            });
+                          }
+                        }
+                        //登录失败
+                        else{
                           this.$Message.error({
-                              content : '登录失败',
+                              content : res.data.msg ? res.data.msg: '登录失败',
                               duration: 5,
                               closable: true
                           });
                         }
                       }
-                      //登录失败
+                      //请求失败
                       else{
                         this.$Message.error({
-                            content : res.data.msg ? res.data.msg: '登录失败',
+                            content : res.status,
                             duration: 5,
                             closable: true
                         });
                       }
-                    }
-                    //请求失败
-                    else{
-                      this.$Message.error({
-                          content : res.status,
-                          duration: 5,
-                          closable: true
-                      });
-                    }
-                    console.log(res);
-                    console.log("this.$config:");
-                    console.log(this.$config);
-                    console.log("this.$route:");
-                    console.log(this.$route);
-                    console.log("this.$router:")
-                    console.log(this.$router)
-                    console.log("res.data:");
-                    console.log(res.data);
-                    console.log("res.data.data:")
-                    console.log(res.data.data)
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-            }
-        }
-        else {
-          if(!validateMobilephone(this.registerUsername)) {
-            this.$Message.warning({
-              content : '手机号格式有误',
-              duration: 5,
-              closable: true
-            })
-          }else if(!validateVerificationCode(this.registerVerifyCode)){
-            console.log(`validateVerificationCode(this.loginVerify)=${validateVerificationCode(this.loginVerify)}`);
-            console.log(`this.loginVerify=${this.loginVerify}`)
-            this.$Message.warning({
-              content : '验证码格式有误',
-              duration: 5,
-              closable: true
-            })
-          }else {
-            if(!validatePassword(this.registerPassword) || !validatePassword(this.confirmRegisterPassword)) {
+                      console.log(res);
+                      console.log("this.$config:");
+                      console.log(this.$config);
+                      console.log("this.$route:");
+                      console.log(this.$route);
+                      console.log("this.$router:")
+                      console.log(this.$router)
+                      console.log("res.data:");
+                      console.log(res.data);
+                      console.log("res.data.data:")
+                      console.log(res.data.data)
+                  })
+                  .catch(err => {
+                    console.log(err)
+                  })
+              }
+          }
+          else {
+            if(!validateMobilephone(this.registerUsername)) {
               this.$Message.warning({
-                content : '密码格式有误',
+                content : '手机号格式有误',
                 duration: 5,
                 closable: true
               })
-            }else{
-              if(this.registerPassword !== this.confirmRegisterPassword) {
+            }else if(!validateVerificationCode(this.registerVerifyCode)){
+              console.log(`validateVerificationCode(this.loginVerify)=${validateVerificationCode(this.loginVerify)}`);
+              console.log(`this.loginVerify=${this.loginVerify}`)
+              this.$Message.warning({
+                content : '验证码格式有误',
+                duration: 5,
+                closable: true
+              })
+            }else {
+              if(!validatePassword(this.registerPassword) || !validatePassword(this.confirmRegisterPassword)) {
                 this.$Message.warning({
-                  content : '两次输入的密码不相同',
+                  content : '密码格式有误',
                   duration: 5,
                   closable: true
                 })
-              }else {
-                console.log('debugger')
+              }else{
+                if(this.registerPassword !== this.confirmRegisterPassword) {
+                  this.$Message.warning({
+                    content : '两次输入的密码不相同',
+                    duration: 5,
+                    closable: true
+                  })
+                }else {
+                  console.log('debugger')
+                }
               }
             }
           }
+      }
+      //更换新设备校验
+      else {
+        console.log('更换新设备校验');
+        if(validateMobilephone(this.registerUsername) && validateVerificationCode(this.registerVerifyCode)) {
+            this.ifNotUuid();
+            axios.request({
+              url    : baseConfig.baseUrl.dev + 'user/sign_in_web_new_device_check',
+              method : 'post',
+              headers: {
+                'Content-Type'    : 'application/json; charset=utf-8',
+                'Trinity-Token'   : '',
+                'Request-Datatime': new Date().getTime()
+              },
+              data: {
+                'priority': '3',
+                'group'   : '',
+                'data'    : {
+                  'phone'   : this.userName,
+                  'password': md5(this.password),
+                  // 'new_password': md5(this.password),
+                  'verify_code': this.registerVerifyCode,
+                  'captcha'    : this.graphValidateCodeShow ? this.graphCode                        : '',
+                  'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
+                  'device_name': window.navigator.userAgent
+                }
+              }
+            })
+            .then(res => {
+              console.log("login——res:");
+              console.log(res)
+              //请求成功
+              if(res.status && res.status == 200) {
+                if(res.data.code) {
+                    // 登录成功
+                    if(res.data.code == 0 ) {
+                      //登录成功的数据包
+                      if(res.data.data) {
+                        let resData = res.data.data;
+                        localStorage.setItem('Trinity-Token',resData.token)
+                        localStorage.setItem('password',resData.password);
+                        this.user_info = resData.user_info;
+                        console.log("this.user_info:");
+                        console.log(this.user_info);
+                        this.$Message.success({
+                            content : '登录成功',
+                            duration: 5,
+                            closable: true
+                        });
+                        this.$router.push({
+                          name: 'home'
+                        });
+                      }
+                      else {
+                        this.$Message.error({
+                            content : '登录失败',
+                            duration: 5,
+                            closable: true
+                        });
+                      }
+                    }
+                    //登录失败
+                    else{
+                        if(res.data.code == 105) {
+                          // this.$Message.info({
+                          //     content : res.data.msg ? res.data.msg: '更换设备需要验证',
+                          //     duration: 5,
+                          //     closable: true
+                          // });
+                          this.changeDevice             = true;
+                          this.registerOrReset          = '设备验证';
+                          this.registerOrSubmit         = '验证'
+                          this.registerShow             = true;
+                          this.identifyVerificationCode = 1
+                        }
+                        else if (res.data.code == 401) {
+                          this.$Message.warning({
+                              content : res.data.msg ? res.data.msg: '密码错误',
+                              duration: 5,
+                              closable: true
+                          });
+                        }
+                        else if(res.data.code == 101 || res.data.code == 102) {
+                          this.graphValidateCodeShow = true;
+                          this.captchaUrl            = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
+                          this.getCaptcha();
+                        }
+                    }
+                }
+                else {
+                    this.$Message.error({
+                        content : res.data.msg ? res.data.msg: '登录失败',
+                        duration: 5,
+                        closable: true
+                    });
+                }
+                console.log("res.data:");
+                console.log(res.data);
+                console.log("res.data.data:")
+                console.log(res.data.data)
+              }
+              //请求失败
+              else{
+                this.$Message.error({
+                    content : '网络异常，请及时联系管理员',
+                    duration: 5,
+                    closable: true
+                });
+              }
+              console.log(res);
+              console.log("this.$config:");
+              console.log(this.$config);
+              console.log("this.$route:");
+              console.log(this.$route);
+              console.log("this.$router:")
+              console.log(this.$router)
+            })
+            .catch(err => {
+              console.log("err:");
+              console.log(err);
+              this.$Message.error({
+                  content : '网络异常，请联系管理员处理',
+                  duration: 5,
+                  closable: true
+              });
+            })
         }
+      }
     },
     getVerify : _throttle(function() {
       //当前并非登录获取验验证码，如果输入的手机号不合法
