@@ -5,6 +5,7 @@ import App from './App'
 import router from './router/index'
 import iView from 'iview';
 // import importDirective from './directives/index';
+console.log(iView)
 Vue.use(iView);
 import 'iview/dist/styles/iview.css'
 // import './index.less'

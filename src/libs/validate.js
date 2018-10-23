@@ -50,3 +50,36 @@ export function validateVerificationCode (code) {
     return false
   }
 }
+// 5位数字与字母组合图形验证码
+/**
+  * @msg: 校验5位数字与字母组合图形验证码
+  * @param {type:srting}
+  * @return: Boolean
+  */
+// export function validateCaptcha (password) {
+//   var pwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$/
+//   if (pwdReg.test(password)) {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
+
+export function validateCaptcha(password) {//必须为字母加数字且长度不小于8位
+   var str = password;
+    if (str == null || str.length != 5) {
+        return false;
+    }
+    var reg1 = new RegExp(/^[0-9A-Za-z]+$/);
+    if (!reg1.test(str)) {
+      debugger
+        return false;
+    }
+    var reg = new RegExp(/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/);
+    if (reg.test(str)) {
+        return true;
+    } else {
+      debugger
+        return false;
+    }
+}

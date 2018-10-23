@@ -8,7 +8,7 @@
         <div class = "login-logo-name">
             <div class = "login-logo" src="./../../assets/images/ShunXiangLogo.png" alt="舜翔众邦"></div>
             <div class = "login-name">
-                舜翔科技有限公司
+                舜翔众邦科技有限公司
             </div>
         </div>
         <p class = "login-slogen">
@@ -41,7 +41,7 @@
                 slot-scope = "props"
                 class      = "control has-icons-left"
             >
-                <input class = "login-input" type = "password" placeholder = "请输入密码" :value = "props.value" oninput = "if(value.length > 11)value = value.slice(0, 11)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
+                <input class = "login-input" type = "password" placeholder = "请输入密码" v-model = "password" oninput = "if(value.length > 11)value = value.slice(0, 11)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -56,11 +56,11 @@
               }}
             </div>
         </div>
-        <div v-if = "graphValidateCodeShow" class = "login-get-verify">
-            <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="4" class = "login-verify"/>
-            <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button"/>
+        <div v-if = "graphValidateCodeShow" class = "login-get-verify graph-validate-code-con">
+            <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
+            <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
         </div>
-        <div class = "two-button">
+        <div :class = "[!selectPassword?'':'password-selected','two-button']">
             <div class = "remember-login" v-if = "selectPassword">
               <div  :class = "[notRemember ? 'not-remember-login' : 'remembered-login']" @click="notRemember = !notRemember"></div>
               <!-- <div v-show= "notRemember" class = "not-remember-login" @click="notRemember = !notRemember"></div> -->
@@ -95,8 +95,32 @@
               }}
             </div>
         </div>
-        <Input v-model.trim="registerPassword" placeholder="请设置密码(8-16位字母数字组合)" autofocus  class = "login-input" v-if = "!changeDevice" @on-change = "passwordChange" @on-focus = "focusPassword" :maxlength="16"/>
-        <Input v-model.trim="confirmRegisterPassword" placeholder="请再次输入密码" autofocus  class = "login-input" v-if = "!changeDevice" :maxlength="16"/>
+        <!-- <Input v-model.trim="registerPassword" placeholder="请设置密码(8-16位字母数字组合)" autofocus  class = "login-input" v-if = "!changeDevice" @on-change = "passwordChange" @on-focus = "focusPassword" :maxlength="16"/> -->
+        <vue-password v-model="registerPassword" v-if = "!changeDevice" classes = "login-input" disableStrength >
+            <div
+                slot       = "password-input"
+                slot-scope = "register"
+                class      = "control has-icons-left"
+            >
+                <input class = "login-input" type = "password" placeholder = "请设置密码(8-16位字母数字组合)" v-model = "registerPassword" oninput = "if(value.length > 11)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+        </vue-password>
+        <!-- <Input v-model.trim="confirmRegisterPassword" placeholder="请再次输入密码" autofocus  class = "login-input" v-if = "!changeDevice" :maxlength="16"/> -->
+        <vue-password v-model="confirmRegisterPassword" v-if = "!changeDevice" classes = "register-password" disableStrength>
+            <div
+                slot       = "password-input"
+                slot-scope = "registerConfirm"
+                class      = "control has-icons-left"
+            >
+                <input class = "login-input" type = "password" placeholder = "请设置密码(8-16位字母数字组合)" v-model = "confirmRegisterPassword" oninput = "if(value.length > 11)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+        </vue-password>
         <div class = "login-button main-button" @click="registerOrResetPassword">
           {{
             registerOrSubmit
@@ -108,7 +132,7 @@
 </template>
 
 <script>
-import baseConfig from './../../config/index'
+import baseConfig from '@/config/index'
 // import LoginForm from '_c/login-form'
 import md5 from 'js-md5'
 import VuePassword from 'vue-password'
@@ -116,7 +140,8 @@ import {
   validateMobilephone, // 校验手机号
   validatePassword, // 校验密码是否8至16位数字字母
   validateVerificationCode, // 校验验证码
-  validateGraphCode//
+  validateGraphCode,
+  validateCaptcha
 } from './../../libs/validate'
 import { mapActions } from 'vuex'; import axios from '@/libs/api.request'
 const TIME_COUNT = 60;
@@ -129,32 +154,33 @@ export default {
   },
   data () {
     return {
-      score                  : 10,
-      selectPassword         : true,
-      userName               : '',
-      password               : '',
-      verifyCode             : '',
-      userNamePlaceholder    : '请输入用户名',
-      notRemember            : true,
-      registerShow           : false,
-      registerUsername       : '',
-      registerVerifyCode     : '',
-      registerPassword       : '',
-      confirmRegisterPassword: '',
-      getVerifyCode          : '获取验证码',
-      timer                  : null,
-      count                  : '',
-      countDown              : false,
-      registerOrReset        : '',
-      registerOrSubmit       : '确定',
-      changeDevice           : false,
-      alertType              : 'error',
-      alertMsg               : '系统异常，请及时联系管理员',
-      graphValidateCodeShow  : false,
-      graphCode              : '',
-      graphCodeSrc           : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
-      user_info              : {},
-      identifyVerificationCode : 3
+      score                   : 10,
+      selectPassword          : true,
+      userName                : '',
+      password                : '',
+      verifyCode              : '',
+      userNamePlaceholder     : '请输入用户名',
+      notRemember             : true,
+      registerShow            : false,
+      registerUsername        : '',
+      registerVerifyCode      : '',
+      registerPassword        : '',
+      confirmRegisterPassword : '',
+      getVerifyCode           : '获取验证码',
+      timer                   : null,
+      count                   : '',
+      countDown               : false,
+      registerOrReset         : '',
+      registerOrSubmit        : '确定',
+      changeDevice            : false,
+      alertType               : 'error',
+      alertMsg                : '系统异常，请及时联系管理员',
+      graphValidateCodeShow   : false,
+      graphCode               : '',
+      graphCodeSrc            : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
+      user_info               : {},
+      identifyVerificationCode: 3,
+      captchaUrl : '' //图形验证码接口path
     }
   },
   methods: {
@@ -179,9 +205,9 @@ export default {
     },
     // 注册
     registerClicked () {
-      this.getVerifyCode = '获取验证码'
+      this.getVerifyCode            = '获取验证码'
       this.identifyVerificationCode = 0
-      this.countDown     = false
+      this.countDown                = false
       if (this.timer) {
         console.log(`this.timer=${this.timer}`)
         clearInterval(this.timer)
@@ -210,6 +236,15 @@ export default {
       console.log('validateVerificationCode(this.loginVerify):')
       console.log(validateVerificationCode(this.loginVerify))
       console.log(this.registerShow)
+      //需要图形验证码才能登录
+      if(this.graphValidateCodeShow && !validateCaptcha(this.graphCode)){
+          this.$Message.error({
+            content : '图形验证码格式不正确或暂未填写!',
+            duration: 3,
+            closable: true
+          })
+          return;
+      }
       // 账号密码登录
       if (this.selectPassword) {
         console.log('账号密码登录')
@@ -236,14 +271,14 @@ export default {
                   'phone'      : this.userName,
                   'password'   : md5(this.password),
                   'verify_code': '',
-                  'captcha'    : '',
+                  'captcha'    : this.graphValidateCodeShow ? this.graphCode : '',
                   'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                   'device_name': window.navigator.userAgent
                 }
               }
             })
             .then(res => {
-              console.log("res:");
+              console.log("login——res:");
               console.log(res)
               //请求成功
               if(res.status && res.status == 200) {
@@ -277,15 +312,15 @@ export default {
                     //登录失败
                     else{
                         if(res.data.code == 405) {
-                          this.$Message.info({
-                              content : res.data.msg ? res.data.msg: '更换设备需要验证',
-                              duration: 5,
-                              closable: true
-                          });
-                          this.changeDevice     = true;
-                          this.registerOrReset  = '设备验证';
-                          this.registerOrSubmit = '验证'
-                          this.registerShow     = true;
+                          // this.$Message.info({
+                          //     content : res.data.msg ? res.data.msg: '更换设备需要验证',
+                          //     duration: 5,
+                          //     closable: true
+                          // });
+                          this.changeDevice             = true;
+                          this.registerOrReset          = '设备验证';
+                          this.registerOrSubmit         = '验证'
+                          this.registerShow             = true;
                           this.identifyVerificationCode = 1
                         }
                         else if (res.data.code == 401) {
@@ -294,6 +329,11 @@ export default {
                               duration: 5,
                               closable: true
                           });
+                        }
+                        else if(res.data.code == 101 || res.data.code == 102) {
+                          this.graphValidateCodeShow = true;
+                          this.captchaUrl = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
+                          this.getCaptcha();
                         }
                     }
                 }else {
@@ -379,7 +419,7 @@ export default {
                   'phone'      : this.userName,
                   'password'   : '',
                   'verify_code': this.loginVerify,
-                  'captcha'    : '',
+                  'captcha'    : this.graphValidateCodeShow ? this.graphCode : '',
                   'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                   'device_name': window.navigator.userAgent
                 }
@@ -400,7 +440,7 @@ export default {
                     this.user_info = resData.user_info;
                     console.log("this.user_info:");
                     console.log(this.user_info);
-                    debugger
+                    // debugger
                     this.$Message.success({
                         content : '登录成功',
                         duration: 5,
@@ -476,6 +516,62 @@ export default {
         }
       }
     },200),
+    //获取图形验证码
+    getCaptcha() {
+        axios.request({
+          url    : baseConfig.baseUrl.dev + this.captchaUrl,
+          method : 'post',
+          headers: {
+            'Content-Type'    : 'application/json; charset=utf-8',
+            'Trinity-Token'   : '',
+            'Request-Datatime': new Date().getTime()
+          },
+          data: {
+            'priority': '3',
+            'group'   : '',
+            'data'    : {
+              'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
+              'device_name': window.navigator.userAgent
+            }
+          }
+        })
+        .then(res => {
+          console.log("res:");
+          console.log(res);
+          //请求成功
+          if(res.status && res.status == 200) {
+            // 登录成功
+            if(res.data.code == 0) {
+              this.graphCodeSrc = 'data:image/png;base64,'  + res.data.img
+            }
+            //登录失败
+            else{
+              this.$Message.error({
+                  content : res.data.msg ? res.data.msg: '获取图形验证码异常，请及时联系管理员处理',
+                  duration: 5,
+                  closable: true
+              });
+            }
+          }
+          //请求失败
+          else{
+            this.$Message.error({
+                content : res.status || '获取图形验证码异常，请及时联系管理员处理',
+                duration: 5,
+                closable: true
+            });
+          }
+        })
+        .catch(err => {
+          console.log("err:");
+          console.log(err);
+          this.$Message.error({
+              content : '获取图形验证码异常，请及时联系管理员处理',
+              duration: 5,
+              closable: true
+          });
+        })
+    },
     passwordChange () {
       console.log('passwordChange')
     },
@@ -485,9 +581,9 @@ export default {
     // 忘记密码
     resetPassword () {
       this.identifyVerificationCode = 2
-      this.registerShow     = true
-      this.registerOrReset  = '找回密码'
-      this.registerOrSubmit = '确定'
+      this.registerShow             = true
+      this.registerOrReset          = '找回密码'
+      this.registerOrSubmit         = '确定'
       // 及时清空
       this.password    = ''
       this.loginVerify = ''
@@ -543,10 +639,10 @@ export default {
                     'priority': '3',
                     'group'   : '',
                     'data'    : {
-                      'phone'      : this.registerUsername,
+                      'phone': this.registerUsername,
                       // 'new_password'   : md5(this.confirmRegisterPassword),
                       'verify_code': this.registerVerifyCode,
-                      'password'    : md5(this.registerPassword),
+                      'password'   : md5(this.registerPassword),
                       // 'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                       // 'device_name': window.navigator.userAgent
                     }
@@ -559,30 +655,6 @@ export default {
                     if(res.status && res.status == 200) {
                       //重置成功
                       if(res.data.code == 0) {
-                        //登录成功的数据包
-                        // if(res.data.data) {
-                        //   let resData = res.data.data;
-                        //   localStorage.setItem('Trinity-Token',resData.token)
-                        //   localStorage.setItem('password',resData.password);
-                        //   this.user_info = resData.user_info;
-                        //   console.log("this.user_info:");
-                        //   console.log(this.user_info);
-                        //   this.$Message.success({
-                        //       content : '登录成功',
-                        //       duration: 5,
-                        //       closable: true
-                        //   });
-                        //   this.$router.push({
-                        //     name: 'home'
-                        //   });
-                        // }else {
-                        //   this.$Message.error({
-                        //       content : '登录失败',
-                        //       duration: 5,
-                        //       closable: true
-                        //   });
-                        // }
-
                         this.$Message.success({
                             content : '密码重置成功',
                             duration: 5,
@@ -590,7 +662,7 @@ export default {
                         });
 
                         this.identifyVerificationCode = 3
-                        this.registerShow     = false
+                        this.registerShow             = false
                         // this.registerOrReset  = '找回密码'
                         // this.registerOrSubmit = '确定'
                         // 将已经修改成功的手机号携带过去给非注册界面
@@ -888,7 +960,7 @@ export default {
           }
           // /当前登录获取验验证码，如果输入的手机号合法
           else{
-                  this.identifyVerificationCode = 3 //当前登录获取手机验证码
+                  this.identifyVerificationCode = 3  //当前登录获取手机验证码
                   this.ifNotUuid();
                   axios.request({
                     url    : baseConfig.baseUrl.dev + 'verify_code/send',
@@ -903,7 +975,7 @@ export default {
                       'group'   : '',
                       'data'    : {
                         'phone': !this.registerShow ? this.userName: this.registerUsername,
-                        'type' : this.identifyVerificationCode  //手机验证码登录接口
+                        'type' : this.identifyVerificationCode                               //手机验证码登录接口
                       }
                     })
                   })
