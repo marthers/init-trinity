@@ -11,6 +11,10 @@
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; 
+    input[type="number"] {
+        -moz-appearance : none;
+        font-size: 14px;
+    }
     .register-con {
         position: absolute;
         right: 160px;
@@ -38,6 +42,10 @@
             // margin : 20px 19px 0  19px;
             margin: 0 auto;
             margin-top: 20px;
+            width : 342px;
+            height : 40px;
+            font-size : 14px;
+            color : #333;
             .ivu-input {
                 width : 342px;
                 height: 40px;
@@ -48,6 +56,9 @@
                 color : #333;
                 border-radius : 0;
             }
+        }
+        .login-input::-webkit-outer-spin-button,.login-input::-webkit-inner-spin-button {
+            -webkit-appearance : none;
         }
         // .verify-input {
         //     margin : 20px 19px 0  19px;
@@ -261,6 +272,10 @@
             // margin : 20px 19px 0  19px;
             margin: 0 auto;
             margin-top: 20px;
+            width: 342px;
+            height: 40px;
+            color: #333;
+            line-height: 40px;
             .ivu-input {
                 width : 342px;
                 height: 40px;
@@ -272,6 +287,10 @@
                 border-radius : 0;
             }
         }
+        .login-input::-webkit-outerspin-button,.login-input::-webkit-inner-spin-button {
+            -webkit-appearance : none;
+        }
+
         // .verify-input {
         //     margin : 20px 19px 0  19px;
         //     width : 342px;
