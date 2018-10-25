@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                  color          = "#3BA5B2"
-                                :particleOpacity = ".7"
-                                :particlesNumber = "88"
-                                  shapeType      = "circle"
-                                :particleSize    = "4"
-                                  linesColor     = "#48A8DA"
-                                :linesWidth      = "1"
-                                :lineLinked      = "true"
-                                :lineOpacity     = "0.4"
-                                :linesDistance   = "150"
-                                :moveSpeed       = "3"
-                                :hoverEffect     = "true"
-                                  hoverMode      = "grab"
-                                :clickEffect     = "true"
-                                  clickMode      = "push"
+                                          color          = "#3BA5B2"
+                                        :particleOpacity = ".7"
+                                        :particlesNumber = "88"
+                                          shapeType      = "circle"
+                                        :particleSize    = "4"
+                                          linesColor     = "#48A8DA"
+                                        :linesWidth      = "1"
+                                        :lineLinked      = "true"
+                                        :lineOpacity     = "0.4"
+                                        :linesDistance   = "150"
+                                        :moveSpeed       = "3"
+                                        :hoverEffect     = "true"
+                                          hoverMode      = "grab"
+                                        :clickEffect     = "true"
+                                          clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -722,9 +722,13 @@ export default {
       this.selectPassword      = true
       this.userNamePlaceholder = '请输入用户名'
       // 及时清空
-      this.password     = ''
-      this.loginVerify  = '';
-      this.changeDevice = false;
+      this.password    = ''
+      this.loginVerify = '';
+      if(this.graphValidateCodeShow) {
+          //重新获取正确的，对应的设备或者手机图形验证码
+        this.captchaUrl = 'captcha/device';
+        this.getCaptcha();
+      }
     },
     verifySelected () {
       this.selectPassword      = false
@@ -732,6 +736,11 @@ export default {
       // 及时清空
       this.password    = ''
       this.loginVerify = ''
+      if(this.graphValidateCodeShow) {
+          //重新获取正确的，对应的设备或者手机图形验证码
+        this.captchaUrl = 'captcha/phone';
+        this.getCaptcha();
+      }
     },
     registerOrResetPassword () {
       if(this.registerOrSubmit != '验证') {
