@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                                  color          = "#3BA5B2"
-                                                :particleOpacity = ".7"
-                                                :particlesNumber = "188"
-                                                  shapeType      = "circle"
-                                                :particleSize    = "4"
-                                                  linesColor     = "#48A8DA"
-                                                :linesWidth      = "1"
-                                                :lineLinked      = "true"
-                                                :lineOpacity     = "0.4"
-                                                :linesDistance   = "150"
-                                                :moveSpeed       = "3"
-                                                :hoverEffect     = "true"
-                                                  hoverMode      = "grab"
-                                                :clickEffect     = "true"
-                                                  clickMode      = "push"
+                                                          color          = "#3BA5B2"
+                                                        :particleOpacity = ".7"
+                                                        :particlesNumber = "188"
+                                                          shapeType      = "circle"
+                                                        :particleSize    = "4"
+                                                          linesColor     = "#48A8DA"
+                                                        :linesWidth      = "1"
+                                                        :lineLinked      = "true"
+                                                        :lineOpacity     = "0.4"
+                                                        :linesDistance   = "150"
+                                                        :moveSpeed       = "3"
+                                                        :hoverEffect     = "true"
+                                                          hoverMode      = "grab"
+                                                        :clickEffect     = "true"
+                                                          clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -108,7 +108,8 @@
         <input type = "number" maxlength = "11" placeholder = "请输入手机号" oninput = "if(value.length>11)value=value.slice(0,11)" v-model.trim="registerUsername" class = "login-input"/>
         <!-- <Input v-model="registerVerifyCode" placeholder="请输入验证码" autofocus  number class = "verify-input" search enter-button="获取验证码"/> -->
         <div class = "login-get-verify">
-            <Input v-model.trim="registerVerifyCode" placeholder="请输入验证码" number autofocus :maxlength="6" class = "login-verify"/>
+            <!-- <Input v-model.trim="registerVerifyCode" placeholder="请输入验证码" number autofocus :maxlength="6" class = "login-verify"/> -->
+            <input type="text" v-model="registerVerifyCode" @input="num2 = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num2" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
             <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
                 getVerifyCode
@@ -212,8 +213,12 @@ export default {
       console.log(`inputVal=${inputVal}`)
     },
     backToLogin () {
-      this.getVerifyCode = '获取验证码'
-      this.countDown     = false
+      this.getVerifyCode           = '获取验证码';
+      this.registerUsername        = ''
+      this.registerVerifyCode      = ''
+      this.confirmRegisterPassword = '';
+      this.registerPassword        = ''
+      this.countDown               = false
       if (this.timer) {
         console.log(`this.timer=${this.timer}`)
         clearInterval(this.timer)
