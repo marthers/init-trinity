@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                          color          = "#3BA5B2"
-                                        :particleOpacity = ".7"
-                                        :particlesNumber = "88"
-                                          shapeType      = "circle"
-                                        :particleSize    = "4"
-                                          linesColor     = "#48A8DA"
-                                        :linesWidth      = "1"
-                                        :lineLinked      = "true"
-                                        :lineOpacity     = "0.4"
-                                        :linesDistance   = "150"
-                                        :moveSpeed       = "3"
-                                        :hoverEffect     = "true"
-                                          hoverMode      = "grab"
-                                        :clickEffect     = "true"
-                                          clickMode      = "push"
+                                                  color          = "#3BA5B2"
+                                                :particleOpacity = ".7"
+                                                :particlesNumber = "188"
+                                                  shapeType      = "circle"
+                                                :particleSize    = "4"
+                                                  linesColor     = "#48A8DA"
+                                                :linesWidth      = "1"
+                                                :lineLinked      = "true"
+                                                :lineOpacity     = "0.4"
+                                                :linesDistance   = "150"
+                                                :moveSpeed       = "3"
+                                                :hoverEffect     = "true"
+                                                  hoverMode      = "grab"
+                                                :clickEffect     = "true"
+                                                  clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -1036,7 +1036,7 @@ export default {
                         }
                         else if (res.data.code == 401) {
                           this.$Message.warning({
-                              content : res.data.msg ? res.data.msg: '密码错误',
+                              content : res.data.msg ? res.data.msg: '认证信息错误，请仔细检查密码是否正确或账号是否已注册',
                               duration: 5,
                               closable: true
                           });

@@ -104,9 +104,10 @@ class HttpRequest {
             });
           }
           else if(code == 401) {
-            iView.Message.info({
+            iView.Message.warning({
                 // content : '认证信息错误，请及时联系管理员处理',
-                content : '密码错误',
+                // content : '账号不存在',
+                content : data.msg  || '认证信息错误',
                 duration: 5,
                 closable: true
             });
