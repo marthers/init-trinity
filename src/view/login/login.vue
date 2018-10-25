@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                              color          = "#3BA5B2"
-                            :particleOpacity = ".7"
-                            :particlesNumber = "88"
-                              shapeType      = "circle"
-                            :particleSize    = "4"
-                              linesColor     = "#48A8DA"
-                            :linesWidth      = "1"
-                            :lineLinked      = "true"
-                            :lineOpacity     = "0.4"
-                            :linesDistance   = "150"
-                            :moveSpeed       = "3"
-                            :hoverEffect     = "true"
-                              hoverMode      = "grab"
-                            :clickEffect     = "true"
-                              clickMode      = "push"
+                                  color          = "#3BA5B2"
+                                :particleOpacity = ".7"
+                                :particlesNumber = "88"
+                                  shapeType      = "circle"
+                                :particleSize    = "4"
+                                  linesColor     = "#48A8DA"
+                                :linesWidth      = "1"
+                                :lineLinked      = "true"
+                                :lineOpacity     = "0.4"
+                                :linesDistance   = "150"
+                                :moveSpeed       = "3"
+                                :hoverEffect     = "true"
+                                  hoverMode      = "grab"
+                                :clickEffect     = "true"
+                                  clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -80,7 +80,8 @@
             <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
         </div>
         <div :class = "[!selectPassword?'':'password-selected','two-button']">
-            <div class = "remember-login" v-if = "selectPassword">
+            <!-- <div class = "remember-login" v-if = "selectPassword"> -->
+            <div class = "remember-login">
               <div  :class = "[notRemember ? 'not-remember-login' : 'remembered-login']" @click="notRemember = !notRemember"></div>
               <!-- <div v-show= "notRemember" class = "not-remember-login" @click="notRemember = !notRemember"></div> -->
               <!-- <div v-show = "!notRemember" class = "remember-login" @click="notRemember = !notRemember"></div> -->
@@ -721,8 +722,9 @@ export default {
       this.selectPassword      = true
       this.userNamePlaceholder = '请输入用户名'
       // 及时清空
-      this.password    = ''
-      this.loginVerify = ''
+      this.password     = ''
+      this.loginVerify  = '';
+      this.changeDevice = false;
     },
     verifySelected () {
       this.selectPassword      = false
