@@ -27,8 +27,10 @@
                 <div class = "header-left-dropdown">北京</div>
           </div>
           <div class = "header-right">
-            <input placeholder="Enter text" style="width: auto" class = "header-right-search" />
-            <Icon type="ios-search-outline" slot = "suffix"/>
+            <div class = "header-right-search-con">
+                <input placeholder="Enter text" style="width: auto" class = "header-right-search" />
+            </div>
+            <!-- <Icon type="ios-search-outline" slot = "suffix"/> -->
             <div class= "header-right-line"></div>
             <div class= "header-right-group">
                 <div class= "header-right-group-icon"></div>
@@ -41,23 +43,37 @@
             <div class= "header-right-Personal" @click = "logOut"></div>
           </div>
       </div>
-      <!-- 最左侧 -->
-      <div class = "left-side-con">
-        <div :class = "[leftSideSelected == 'back-to-main'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'back-to-main'">
-            <div class = "back-to-main inside-item"></div>
-        </div>
-        <div :class = "[leftSideSelected == 'statistics'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'statistics'">
-            <div class = "statistics inside-item"></div>
-        </div>
-        <div :class = "[leftSideSelected == 'menu'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'menu'">
-            <div class = "menu inside-item"></div>
-        </div>
-        <div :class = "[leftSideSelected == 'briefcase'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'briefcase'">
-            <div class = "briefcase inside-item"></div>
-        </div>
-        <div :class = "[leftSideSelected == 'settings'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'settings'">
-            <div class = "settings inside-item"></div>
-        </div>
+      <div class = "body">
+            <div class = "left-side-con">
+                    <div :class = "[leftSideSelected == 'back-to-main'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'back-to-main'">
+                        <div class = "back-to-main inside-item"></div>
+                    </div>
+                    <div :class = "[leftSideSelected == 'statistics'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'statistics'">
+                        <div class = "statistics inside-item"></div>
+                    </div>
+                    <div :class = "[leftSideSelected == 'menu'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'menu'">
+                        <div class = "menu inside-item"></div>
+                    </div>
+                    <div :class = "[leftSideSelected == 'briefcase'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'briefcase'">
+                        <div class = "briefcase inside-item"></div>
+                    </div>
+                    <div :class = "[leftSideSelected == 'settings'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'settings'">
+                        <div class = "settings inside-item"></div>
+                    </div>
+            </div>
+            <div class = "left-menu-con">
+                <div class = "menu-head">管理平台</div>
+                <button class = "back">返回</button>
+                <div class = "mune-con">
+                    <div class= "title-con">
+                        <button class = "title" @click = "titleClicked">
+                            <div :class = "[titleTrueClicked ? 'triangle-down' :'triangle-up']"></div>
+                            <div class = "title-name">概况</div>
+                        </button>
+                    </div>
+                </div>
+                </Menu>
+            </div>
       </div>
   </div>
 </template>
@@ -69,7 +85,9 @@ export default {
     data() {
         return {
             leftSideSelected: 'menu',
-            groupNumber     : 20
+            groupNumber     : 20,
+            titleTrueClicked: false,
+            count           : 0
         }
     },
     methods : {
@@ -106,20 +124,25 @@ export default {
                 })
             })
         },
-        // personalClicked() {
-        //     const content = `<Button type="primary" @click = "logOut">退出登录</Button>
-        //                     <h2>Personal</h2>
-        //     `;
-        //     this.$Modal.info({
-        //         title  : '用户个人中心',
-        //         content: content
-        //     });
-        // }
+       titleClicked() {
+           this.count ++;
+           if(this.count%2 >0) {
+               this.titleTrueClicked = true
+           }else {
+               this.titleTrueClicked = false;
+           }
+       }
     }
 }
 </script>
 <style lang="less" scoped>
 .home {
+    button {
+        border-width: 0;
+        outline     : none;
+        background  : #DEDEDE;
+        cursor      : pointer;
+    }
     width: 100vw;
   .header{
     width           : 100vw;
@@ -170,8 +193,9 @@ export default {
         color         : green;
         display       : flex;
         flex-direction: row;
+        align-items   : center;
         &-search {
-            width                     : 240px;
+            width                     : 240px !important;
             height                    : 36px;
             border-top-left-radius    : 18px;
             border-top-right-radius   : 18px;
@@ -180,8 +204,12 @@ export default {
             background                : rgba(255,255,255,0.3);
             color                     : #FFF;
             font-size                 : 16px;
-            text-align                : center;
+            text-align                : left;
+            text-indent               : 1em;
             line-height               : 36px;
+            border                    : none;
+            //去掉边框颜色
+            outline: none;
         }
         &-line {
             width           : 1px;
@@ -230,67 +258,156 @@ export default {
         }
     }
   }
-  .left-side-con {
-    width           : 5vw;
-    height          : 100vh;
-    background-color: #08131E;
-    text-align      : center;
-    display         : flex;
-    flex-direction  : column;
-    justify-content : center;
-    align-items     : center;
-    .item-con {
-        width           : 40px;
-        height          : 40px;
-        border-radius   : 20px;
-        margin          : 2vh 0;
-        background-color: #08131E;
-        display         : flex;
-        justify-content : center;
-        align-items     : center;
-        transform       : translateY(-500%);
-        .inside-item {
-            width              : 24px;
-            height             : 24px;
-            cursor             : pointer;
-            background-size    : contain;
-            background-position: center;
+  .body {
+      width         : 100vw;
+      height        : 100vh;
+      display       : flex;
+      flex-direction: row;
+        .left-side-con {
+            width           : 50px;
+            height          : 100vh;
+            background-color: #08131E;
+            text-align      : center;
+            display         : flex;
+            flex-direction  : column;
+            justify-content : center;
+            align-items     : center;
+            .item-con {
+                width           : 40px;
+                height          : 40px;
+                border-radius   : 20px;
+                margin          : 2vh 0;
+                background-color: #08131E;
+                display         : flex;
+                justify-content : center;
+                align-items     : center;
+                transform       : translateY(-500%);
+                .inside-item {
+                    width              : 24px;
+                    height             : 24px;
+                    cursor             : pointer;
+                    background-size    : contain;
+                    background-position: center;
+                }
+            }
+            //被选中
+            .left-side-selected {
+                background: linear-gradient(180deg,rgba(59,165,178,1) 0%,rgba(72,168,218,1) 100%);
+            }
+            .back-to-main {
+                background-image: url('./../../assets/images/home/Home.png');
+                @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+                    background-image: url('./../../assets/images/home/Home@2x.png');
+                }
+            }
+            .statistics {
+                background-image: url('./../../assets/images/home/Shares.png');
+                @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+                    background-image: url('./../../assets/images/home/Shares@2x.png');
+                }
+            }
+            .menu{
+                background-image: url('./../../assets/images/home/Notes.png');
+                @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+                    background-image: url('./../../assets/images/home/Notes@2x.png');
+                }
+            }
+            .briefcase {
+                background-image: url('./../../assets/images/home/Job.png');
+                @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+                    background-image: url('./../../assets/images/home/Job@2x.png');
+                }
+            }
+            .settings {
+                background-image: url('./../../assets/images/home/Settings.png');
+                @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+                    background-image: url('./../../assets/images/home/Settings@2x.png');
+                }
+            }
         }
-    }
-    //被选中
-    .left-side-selected {
-        background: linear-gradient(180deg,rgba(59,165,178,1) 0%,rgba(72,168,218,1) 100%);
-    }
-    .back-to-main {
-        background-image: url('./../../assets/images/home/Home.png');
-        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-            background-image: url('./../../assets/images/home/Home@2x.png');
+        .left-menu-con {
+            width           : 160px;
+            height          : 100vh;
+            background-color: #DEDEDE;
+            text-align      : center;
+            .menu-head {
+                width        : 160px !important;
+                height       : 60px;
+                line-height  : 60px;
+                text-align   : center;
+                font-size    : 12px;width: 48px;
+                font-size    : 12px;
+                font-family  : PingFangSC-Medium;
+                font-weight  : 500;
+                color        : rgba(21,24,54,1);
+                border-bottom: 1px solid rgba(66,160,186,0.49);
+            }
+            .back {
+                width       : 160px;
+                height      : 40px;
+                line-height : 40px;
+                text-align  : center;
+                color       : #000;
+                border-width: 0;
+                outline     : none;
+                background  : #DEDEDE;
+                cursor      : pointer;
+            }
+            .menu-con {
+                width           : 160px !important;
+                overflow        : hidden;
+                text-align      : left;
+                font-size       : 12px;
+                color           : #000;
+                background-color: #DEDEDE;
+            }
+            .title-con {
+                width      : 160px;
+                height     : 40px;
+                line-height: 40px;
+                .title {
+                    width          : 100%;
+                    height         : 40px;
+                    background     : #DEDEDE;
+                    line-height    : 40px;
+                    text-align     : center;
+                    display        : flex;
+                    flex-direction : row;
+                    justify-content: left;
+                    align-items    : center;
+                    .triangle-up {
+                            width       : 0px;
+                            height      : 0px;
+                            *width      : 7px;
+                            *height     : 10px;
+                            font-size   : 0;
+                            line-height : 0;
+                            overflow    : hidden;
+                            border-width: 7px;
+                            border-style: dashed dashed solid dashed;
+                            border-color: transparent  transparent transparent #9B9B9B;
+                            margin-left : 20px;
+                    }
+                    .triangle-down {
+                            width       : 0px;
+                            height      : 0px;
+                            *width      : 7px;
+                            *height     : 10px;
+                            font-size   : 0;
+                            line-height : 0;
+                            overflow    : hidden;
+                            border-width: 7px;
+                            border-style: dashed dashed solid dashed;
+                            border-color: pink transparent  transparent transparent;
+                            margin-left : 20px;
+                    }
+                    &-name {
+                        height     : 12px;
+                        line-height: 12px;
+                    }
+                }
+            }
         }
-    }
-    .statistics {
-        background-image: url('./../../assets/images/home/Shares.png');
-        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-            background-image: url('./../../assets/images/home/Shares@2x.png');
-        }
-    }
-    .menu{
-        background-image: url('./../../assets/images/home/Notes.png');
-        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-            background-image: url('./../../assets/images/home/Notes@2x.png');
-        }
-    }
-    .briefcase {
-        background-image: url('./../../assets/images/home/Job.png');
-        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-            background-image: url('./../../assets/images/home/Job@2x.png');
-        }
-    }
-    .settings {
-        background-image: url('./../../assets/images/home/Settings.png');
-        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-            background-image: url('./../../assets/images/home/Settings@2x.png');
-        }
-    }
   }
 }
 </style>

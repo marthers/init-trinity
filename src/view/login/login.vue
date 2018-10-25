@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                      color          = "#3BA5B2"
-                    :particleOpacity = ".7"
-                    :particlesNumber = "40"
-                      shapeType      = "circle"
-                    :particleSize    = "4"
-                      linesColor     = "#48A8DA"
-                    :linesWidth      = "1"
-                    :lineLinked      = "true"
-                    :lineOpacity     = "1"
-                    :linesDistance   = "250"
-                    :moveSpeed       = "3"
-                    :hoverEffect     = "true"
-                      hoverMode      = "grab"
-                    :clickEffect     = "true"
-                      clickMode      = "push"
+                          color          = "#3BA5B2"
+                        :particleOpacity = ".7"
+                        :particlesNumber = "40"
+                          shapeType      = "circle"
+                        :particleSize    = "4"
+                          linesColor     = "#48A8DA"
+                        :linesWidth      = "1"
+                        :lineLinked      = "true"
+                        :lineOpacity     = "1"
+                        :linesDistance   = "250"
+                        :moveSpeed       = "3"
+                        :hoverEffect     = "true"
+                          hoverMode      = "grab"
+                        :clickEffect     = "true"
+                          clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -364,14 +364,10 @@ export default {
                           this.registerShow             = true;
                           this.identifyVerificationCode = 1
                         }
-                        // else if (res.data.code == 401) {
-                        //     // debugger
-                        //   this.$Message.warning({
-                        //       content : res.data.msg ? res.data.msg: '密码错误',
-                        //       duration: 5,
-                        //       closable: true
-                        //   });
-                        // }
+                        else if (res.data.code == 413) {
+                          this.captchaUrl = 'captcha/device';
+                          this.getCaptcha();
+                        }
                         else if(res.data.code == 101 || res.data.code == 102) {
                           this.graphValidateCodeShowForPasswordLogin = true;
                           this.captchaUrl                            = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
