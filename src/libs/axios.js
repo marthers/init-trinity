@@ -105,7 +105,8 @@ class HttpRequest {
           }
           else if(code == 401) {
             iView.Message.info({
-                content : '认证信息错误，请及时联系管理员处理',
+                // content : '认证信息错误，请及时联系管理员处理',
+                content : '密码错误',
                 duration: 5,
                 closable: true
             });
