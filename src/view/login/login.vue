@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                color          = "#3BA5B2"
-              :particleOpacity = ".7"
-              :particlesNumber = "40"
-                shapeType      = "circle"
-              :particleSize    = "4"
-                linesColor     = "#48A8DA"
-              :linesWidth      = "1"
-              :lineLinked      = "true"
-              :lineOpacity     = "1"
-              :linesDistance   = "250"
-              :moveSpeed       = "3"
-              :hoverEffect     = "true"
-                hoverMode      = "grab"
-              :clickEffect     = "true"
-                clickMode      = "push"
+                      color          = "#3BA5B2"
+                    :particleOpacity = ".7"
+                    :particlesNumber = "40"
+                      shapeType      = "circle"
+                    :particleSize    = "4"
+                      linesColor     = "#48A8DA"
+                    :linesWidth      = "1"
+                    :lineLinked      = "true"
+                    :lineOpacity     = "1"
+                    :linesDistance   = "250"
+                    :moveSpeed       = "3"
+                    :hoverEffect     = "true"
+                      hoverMode      = "grab"
+                    :clickEffect     = "true"
+                      clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -77,11 +77,11 @@
         </div>
         <div v-if = "graphValidateCodeShowForPasswordLogin" class = "login-get-verify graph-validate-code-con">
             <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
-            <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
+            <img :src = "graphCodeSrcPassword" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
         </div>
         <div v-if = "graphValidateCodeShowForVerificationLogin" class = "login-get-verify graph-validate-code-con">
             <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
-            <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
+            <img :src = "graphCodeSrcVerify" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
         </div>
         <div :class = "[!selectPassword?'':'password-selected','two-button']">
             <!-- <div class = "remember-login" v-if = "selectPassword"> -->
@@ -183,37 +183,39 @@ export default {
   },
   data () {
     return {
-      score                                    : 10,
-      selectPassword                           : true,
-      userName                                 : '',
-      password                                 : '',
-      verifyCode                               : '',
-      userNamePlaceholder                      : '请输入用户名',
-      notRemember                              : true,
-      registerShow                             : false,
-      registerUsername                         : '',
-      registerVerifyCode                       : '',
-      registerPassword                         : '',
-      confirmRegisterPassword                  : '',
-      getVerifyCode                            : '获取验证码',
-      timer                                    : null,
-      count                                    : '',
-      countDown                                : false,
-      registerOrReset                          : '',
-      registerOrSubmit                         : '确定',
-      changeDevice                             : false,
-      alertType                                : 'error',
-      alertMsg                                 : '系统异常，请及时联系管理员',
-      graphValidateCodeShowForVerificationLogin: false,
-      graphValidateCodeShowForPasswordLogin    : false,
-      markVerifyLogin                          : false,
-      markPasswordLogin                        : false,
-      graphValidateCodeShow                    : false,
-      graphCode                                : '',
-      graphCodeSrc                             : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
-      user_info                                : {},
-      identifyVerificationCode                 : 3,
-      captchaUrl                               : ''                                                                        //图形验证码接口path
+        graphCodeSrcPassword                     : '',
+        graphCodeSrcVerify                       : '',
+        score                                    : 10,
+        selectPassword                           : true,
+        userName                                 : '',
+        password                                 : '',
+        verifyCode                               : '',
+        userNamePlaceholder                      : '请输入用户名',
+        notRemember                              : true,
+        registerShow                             : false,
+        registerUsername                         : '',
+        registerVerifyCode                       : '',
+        registerPassword                         : '',
+        confirmRegisterPassword                  : '',
+        getVerifyCode                            : '获取验证码',
+        timer                                    : null,
+        count                                    : '',
+        countDown                                : false,
+        registerOrReset                          : '',
+        registerOrSubmit                         : '确定',
+        changeDevice                             : false,
+        alertType                                : 'error',
+        alertMsg                                 : '系统异常，请及时联系管理员',
+        graphValidateCodeShowForVerificationLogin: false,
+        graphValidateCodeShowForPasswordLogin    : false,
+        markVerifyLogin                          : false,
+        markPasswordLogin                        : false,
+        graphValidateCodeShow                    : false,
+        graphCode                                : '',
+    //   graphCodeSrc                             : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
+      user_info               : {},
+      identifyVerificationCode: 3,
+      captchaUrl              : ''   //图形验证码接口path
     }
   },
   methods: {
@@ -611,7 +613,12 @@ export default {
           if(res.status && res.status == 200) {
             // 登录成功
             if(res.data.code == 0) {
-              this.graphCodeSrc = 'data:image/png;base64,'  + res.data.img
+                if(this.captchaUrl.lastIndexOf('phone') < 0) {
+                    console.log('当前为获取手机图形验证码');
+                    this.graphCodeSrcPassword = 'data:image/png;base64,'  + res.data.img
+                }else {
+                    this.graphCodeSrcVerify = 'data:image/png;base64,'  + res.data.img
+                }
             }
             //登录失败
             else{
@@ -682,10 +689,10 @@ export default {
         this.markVerifyLogin                           = this.graphValidateCodeShowForVerificationLogin
         this.graphValidateCodeShowForVerificationLogin = false;
         this.graphValidateCodeShowForPasswordLogin     = this.markPasswordLogin;
-        if(this.graphValidateCodeShowForPasswordLogin) {
-            this.captchaUrl = 'captcha/device';
-            this.getCaptcha();
-        }
+        // if(this.graphValidateCodeShowForPasswordLogin) {
+        //     this.captchaUrl = 'captcha/device';
+        //     this.getCaptcha();
+        // }
         this.selectPassword      = true
         this.userNamePlaceholder = '请输入用户名'
       // 及时清空
@@ -710,10 +717,10 @@ export default {
     //   }
         this.markPasswordLogin                         = this.graphValidateCodeShowForPasswordLogin
         this.graphValidateCodeShowForVerificationLogin = this.markVerifyLogin
-        if(this.graphValidateCodeShowForVerificationLogin) {
-            this.captchaUrl = 'captcha/phone';
-            this.getCaptcha();
-        }
+        // if(this.graphValidateCodeShowForVerificationLogin) {
+        //     this.captchaUrl = 'captcha/phone';
+        //     this.getCaptcha();
+        // }
         this.graphValidateCodeShowForPasswordLogin = false;
         console.log('verifySelected')
         console.log(`this.graphValidateCodeShowForPasswordLogin=${this.graphValidateCodeShowForPasswordLogin}`)
