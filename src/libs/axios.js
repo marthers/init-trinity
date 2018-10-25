@@ -43,8 +43,9 @@ class HttpRequest {
       this.queue[url] = true
       console.log('nterceptors.request__config:')
       console.log(config)
-      // config.headers['Request-Datatime '] = new Date().getTime()
-      // config.headers['Trinity-Token'] = localStorage.getItem('Trinity-Token') != null ? localStorage.getItem('Trinity-Token') : ''
+      config.headers['Request-Datatime '] = new Date().getTime()
+      config.headers['Trinity-Token']     = localStorage.getItem('Trinity-Token') != null ? localStorage.getItem('Trinity-Token') : '';
+      config.headers['Content-Type']      = 'application/json; charset=utf-8';
       return config
     }, error => {
       return Promise.reject(error)
