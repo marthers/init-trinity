@@ -41,7 +41,7 @@
             <div class= "header-right-Personal" @click = "logOut"></div>
           </div>
       </div>
-      <!-- 最右侧 -->
+      <!-- 最左侧 -->
       <div class = "left-side-con">
         <div :class = "[leftSideSelected == 'back-to-main'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'back-to-main'">
             <div class = "back-to-main inside-item"></div>

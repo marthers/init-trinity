@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                                                                                          color          = "#3BA5B2"
-                                                                                                        :particleOpacity = ".7"
-                                                                                                        :particlesNumber = "40"
-                                                                                                          shapeType      = "circle"
-                                                                                                        :particleSize    = "4"
-                                                                                                          linesColor     = "#48A8DA"
-                                                                                                        :linesWidth      = "1"
-                                                                                                        :lineLinked      = "true"
-                                                                                                        :lineOpacity     = "1"
-                                                                                                        :linesDistance   = "250"
-                                                                                                        :moveSpeed       = "3"
-                                                                                                        :hoverEffect     = "true"
-                                                                                                          hoverMode      = "grab"
-                                                                                                        :clickEffect     = "true"
-                                                                                                          clickMode      = "push"
+                color          = "#3BA5B2"
+              :particleOpacity = ".7"
+              :particlesNumber = "40"
+                shapeType      = "circle"
+              :particleSize    = "4"
+                linesColor     = "#48A8DA"
+              :linesWidth      = "1"
+              :lineLinked      = "true"
+              :lineOpacity     = "1"
+              :linesDistance   = "250"
+              :moveSpeed       = "3"
+              :hoverEffect     = "true"
+                hoverMode      = "grab"
+              :clickEffect     = "true"
+                clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -206,6 +206,8 @@ export default {
       alertMsg                                 : '系统异常，请及时联系管理员',
       graphValidateCodeShowForVerificationLogin: false,
       graphValidateCodeShowForPasswordLogin    : false,
+      markVerifyLogin                          : false,
+      markPasswordLogin                        : false,
       graphValidateCodeShow                    : false,
       graphCode                                : '',
       graphCodeSrc                             : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
@@ -677,10 +679,15 @@ export default {
         console.log('passwordSelected')
         console.log(`this.graphValidateCodeShowForPasswordLogin=${this.graphValidateCodeShowForPasswordLogin}`)
         console.log(`this.graphValidateCodeShowForVerificationLogin=${this.graphValidateCodeShowForVerificationLogin}`);
+        this.markVerifyLogin                           = this.graphValidateCodeShowForVerificationLogin
         this.graphValidateCodeShowForVerificationLogin = false;
-        this.graphValidateCodeShowForPasswordLogin     = false;
-        this.selectPassword                            = true
-        this.userNamePlaceholder                       = '请输入用户名'
+        this.graphValidateCodeShowForPasswordLogin     = this.markPasswordLogin;
+        if(this.graphValidateCodeShowForPasswordLogin) {
+            this.captchaUrl = 'captcha/device';
+            this.getCaptcha();
+        }
+        this.selectPassword      = true
+        this.userNamePlaceholder = '请输入用户名'
       // 及时清空
       this.password    = ''
       this.loginVerify = '';
@@ -701,8 +708,13 @@ export default {
     //     this.captchaUrl = 'captcha/phone';
     //     this.getCaptcha();
     //   }
-        this.graphValidateCodeShowForVerificationLogin = false;
-        this.graphValidateCodeShowForPasswordLogin     = false;
+        this.markPasswordLogin                         = this.graphValidateCodeShowForPasswordLogin
+        this.graphValidateCodeShowForVerificationLogin = this.markVerifyLogin
+        if(this.graphValidateCodeShowForVerificationLogin) {
+            this.captchaUrl = 'captcha/phone';
+            this.getCaptcha();
+        }
+        this.graphValidateCodeShowForPasswordLogin = false;
         console.log('verifySelected')
         console.log(`this.graphValidateCodeShowForPasswordLogin=${this.graphValidateCodeShowForPasswordLogin}`)
         console.log(`this.graphValidateCodeShowForVerificationLogin=${this.graphValidateCodeShowForVerificationLogin}`)
