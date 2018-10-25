@@ -21,9 +21,9 @@ export const getUserInfo = (token) => {
   })
 }
 
-export const signOut = () => {
+export const signOut = (url) => {
   return axios.request({
-    url   : 'http://192.168.50.154:8090/trinity-backstage-account/user/sign_out_web',
+    url   : url,
     method: 'post'
   })
 }

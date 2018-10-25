@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                                                                            color          = "#3BA5B2"
-                                                                                          :particleOpacity = ".7"
-                                                                                          :particlesNumber = "40"
-                                                                                            shapeType      = "circle"
-                                                                                          :particleSize    = "4"
-                                                                                            linesColor     = "#48A8DA"
-                                                                                          :linesWidth      = "1"
-                                                                                          :lineLinked      = "true"
-                                                                                          :lineOpacity     = "1"
-                                                                                          :linesDistance   = "250"
-                                                                                          :moveSpeed       = "3"
-                                                                                          :hoverEffect     = "true"
-                                                                                            hoverMode      = "grab"
-                                                                                          :clickEffect     = "true"
-                                                                                            clickMode      = "push"
+                                                                                                          color          = "#3BA5B2"
+                                                                                                        :particleOpacity = ".7"
+                                                                                                        :particlesNumber = "40"
+                                                                                                          shapeType      = "circle"
+                                                                                                        :particleSize    = "4"
+                                                                                                          linesColor     = "#48A8DA"
+                                                                                                        :linesWidth      = "1"
+                                                                                                        :lineLinked      = "true"
+                                                                                                        :lineOpacity     = "1"
+                                                                                                        :linesDistance   = "250"
+                                                                                                        :moveSpeed       = "3"
+                                                                                                        :hoverEffect     = "true"
+                                                                                                          hoverMode      = "grab"
+                                                                                                        :clickEffect     = "true"
+                                                                                                          clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -172,7 +172,7 @@ import {
   validateGraphCode,
   validateCaptcha
 } from './../../libs/validate'
-import { mapActions } from 'vuex'; import axios from '@/libs/api.request'
+import { mapActions } from 'vuex';
 const TIME_COUNT = 60;
 import {_debounce,_throttle} from './../../libs/debounce';
 import {uuid} from './../../libs/uuid';
@@ -291,7 +291,7 @@ export default {
             console.log('baseConfig:')
             console.log(baseConfig);
             this.ifNotUuid();
-            axios.request({
+            this.$axios.request({
               url    : baseConfig.baseUrl.dev + 'user/sign_in_web_mobile_password',
               method : 'post',
               headers: {
@@ -442,7 +442,7 @@ export default {
           if (validateVerificationCode(this.loginVerify)) {
             this.ifNotUuid();
             // 注册或者重置密码
-            axios.request({
+            this.$axios.request({
               url    : baseConfig.baseUrl.dev + 'user/sign_in_web_mobile_verify_code',
               method : 'post',
               headers: {
@@ -498,11 +498,6 @@ export default {
                     //登录失败
                     else{
                         if(res.data.code == 105) {
-                          // this.$Message.info({
-                          //     content : res.data.msg ? res.data.msg: '更换设备需要验证',
-                          //     duration: 5,
-                          //     closable: true
-                          // });
                           this.changeDevice             = true;
                           this.registerOrReset          = '设备验证';
                           this.registerOrSubmit         = '验证'
@@ -515,6 +510,10 @@ export default {
                               duration: 5,
                               closable: true
                           });
+                        }
+                        else if (res.data.code == 413) {
+                          this.captchaUrl = 'captcha/phone';
+                          this.getCaptcha();
                         }
                         else if(res.data.code == 101 || res.data.code == 102) {
                           this.graphValidateCodeShowForVerificationLogin = true;
@@ -542,65 +541,6 @@ export default {
                     closable: true
                 });
               }
-            //   console.log("res:");
-            //   console.log(res);
-            //   //请求成功
-            //   if(res.status && res.status == 200) {
-            //     // 登录成功
-            //     if(res.data.code == 0 || res.data.success) {
-            //       //登录成功的数据包
-            //       if(res.data.data) {
-            //         let resData = res.data.data;
-            //         localStorage.setItem('Trinity-Token',resData.token)
-            //         localStorage.setItem('password',resData.password);
-            //         this.user_info = resData.user_info;
-            //         console.log("this.user_info:");
-            //         console.log(this.user_info);
-            //         // debugger
-            //         this.$Message.success({
-            //             content : '登录成功',
-            //             duration: 5,
-            //             closable: true
-            //         });
-            //         this.$router.push({
-            //           name: 'home'
-            //         });
-            //       }else {
-            //         this.$Message.error({
-            //             content : '登录失败',
-            //             duration: 5,
-            //             closable: true
-            //         });
-            //       }
-            //     }
-            //     //登录失败
-            //     else{
-            //       this.$Message.error({
-            //           content : res.data.msg ? res.data.msg: '登录失败',
-            //           duration: 5,
-            //           closable: true
-            //       });
-            //     }
-            //     console.log("res.data:");
-            //     console.log(res.data);
-            //     console.log("res.data.data:")
-            //     console.log(res.data.data)
-            //   }
-            //   //请求失败
-            //   else{
-            //     this.$Message.error({
-            //         content : res.status,
-            //         duration: 5,
-            //         closable: true
-            //     });
-            //   }
-            //   console.log(res);
-            //   console.log("this.$config:");
-            //   console.log(this.$config);
-            //   console.log("this.$route:");
-            //   console.log(this.$route);
-            //   console.log("this.$router:")
-            //   console.log(this.$router)
             })
             .catch(err => {
               console.log("err:");
@@ -648,7 +588,7 @@ export default {
               'device_name': window.navigator.userAgent
             }
         }
-        axios.request({
+        this.$axios.request({
           url    : baseConfig.baseUrl.dev + this.captchaUrl,
           method : 'post',
           headers: {
@@ -774,9 +714,7 @@ export default {
           if(validateMobilephone(this.registerUsername) && validateVerificationCode(this.registerVerifyCode) && validatePassword(this.registerPassword) && validatePassword(this.confirmRegisterPassword) && this.registerPassword === this.confirmRegisterPassword ){
               if (this.registerOrReset == '找回密码') {
                   console.log('找回密码')
-
-
-                  axios.request({
+                  this.$axios.request({
                     url    : baseConfig.baseUrl.dev + 'user/forget_password',
                     method : 'post',
                     headers: {
@@ -863,7 +801,7 @@ export default {
               } else {
                   console.log('用户注册');
                   this.ifNotUuid();
-                  axios.request({
+                  this.$axios.request({
                     url    : baseConfig.baseUrl.dev + 'user/sign_up_web',
                     method : 'post',
                     headers: {
@@ -990,7 +928,7 @@ export default {
         console.log('更换新设备校验');
         if(validateMobilephone(this.registerUsername) && validateVerificationCode(this.registerVerifyCode)) {
             this.ifNotUuid();
-            axios.request({
+            this.$axios.request({
               url    : baseConfig.baseUrl.dev + 'user/sign_in_web_new_device_check',
               method : 'post',
               headers: {
@@ -1139,7 +1077,7 @@ export default {
             }
           }else{
                   this.ifNotUuid();
-                  axios.request({
+                  this.$axios.request({
                     url    : baseConfig.baseUrl.dev + 'verify_code/send',
                     method : 'post',
                     headers: {
@@ -1239,7 +1177,7 @@ export default {
           else{
                   this.identifyVerificationCode = 3  //当前登录获取手机验证码
                   this.ifNotUuid();
-                  axios.request({
+                  this.$axios.request({
                     url    : baseConfig.baseUrl.dev + 'verify_code/send',
                     method : 'post',
                     headers: {

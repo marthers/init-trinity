@@ -72,14 +72,14 @@ export function validateCaptcha(password) {//必须为字母加数字且长度�
     }
     var reg1 = new RegExp(/^[0-9A-Za-z]+$/);
     if (!reg1.test(str)) {
-      debugger
         return false;
+    }else {
+        return true
     }
-    var reg = new RegExp(/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/);
-    if (reg.test(str)) {
-        return true;
-    } else {
-      debugger
-        return false;
-    }
+    // var reg = new RegExp(/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/);
+    // if (reg.test(str)) {
+    //     return true;
+    // } else {
+    //     return false;
+    // }
 }

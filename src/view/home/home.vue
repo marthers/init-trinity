@@ -63,6 +63,8 @@
 </template>
 <script>
 import {signOut} from '@/api/user.js';
+import baseConfig from '@/config/index';
+const baseUrl = baseConfig.baseUrl.dev;
 export default {
     data() {
         return {
@@ -72,17 +74,37 @@ export default {
     },
     methods : {
         logOut() {
-            signOut().then(res => {
+            signOut(baseUrl + 'user/sign_out_web').then(res => {
+                console.log("res:::::::")
                 console.log(res)
+                console.log(res.data)
+                if(res.status == 200 && res.data.code == 0) {
+                    this.$Message.info({
+                        content : '退出成功',
+                        duration: 5,
+                        closable: true
+                    })
+                    if(localStorage.getItem('Trinity-Token') != null) {
+                        localStorage.removeItem('Trinity-Token');
+                    }
+                    this.$router.push({
+                        name: 'login'
+                    })
+                }else{
+                    this.$Message.error({
+                        content : '退出失败',
+                        duration: 5,
+                        closable: true
+                    })
+                }
             }).catch(err => {
-                console.log(err)
+                console.log(err);
+                this.$Message.error({
+                    content : '网络异常，请联系管理员及时处理',
+                    duration: 5,
+                    closable: true
+                })
             })
-            // if(localStorage.getItem('Trinity-Token') != null) {
-            //     localStorage.removeItem('Trinity-Token');
-            // }
-            // this.$router.push({
-            //     name: 'login'
-            // })
         },
         // personalClicked() {
         //     const content = `<Button type="primary" @click = "logOut">退出登录</Button>
