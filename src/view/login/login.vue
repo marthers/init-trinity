@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                                          color          = "#3BA5B2"
-                                                        :particleOpacity = ".7"
-                                                        :particlesNumber = "188"
-                                                          shapeType      = "circle"
-                                                        :particleSize    = "4"
-                                                          linesColor     = "#48A8DA"
-                                                        :linesWidth      = "1"
-                                                        :lineLinked      = "true"
-                                                        :lineOpacity     = "0.4"
-                                                        :linesDistance   = "150"
-                                                        :moveSpeed       = "3"
-                                                        :hoverEffect     = "true"
-                                                          hoverMode      = "grab"
-                                                        :clickEffect     = "true"
-                                                          clickMode      = "push"
+                                                                                            color          = "#3BA5B2"
+                                                                                          :particleOpacity = ".7"
+                                                                                          :particlesNumber = "40"
+                                                                                            shapeType      = "circle"
+                                                                                          :particleSize    = "4"
+                                                                                            linesColor     = "#48A8DA"
+                                                                                          :linesWidth      = "1"
+                                                                                          :lineLinked      = "true"
+                                                                                          :lineOpacity     = "1"
+                                                                                          :linesDistance   = "250"
+                                                                                          :moveSpeed       = "3"
+                                                                                          :hoverEffect     = "true"
+                                                                                            hoverMode      = "grab"
+                                                                                          :clickEffect     = "true"
+                                                                                            clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -75,7 +75,11 @@
               }}
             </div>
         </div>
-        <div v-if = "graphValidateCodeShow" class = "login-get-verify graph-validate-code-con">
+        <div v-if = "graphValidateCodeShowForPasswordLogin" class = "login-get-verify graph-validate-code-con">
+            <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
+            <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
+        </div>
+        <div v-if = "graphValidateCodeShowForVerificationLogin" class = "login-get-verify graph-validate-code-con">
             <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
             <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
         </div>
@@ -116,6 +120,10 @@
               }}
             </div>
         </div>
+        <!-- <div v-if = "graphValidateCodeShow" class = "login-get-verify graph-validate-code-con">
+            <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
+            <img :src = "graphCodeSrc" class = "graph-code get-login-verify-button" @click = "getCaptcha"/>
+        </div> -->
         <!-- <Input v-model.trim="registerPassword" placeholder="请设置密码(8-16位字母数字组合)" autofocus  class = "login-input" v-if = "!changeDevice" @on-change = "passwordChange" @on-focus = "focusPassword" :maxlength="16"/> -->
         <vue-password v-model="registerPassword" v-if = "!changeDevice" classes = "login-input" disableStrength >
             <div
@@ -175,33 +183,35 @@ export default {
   },
   data () {
     return {
-      score                   : 10,
-      selectPassword          : true,
-      userName                : '',
-      password                : '',
-      verifyCode              : '',
-      userNamePlaceholder     : '请输入用户名',
-      notRemember             : true,
-      registerShow            : false,
-      registerUsername        : '',
-      registerVerifyCode      : '',
-      registerPassword        : '',
-      confirmRegisterPassword : '',
-      getVerifyCode           : '获取验证码',
-      timer                   : null,
-      count                   : '',
-      countDown               : false,
-      registerOrReset         : '',
-      registerOrSubmit        : '确定',
-      changeDevice            : false,
-      alertType               : 'error',
-      alertMsg                : '系统异常，请及时联系管理员',
-      graphValidateCodeShow   : false,
-      graphCode               : '',
-      graphCodeSrc            : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
-      user_info               : {},
-      identifyVerificationCode: 3,
-      captchaUrl              : ''                                                                        //图形验证码接口path
+      score                                    : 10,
+      selectPassword                           : true,
+      userName                                 : '',
+      password                                 : '',
+      verifyCode                               : '',
+      userNamePlaceholder                      : '请输入用户名',
+      notRemember                              : true,
+      registerShow                             : false,
+      registerUsername                         : '',
+      registerVerifyCode                       : '',
+      registerPassword                         : '',
+      confirmRegisterPassword                  : '',
+      getVerifyCode                            : '获取验证码',
+      timer                                    : null,
+      count                                    : '',
+      countDown                                : false,
+      registerOrReset                          : '',
+      registerOrSubmit                         : '确定',
+      changeDevice                             : false,
+      alertType                                : 'error',
+      alertMsg                                 : '系统异常，请及时联系管理员',
+      graphValidateCodeShowForVerificationLogin: false,
+      graphValidateCodeShowForPasswordLogin    : false,
+      graphValidateCodeShow                    : false,
+      graphCode                                : '',
+      graphCodeSrc                             : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
+      user_info                                : {},
+      identifyVerificationCode                 : 3,
+      captchaUrl                               : ''                                                                        //图形验证码接口path
     }
   },
   methods: {
@@ -262,7 +272,7 @@ export default {
       console.log(validateVerificationCode(this.loginVerify))
       console.log(this.registerShow)
       //需要图形验证码才能登录
-      if(this.graphValidateCodeShow && !validateCaptcha(this.graphCode)){
+      if((this.graphValidateCodeShowForPasswordLogin || this.graphValidateCodeShowForVerificationLogin) && !validateCaptcha(this.graphCode)){
           this.$Message.error({
             content : '图形验证码格式不正确或暂未填写!',
             duration: 3,
@@ -297,7 +307,7 @@ export default {
                   'password': md5(this.password),
                   // 'new_password': md5(this.password),
                   'verify_code': '',
-                  'captcha'    : this.graphValidateCodeShow ? this.graphCode                        : '',
+                  'captcha'    : this.graphValidateCodeShowForPasswordLogin ? this.graphCode        : '',
                   'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                   'device_name': window.navigator.userAgent
                 }
@@ -359,8 +369,8 @@ export default {
                         //   });
                         // }
                         else if(res.data.code == 101 || res.data.code == 102) {
-                          this.graphValidateCodeShow = true;
-                          this.captchaUrl            = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
+                          this.graphValidateCodeShowForPasswordLogin = true;
+                          this.captchaUrl                            = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
                           this.getCaptcha();
                         }
                     }
@@ -447,7 +457,7 @@ export default {
                   'phone'      : this.userName,
                   'password'   : '',
                   'verify_code': this.loginVerify,
-                  'captcha'    : this.graphValidateCodeShow ? this.graphCode                        : '',
+                  'captcha'    : this.graphValidateCodeShowForVerificationLogin ? this.graphCode    : '',
                   'device_id'  : localStorage.getItem('uuid') != null ? localStorage.getItem('uuid'): uuid(8,16),
                   'device_name': window.navigator.userAgent
                 }
@@ -507,8 +517,8 @@ export default {
                           });
                         }
                         else if(res.data.code == 101 || res.data.code == 102) {
-                          this.graphValidateCodeShow = true;
-                          this.captchaUrl            = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
+                          this.graphValidateCodeShowForVerificationLogin = true;
+                          this.captchaUrl                                = res.data.code == 101 ? 'captcha/phone' : 'captcha/device';
                           this.getCaptcha();
                         }
                     }
@@ -724,16 +734,21 @@ export default {
       })
     },
     passwordSelected () {
-      this.selectPassword      = true
-      this.userNamePlaceholder = '请输入用户名'
+        console.log('passwordSelected')
+        console.log(`this.graphValidateCodeShowForPasswordLogin=${this.graphValidateCodeShowForPasswordLogin}`)
+        console.log(`this.graphValidateCodeShowForVerificationLogin=${this.graphValidateCodeShowForVerificationLogin}`);
+        this.graphValidateCodeShowForVerificationLogin = false;
+        this.graphValidateCodeShowForPasswordLogin     = false;
+        this.selectPassword                            = true
+        this.userNamePlaceholder                       = '请输入用户名'
       // 及时清空
       this.password    = ''
       this.loginVerify = '';
-      if(this.graphValidateCodeShow) {
-          //重新获取正确的，对应的设备或者手机图形验证码
-        this.captchaUrl = 'captcha/device';
-        this.getCaptcha();
-      }
+    //   if(this.graphValidateCodeShow) {
+    //       //重新获取正确的，对应的设备或者手机图形验证码
+    //     this.captchaUrl = 'captcha/device';
+    //     this.getCaptcha();
+    //   }
     },
     verifySelected () {
       this.selectPassword      = false
@@ -741,11 +756,16 @@ export default {
       // 及时清空
       this.password    = ''
       this.loginVerify = ''
-      if(this.graphValidateCodeShow) {
-          //重新获取正确的，对应的设备或者手机图形验证码
-        this.captchaUrl = 'captcha/phone';
-        this.getCaptcha();
-      }
+    //   if(this.graphValidateCodeShow) {
+    //       //重新获取正确的，对应的设备或者手机图形验证码
+    //     this.captchaUrl = 'captcha/phone';
+    //     this.getCaptcha();
+    //   }
+        this.graphValidateCodeShowForVerificationLogin = false;
+        this.graphValidateCodeShowForPasswordLogin     = false;
+        console.log('verifySelected')
+        console.log(`this.graphValidateCodeShowForPasswordLogin=${this.graphValidateCodeShowForPasswordLogin}`)
+        console.log(`this.graphValidateCodeShowForVerificationLogin=${this.graphValidateCodeShowForVerificationLogin}`)
     },
     registerOrResetPassword () {
       if(this.registerOrSubmit != '验证') {

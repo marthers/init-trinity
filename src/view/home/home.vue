@@ -62,6 +62,7 @@
   </div>
 </template>
 <script>
+import {signOut} from '@/api/user.js';
 export default {
     data() {
         return {
@@ -71,12 +72,17 @@ export default {
     },
     methods : {
         logOut() {
-            if(localStorage.getItem('Trinity-Token') != null) {
-                localStorage.removeItem('Trinity-Token');
-            }
-            this.$router.push({
-                name: 'login'
+            signOut().then(res => {
+                console.log(res)
+            }).catch(err => {
+                console.log(err)
             })
+            // if(localStorage.getItem('Trinity-Token') != null) {
+            //     localStorage.removeItem('Trinity-Token');
+            // }
+            // this.$router.push({
+            //     name: 'login'
+            // })
         },
         // personalClicked() {
         //     const content = `<Button type="primary" @click = "logOut">退出登录</Button>

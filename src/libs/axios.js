@@ -41,7 +41,7 @@ class HttpRequest {
         // Spin.show() // 不建议开启，因为界面不友好
       }
       this.queue[url] = true
-      console.log('config:')
+      console.log('nterceptors.request__config:')
       console.log(config)
       // config.headers['Request-Datatime '] = new Date().getTime()
       // config.headers['Trinity-Token'] = localStorage.getItem('Trinity-Token') != null ? localStorage.getItem('Trinity-Token') : ''

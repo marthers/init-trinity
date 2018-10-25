@@ -1,5 +1,4 @@
 import axios from '@/libs/api.request'
-
 export const login = ({ userName, password }) => {
   const data = {
     userName,
@@ -14,7 +13,7 @@ export const login = ({ userName, password }) => {
 
 export const getUserInfo = (token) => {
   return axios.request({
-    url: 'get_info',
+    url   : 'get_info',
     params: {
       token
     },
@@ -22,9 +21,9 @@ export const getUserInfo = (token) => {
   })
 }
 
-export const logout = (token) => {
+export const signOut = () => {
   return axios.request({
-    url: 'logout',
+    url   : 'http://192.168.50.154:8090/trinity-backstage-account/user/sign_out_web',
     method: 'post'
   })
 }
