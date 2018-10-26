@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                          color          = "#3BA5B2"
-                        :particleOpacity = ".7"
-                        :particlesNumber = "40"
-                          shapeType      = "circle"
-                        :particleSize    = "4"
-                          linesColor     = "#48A8DA"
-                        :linesWidth      = "1"
-                        :lineLinked      = "true"
-                        :lineOpacity     = "1"
-                        :linesDistance   = "250"
-                        :moveSpeed       = "3"
-                        :hoverEffect     = "true"
-                          hoverMode      = "grab"
-                        :clickEffect     = "true"
-                          clickMode      = "push"
+                                                                    color          = "#3BA5B2"
+                                                                  :particleOpacity = ".7"
+                                                                  :particlesNumber = "40"
+                                                                    shapeType      = "circle"
+                                                                  :particleSize    = "4"
+                                                                    linesColor     = "#48A8DA"
+                                                                  :linesWidth      = "1"
+                                                                  :lineLinked      = "true"
+                                                                  :lineOpacity     = "1"
+                                                                  :linesDistance   = "250"
+                                                                  :moveSpeed       = "3"
+                                                                  :hoverEffect     = "true"
+                                                                    hoverMode      = "grab"
+                                                                  :clickEffect     = "true"
+                                                                    clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -60,7 +60,7 @@
                 slot-scope = "props"
                 class      = "control has-icons-left"
             >
-                <input class = "login-input" type = "password" placeholder = "请输入密码" v-model = "password" oninput = "if(value.length > 11)value = value.slice(0, 11)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
+                <input class = "login-input" type = "password" placeholder = "请输入密码" v-model = "password" oninput = "if(value.length > 16)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -263,8 +263,12 @@ export default {
     },
     ifNotUuid() {
       if(localStorage.getItem('uuid') == null) {
-        localStorage.setItem('uuid',uuid(8,16));
+        // localStorage.setItem('uuid',uuid(8,16));
+        // localStorage.setItem('uuid','111ssfds');
       }
+    //   else {
+    //     localStorage.setItem('uuid','111ssfds');
+    //   }
     },
     // login
     login : _debounce(function() {
@@ -363,6 +367,9 @@ export default {
                           this.registerOrSubmit         = '验证'
                           this.registerShow             = true;
                           this.identifyVerificationCode = 1
+                          //携带过去
+                          console.log(`this.userName = ${this.userName}`)
+                          this.registerUsername = this.userName
                         }
                         else if (res.data.code == 413) {
                           this.captchaUrl = 'captcha/device';
@@ -503,6 +510,9 @@ export default {
                           this.registerOrSubmit         = '验证'
                           this.registerShow             = true;
                           this.identifyVerificationCode = 1
+                          //携带过去
+                          console.log(`this.userName = ${this.userName}`)
+                          this.registerUsername = this.userName
                         }
                         else if (res.data.code == 405) {
                           this.$Message.warning({
@@ -968,9 +978,7 @@ export default {
             .then(res => {
               console.log("login——res:");
               console.log(res)
-              //请求成功
-              if(res.status && res.status == 200) {
-                if(res.data.code) {
+                // if(res.data.code) {
                     // 登录成功
                     if(res.data.code == 0 ) {
                       //登录成功的数据包
@@ -1011,10 +1019,20 @@ export default {
                           this.registerOrSubmit         = '验证'
                           this.registerShow             = true;
                           this.identifyVerificationCode = 1
+                          //携带过去
+                          console.log(`this.userName = ${this.userName}`)
+                          this.registerUsername = this.userName
                         }
                         else if (res.data.code == 401) {
                           this.$Message.warning({
                               content : res.data.msg ? res.data.msg: '认证信息错误，请仔细检查密码是否正确或账号是否已注册',
+                              duration: 5,
+                              closable: true
+                          });
+                        }
+                        else if (res.data.code == 405) {
+                          this.$Message.warning({
+                              content : res.data.msg ? res.data.msg: '验证码错误',
                               duration: 5,
                               closable: true
                           });
@@ -1025,27 +1043,29 @@ export default {
                           this.getCaptcha();
                         }
                     }
-                }
-                else {
-                    this.$Message.error({
-                        content : res.data.msg ? res.data.msg: '登录失败',
-                        duration: 5,
-                        closable: true
-                    });
-                }
-                console.log("res.data:");
-                console.log(res.data);
-                console.log("res.data.data:")
-                console.log(res.data.data)
-              }
-              //请求失败
-              else{
-                this.$Message.error({
-                    content : '网络异常，请及时联系管理员',
-                    duration: 5,
-                    closable: true
-                });
-              }
+                // }
+                // else {
+                //     this.$Message.error({
+                //         content : res.data.msg ? res.data.msg: '登录失败',
+                //         duration: 5,
+                //         closable: true
+                //     });
+                // }
+              //请求成功
+            //   if(res.status && res.status == 200) {
+            //     console.log("res.data:");
+            //     console.log(res.data);
+            //     console.log("res.data.data:")
+            //     console.log(res.data.data)
+            //   }
+            //   //请求失败
+            //   else{
+            //     this.$Message.error({
+            //         content : '网络异常，请及时联系管理员',
+            //         duration: 5,
+            //         closable: true
+            //     });
+            //   }
               console.log(res);
               console.log("this.$config:");
               console.log(this.$config);
@@ -1063,6 +1083,9 @@ export default {
                   closable: true
               });
             })
+        }
+        else {
+            debugger
         }
       }
     },

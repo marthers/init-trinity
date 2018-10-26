@@ -5,6 +5,8 @@ import App from './App'
 import router from './router/index'
 import iView from 'iview';
 import axios from '@/libs/api.request';
+import 'babel-polyfill';
+import 'es6-promise/auto';
 // import importDirective from './directives/index';
 console.log(iView)
 Vue.use(iView);
