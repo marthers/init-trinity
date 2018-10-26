@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                                                    color          = "#3BA5B2"
-                                                                  :particleOpacity = ".7"
-                                                                  :particlesNumber = "40"
-                                                                    shapeType      = "circle"
-                                                                  :particleSize    = "4"
-                                                                    linesColor     = "#48A8DA"
-                                                                  :linesWidth      = "1"
-                                                                  :lineLinked      = "true"
-                                                                  :lineOpacity     = "1"
-                                                                  :linesDistance   = "250"
-                                                                  :moveSpeed       = "3"
-                                                                  :hoverEffect     = "true"
-                                                                    hoverMode      = "grab"
-                                                                  :clickEffect     = "true"
-                                                                    clickMode      = "push"
+                                                                                color          = "#3BA5B2"
+                                                                              :particleOpacity = ".7"
+                                                                              :particlesNumber = "40"
+                                                                                shapeType      = "circle"
+                                                                              :particleSize    = "4"
+                                                                                linesColor     = "#48A8DA"
+                                                                              :linesWidth      = "1"
+                                                                              :lineLinked      = "true"
+                                                                              :lineOpacity     = "1"
+                                                                              :linesDistance   = "250"
+                                                                              :moveSpeed       = "3"
+                                                                              :hoverEffect     = "true"
+                                                                                hoverMode      = "grab"
+                                                                              :clickEffect     = "true"
+                                                                                clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -212,10 +212,11 @@ export default {
         markPasswordLogin                        : false,
         graphValidateCodeShow                    : false,
         graphCode                                : '',
-    //   graphCodeSrc                             : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
-      user_info               : {},
-      identifyVerificationCode: 3,
-      captchaUrl              : ''   //图形验证码接口path
+        //   graphCodeSrc                             : 'http://img2.imgtn.bdimg.com/it/u=1190478869,2154054603&fm=26&gp=0.jpg',
+        user_info               : {},
+        identifyVerificationCode: 3,
+        captchaUrl              : '',   //图形验证码接口path,
+        loginVerify             : ''
     }
   },
   methods: {
@@ -263,7 +264,7 @@ export default {
     },
     ifNotUuid() {
       if(localStorage.getItem('uuid') == null) {
-        // localStorage.setItem('uuid',uuid(8,16));
+        localStorage.setItem('uuid',uuid(8,16));
         // localStorage.setItem('uuid','111ssfds');
       }
     //   else {
@@ -702,8 +703,8 @@ export default {
         this.selectPassword      = true
         this.userNamePlaceholder = '请输入用户名'
       // 及时清空
-      this.password    = ''
-      this.loginVerify = '';
+    //   this.password    = ''
+    //   this.loginVerify = '';
     //   if(this.graphValidateCodeShow) {
     //       //重新获取正确的，对应的设备或者手机图形验证码
     //     this.captchaUrl = 'captcha/device';
@@ -714,8 +715,8 @@ export default {
       this.selectPassword      = false
       this.userNamePlaceholder = '请输入手机号'
       // 及时清空
-      this.password    = ''
-      this.loginVerify = ''
+    //   this.password    = ''
+    //   this.loginVerify = ''
     //   if(this.graphValidateCodeShow) {
     //       //重新获取正确的，对应的设备或者手机图形验证码
     //     this.captchaUrl = 'captcha/phone';

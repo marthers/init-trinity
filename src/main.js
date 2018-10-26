@@ -9,6 +9,10 @@ import 'babel-polyfill';
 import 'es6-promise/auto';
 // import importDirective from './directives/index';
 console.log(iView)
+iView.Notice.config({
+    top     : 350,
+    duration: 1
+});
 Vue.use(iView);
 import VueParticles from 'vue-particles'
 Vue.use(VueParticles)
