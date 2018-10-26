@@ -6,21 +6,21 @@
   <div class="login">
 
      <vue-particles
-                                                                                color          = "#3BA5B2"
-                                                                              :particleOpacity = ".7"
-                                                                              :particlesNumber = "40"
-                                                                                shapeType      = "circle"
-                                                                              :particleSize    = "4"
-                                                                                linesColor     = "#48A8DA"
-                                                                              :linesWidth      = "1"
-                                                                              :lineLinked      = "true"
-                                                                              :lineOpacity     = "1"
-                                                                              :linesDistance   = "250"
-                                                                              :moveSpeed       = "3"
-                                                                              :hoverEffect     = "true"
-                                                                                hoverMode      = "grab"
-                                                                              :clickEffect     = "true"
-                                                                                clickMode      = "push"
+              color          = "#3BA5B2"
+            :particleOpacity = ".7"
+            :particlesNumber = "40"
+              shapeType      = "circle"
+            :particleSize    = "4"
+              linesColor     = "#48A8DA"
+            :linesWidth      = "1"
+            :lineLinked      = "true"
+            :lineOpacity     = "1"
+            :linesDistance   = "250"
+            :moveSpeed       = "3"
+            :hoverEffect     = "true"
+              hoverMode      = "grab"
+            :clickEffect     = "true"
+              clickMode      = "push"
      >
      </vue-particles>
     <div class = "login-left">
@@ -69,11 +69,11 @@
         <div v-else class = "login-get-verify">
             <!-- <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/> -->
             <input type="text" v-model="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
-            <div :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
+            <a :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
                 getVerifyCode
               }}
-            </div>
+            </a>
         </div>
         <div v-if = "graphValidateCodeShowForPasswordLogin" class = "login-get-verify graph-validate-code-con">
             <Input v-model="graphCode" placeholder="请输入右侧的图形验证码"  autofocus :maxlength="5" class = "login-verify"/>
@@ -97,8 +97,8 @@
               忘记密码
             </div>
         </div>
-        <div class = "login-button main-button" @click = "login">登录</div>
-        <div class = "register-button  main-button" @click = "registerClicked">注册</div>
+        <a class = "login-button main-button" @click = "login">登录</a>
+        <a class = "register-button  main-button" @click = "registerClicked">注册</a>
     </div>
 
     <!-- 注册&找回密码&设备验证 -->
@@ -286,7 +286,7 @@ export default {
             content : '图形验证码格式不正确或暂未填写!',
             duration: 3,
             closable: true
-          })
+          });
           return;
       }
       // 账号密码登录
@@ -338,10 +338,10 @@ export default {
                         this.user_info = resData.user_info;
                         console.log("this.user_info:");
                         console.log(this.user_info);
-                        this.$Message.success({
-                            content : '登录成功',
-                            duration: 5,
-                            closable: true
+                        this.$Notice.success({
+                            title   : '登录成功',
+                            desc    : '欢迎进入Trinity Tech Saas',
+                            duration: 6
                         });
                         this.$router.push({
                           name: 'home'
@@ -486,10 +486,15 @@ export default {
                         this.user_info = resData.user_info;
                         console.log("this.user_info:");
                         console.log(this.user_info);
-                        this.$Message.success({
-                            content : '登录成功',
-                            duration: 5,
-                            closable: true
+                        // this.$Message.success({
+                        //     content : '登录成功',
+                        //     duration: 5,
+                        //     closable: true
+                        // });
+                        this.$Notice.success({
+                            title   : '登录成功',
+                            desc    : '欢迎进入Trinity Tech Saas',
+                            duration: 7
                         });
                         this.$router.push({
                           name: 'home'
@@ -863,10 +868,15 @@ export default {
                             this.user_info = resData.user_info;
                             console.log("this.user_info:");
                             console.log(this.user_info);
-                            this.$Message.success({
-                                content : '登录成功',
-                                duration: 5,
-                                closable: true
+                            // this.$Message.success({
+                            //     content : '登录成功',
+                            //     duration: 5,
+                            //     closable: true
+                            // });
+                            this.$Notice.success({
+                                title   : '登录成功',
+                                desc    : '欢迎进入Trinity Tech Saas',
+                                duration: 7
                             });
                             this.$router.push({
                               name: 'home'
@@ -990,10 +1000,15 @@ export default {
                         this.user_info = resData.user_info;
                         console.log("this.user_info:");
                         console.log(this.user_info);
-                        this.$Message.success({
-                            content : '登录成功',
-                            duration: 5,
-                            closable: true
+                        // this.$Message.success({
+                        //     content : '登录成功',
+                        //     duration: 5,
+                        //     closable: true
+                        // });
+                        this.$Notice.success({
+                            title   : '登录成功',
+                            desc    : '欢迎进入Trinity Tech Saas',
+                            duration: 7
                         });
                         this.$router.push({
                           name: 'home'
@@ -1297,10 +1312,29 @@ export default {
         }
       }
     },200)
+  },
+  mounted() {
+    this.$Message.config({
+        top     : 389,
+        duration: 3
+    })
+
+    // this.$Message.loading({
+    //     content : '<h2>dsasd</h2>',
+    //     duration: 100,
+    //     closable: true
+    // })
   }
 }
 </script>
 
-<style>
-
+<style lang = "less">
+.ivu-message{
+    top: 380px;
+    .ivu-message-notice {
+        width   : 380px;
+        position: absolute !important;
+        right   : 130px !important;
+    }
+}
 </style>

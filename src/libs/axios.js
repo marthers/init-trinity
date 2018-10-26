@@ -1,6 +1,10 @@
 import axios from 'axios'
 import store from '@/store'
-import iView from 'iview'
+import iView from 'iview';
+iView.Message.config({
+    top     : 350,
+    duration: 2
+});
 // import { Spin } from 'iview'
 // const addErrorLog = errorInfo => {
 //   const { statusText, status, request: { responseURL } } = errorInfo

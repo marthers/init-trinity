@@ -64,15 +64,32 @@
             <div class = "left-menu-con">
                 <div class = "menu-head">管理平台</div>
                 <button class = "back">返回</button>
-                <div class = "mune-con">
+                <div class = "survey-menu-con menu-con">
                     <div class= "title-con">
                         <button class = "title" @click = "titleClicked">
                             <div :class = "[titleTrueClicked ? 'triangle-down' :'triangle-up']"></div>
-                            <div class = "title-name">概况</div>
+                            <a class = "title-name">概况</a>
                         </button>
                     </div>
+                    <a class = "menu-child" v-for = "(item,index) in surveyArr" :key = "index" v-show = "titleTrueClicked">
+                        {{
+                            item.name
+                        }}
+                    </a>
                 </div>
-                </Menu>
+                <div class = "order-management-menu-con menu-con">
+                    <div class= "title-con">
+                        <button class = "title" @click = "orderTitleClicked">
+                            <div :class = "[orderTitleTrueClicked ? 'triangle-down' :'triangle-up']"></div>
+                            <a class = "title-name">概况</a>
+                        </button>
+                    </div>
+                    <a class = "menu-child" v-for = "(item,index) in surveyArr" :key = "index" v-show = "orderTitleTrueClicked">
+                        {{
+                            item.name
+                        }}
+                    </a>
+                </div>
             </div>
       </div>
   </div>
@@ -84,10 +101,28 @@ const baseUrl = baseConfig.baseUrl.dev;
 export default {
     data() {
         return {
-            leftSideSelected: 'menu',
-            groupNumber     : 20,
-            titleTrueClicked: false,
-            count           : 0
+            leftSideSelected     : 'menu',
+            groupNumber          : 20,
+            titleTrueClicked     : false,
+            orderTitleTrueClicked: false,
+            count                : 0,
+            surveyArr            : [
+                {
+                    name: '概况1'
+                },
+                {
+                    name: '概况2'
+                },
+                {
+                    name: '概况3'
+                },
+                {
+                    name: '概况4'
+                },
+                {
+                    name: '概况5'
+                }
+            ]
         }
     },
     methods : {
@@ -125,11 +160,19 @@ export default {
             })
         },
        titleClicked() {
-           this.count ++;
+            ++this.count;
            if(this.count%2 >0) {
                this.titleTrueClicked = true
            }else {
                this.titleTrueClicked = false;
+           }
+       },
+       orderTitleClicked() {
+           ++this.count;
+           if(this.count%2 >0) {
+               this.orderTitleTrueClicked = true
+           }else {
+               this.orderTitleTrueClicked = false;
            }
        }
     }
@@ -161,8 +204,8 @@ export default {
         flex-direction: row;
         align-items   : center;
         &-logo{
-            width              : 60px;
-            height             : 60px;
+            width              : 55px;
+            height             : 55px;
             background-image   : url('./../../assets/images/home/logo.png');
             background-size    : contain;
             background-position: center;
@@ -353,6 +396,7 @@ export default {
                 background  : #DEDEDE;
                 cursor      : pointer;
             }
+            // container
             .menu-con {
                 width           : 160px !important;
                 overflow        : hidden;
@@ -375,6 +419,9 @@ export default {
                     flex-direction : row;
                     justify-content: left;
                     align-items    : center;
+                    .title-name{
+                        color: #000;
+                    }
                     .triangle-up {
                             width       : 0px;
                             height      : 0px;
@@ -383,10 +430,10 @@ export default {
                             font-size   : 0;
                             line-height : 0;
                             overflow    : hidden;
-                            border-width: 7px;
+                            border-width: 5px;
                             border-style: dashed dashed solid dashed;
                             border-color: transparent  transparent transparent #9B9B9B;
-                            margin-left : 20px;
+                            margin      : 3px 10px;
                     }
                     .triangle-down {
                             width       : 0px;
@@ -396,16 +443,120 @@ export default {
                             font-size   : 0;
                             line-height : 0;
                             overflow    : hidden;
-                            border-width: 7px;
+                            border-width: 5px;
                             border-style: dashed dashed solid dashed;
-                            border-color: pink transparent  transparent transparent;
-                            margin-left : 20px;
+                            border-color: #9B9B9B transparent  transparent transparent;
+                            margin      : 3px 10px;
                     }
                     &-name {
                         height     : 12px;
                         line-height: 12px;
                     }
                 }
+                .title:link{
+                    background-color: #48A8DA;
+                }
+                .title:visited{
+                    background-color: #DEDEDE;
+                    .triangle-down {
+                            width       : 0px;
+                            height      : 0px;
+                            *width      : 7px;
+                            *height     : 10px;
+                            font-size   : 0;
+                            line-height : 0;
+                            overflow    : hidden;
+                            border-width: 5px;
+                            border-style: dashed dashed solid dashed;
+                            border-color: #9B9B9B transparent  transparent transparent;
+                            margin      : 3px 10px;
+                    }
+                    .title-name{
+                        color: #FFF;
+                    }
+                }
+                .title:hover{
+                    background-color: #48A8DA;
+                    color           : #FFF;
+                    .triangle-up {
+                            width       : 0px;
+                            height      : 0px;
+                            *width      : 7px;
+                            *height     : 10px;
+                            font-size   : 0;
+                            line-height : 0;
+                            overflow    : hidden;
+                            border-width: 5px;
+                            border-style: dashed dashed solid dashed;
+                            border-color: transparent  transparent transparent #FFF;
+                            margin      : 3px 10px;
+                    }
+                    .triangle-down {
+                            width       : 0px;
+                            height      : 0px;
+                            *width      : 7px;
+                            *height     : 10px;
+                            font-size   : 0;
+                            line-height : 0;
+                            overflow    : hidden;
+                            border-width: 5px;
+                            border-style: dashed dashed solid dashed;
+                            border-color: #fff transparent  transparent transparent;
+                            margin      : 3px 10px;
+                    }
+                    .title-name{
+                        color: #FFF;
+                    }
+                }
+                .title:active{
+                    background-color: #DEDEDE;
+                    .triangle-down {
+                            width       : 0px;
+                            height      : 0px;
+                            *width      : 7px;
+                            *height     : 10px;
+                            font-size   : 0;
+                            line-height : 0;
+                            overflow    : hidden;
+                            border-width: 5px;
+                            border-style: dashed dashed solid dashed;
+                            border-color: blue transparent  transparent transparent;
+                            margin      : 3px 10px;
+                    }
+                    .title-name{
+                        color: #FFF;
+                    }
+                }
+            }
+            .menu-child {
+                display      : block;
+                font-size    : 12px;
+                color        : #4A4A4A;
+                text-align   : center;
+                box-sizing   : border-box;
+                padding      : 0 20px;
+                width        : 100%;
+                height       : 40px;
+                line-height  : 40px;
+                overflow     : hidden;
+                white-space  : nowrap;
+                text-overflow: ellipsis;
+            }
+            .menu-child:link {
+                color           : #fff;
+                background-color: #48A8DA;
+            }
+            .menu-child:visited {
+                color           : #fff;
+                background-color: #48A8DA;
+            }
+            .menu-child:hover {
+                color           : #fff;
+                background-color: #48A8DA;
+            }
+            .menu-child:active {
+                color           : #fff;
+                background-color: #48A8DA;
             }
         }
   }
