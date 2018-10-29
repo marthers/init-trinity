@@ -87,19 +87,8 @@
                         }}
                     </a>
                 </div>
-                <!-- <div class = "order-management-menu-con menu-con">
-                    <div class= "title-con">
-                        <button class = "title" @click = "orderTitleClicked">
-                            <div :class = "[orderTitleTrueClicked ? 'triangle-down' :'triangle-up']"></div>
-                            <a class = "title-name">概况</a>
-                        </button>
-                    </div>
-                    <a class = "menu-child" v-for = "(item,index) in surveyArr" :key = "index" v-show = "orderTitleTrueClicked">
-                        {{
-                            item.name
-                        }}
-                    </a>
-                </div> -->
+            </div>
+            <div class = "content">
             </div>
       </div>
   </div>
@@ -693,6 +682,12 @@ export default {
                 }
             }
         }
+        .content {
+            width : 100%;
+            height: 100%;
+            background : pink;
+        }
+
         .left-menu-con {
             width           : 160px;
             min-height:100vh;

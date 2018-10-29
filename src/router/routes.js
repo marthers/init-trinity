@@ -2,7 +2,10 @@ export default [
     {
         path     : '/',
         name     : 'home',
-        component: () => import('@/view/home/home')
+        // component: () => import('@/view/home/home')
+        components : {
+            default : () => import('@/view/home/home')
+        }
     },
     {
         path: '/login',
