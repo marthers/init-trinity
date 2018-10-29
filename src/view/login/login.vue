@@ -60,7 +60,7 @@
                 slot-scope = "props"
                 class      = "control has-icons-left"
             >
-                <input class = "login-input" type = "password" placeholder = "请输入密码" v-model = "password" oninput = "if(value.length > 16)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
+                <input class = "login-input" type = "password" placeholder = "请输入密码"  @keyup.enter = "login" v-model = "password" oninput = "if(value.length > 16)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -144,7 +144,7 @@
                 slot-scope = "registerConfirm"
                 class      = "control has-icons-left"
             >
-                <input class = "login-input" type = "password" placeholder = "请设置密码(8-16位字母数字组合)" v-model = "confirmRegisterPassword" oninput = "if(value.length > 11)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
+                <input class = "login-input" type = "password" placeholder = "请设置密码(8-16位字母数字组合)"  @kleyup.enter = "registerOrResetPassword" v-model = "confirmRegisterPassword" oninput = "if(value.length > 11)value = value.slice(0, 16)"  ref = "loginPassword" oncopy = "return false" oncut = "return false" onpaste = "return false">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -344,7 +344,8 @@ export default {
                             duration: 6
                         });
                         this.$router.push({
-                          name: 'home'
+                          name: 'home',
+                          params : resData
                         });
                       }
                       else {
@@ -497,7 +498,8 @@ export default {
                             duration: 7
                         });
                         this.$router.push({
-                          name: 'home'
+                          name: 'home',
+                          params : resData
                         });
                       }
                       else {
@@ -879,7 +881,8 @@ export default {
                                 duration: 7
                             });
                             this.$router.push({
-                              name: 'home'
+                              name: 'home',
+                              params : resData
                             });
                           }else {
                             this.$Message.error({
@@ -1011,7 +1014,8 @@ export default {
                             duration: 7
                         });
                         this.$router.push({
-                          name: 'home'
+                          name: 'home',
+                          params : resData
                         });
                       }
                       else {

@@ -44,7 +44,8 @@
           </div>
       </div>
       <div class = "body">
-            <div class = "left-side-con">
+            <div class = "left-side-con" id = "left-side-main">
+                <div class= "left-side-box">
                     <div :class = "[leftSideSelected == 'back-to-main'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'back-to-main'">
                         <div class = "back-to-main inside-item"></div>
                     </div>
@@ -60,24 +61,33 @@
                     <div :class = "[leftSideSelected == 'settings'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'settings'">
                         <div class = "settings inside-item"></div>
                     </div>
+                </div>
             </div>
-            <div class = "left-menu-con">
+            <div class = "left-menu-con" v-if = "leftSideSelected == 'menu'">
                 <div class = "menu-head">管理平台</div>
                 <button class = "back">返回</button>
-                <div class = "survey-menu-con menu-con">
+                <div class = "survey-menu-con menu-con" v-for = "(item,index) in menuList" :key = "index">
                     <div class= "title-con">
-                        <button class = "title" @click = "titleClicked">
-                            <div :class = "[titleTrueClicked ? 'triangle-down' :'triangle-up']"></div>
-                            <a class = "title-name">概况</a>
+                        <!-- <button class = "title" @click = "titleClicked"> -->
+                        <button class = "title" @click.stop.prevent = "titleClicked(index)">
+                            <!-- <div :class = "[titleTrueClicked ? 'triangle-down' :'triangle-up']"></div> -->
+                            <div :class = "[item.clicked%2 > 0 ? 'triangle-down' :'triangle-up']"></div>
+                            <a class = "title-name">
+                                {{
+                                    item.menuTitle
+                                }}
+                            </a>
                         </button>
                     </div>
-                    <a class = "menu-child" v-for = "(item,index) in surveyArr" :key = "index" v-show = "titleTrueClicked">
+                    <!-- <a class = "menu-child" v-for = "(i,key) in surveyArr" :key = "key" v-show = "titleTrueClicked"> -->
+                    <!-- <a class = "menu-child" v-for = "(i,key) in surveyArr" :key = "key" v-if = "item.clicked"> -->
+                    <a class = "menu-child" v-for = "(i,key) in item.childArr" :key = "key" v-if = "item.clicked%2 > 0">
                         {{
-                            item.name
+                            i.name
                         }}
                     </a>
                 </div>
-                <div class = "order-management-menu-con menu-con">
+                <!-- <div class = "order-management-menu-con menu-con">
                     <div class= "title-con">
                         <button class = "title" @click = "orderTitleClicked">
                             <div :class = "[orderTitleTrueClicked ? 'triangle-down' :'triangle-up']"></div>
@@ -89,7 +99,7 @@
                             item.name
                         }}
                     </a>
-                </div>
+                </div> -->
             </div>
       </div>
   </div>
@@ -105,7 +115,16 @@ export default {
             groupNumber          : 20,
             titleTrueClicked     : false,
             orderTitleTrueClicked: false,
-            count                : 0,
+            count                : 0,//概况
+            orderCount : 0,//订单管理
+            settleCount : 0,//结算管理
+            goodsCount :0,//商品管理
+            memberCount : 0,//会员管理 
+            pointCount : 0,//点位管理
+            deviceCount : 0,//设备管理
+            activityCount : 0,//活动管理
+            dataCount : 0,//数据分析
+            systemCount : 0,//系统管理
             surveyArr            : [
                 {
                     name: '概况1'
@@ -122,10 +141,196 @@ export default {
                 {
                     name: '概况5'
                 }
+            ],
+            menuList : [
+                {
+                    menuTitle : '概况',
+                    childArr : [
+                        {
+                            name: '概况1'
+                        },
+                        {
+                            name: '概况2'
+                        },
+                        {
+                            name: '概况3'
+                        },
+                        {
+                            name: '概况4'
+                        },
+                        {
+                            name: '概况5'
+                        }
+                    ],
+                    clicked : 1,
+                },
+                {
+                    menuTitle : '订单管理',
+                    childArr : [
+                        {
+                            name: '订单管理1'
+                        },
+                        {
+                            name: '订单管理2'
+                        },
+                        {
+                            name: '订单管理3'
+                        },
+                        {
+                            name: '订单管理4'
+                        },
+                        {
+                            name: '订单管理5'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '结算管理',
+                    childArr : [
+                        {
+                            name: '结算管理子菜单1'
+                        },
+                        {
+                            name: '结算管理子菜单1'
+                        },
+                        {
+                            name: '结算管理子菜单1'
+                        },
+                        {
+                            name: '结算管理子菜单1'
+                        },
+                        {
+                            name: '结算管理子菜单1'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '会员管理',
+                    childArr : [
+                        {
+                            name: '会员管理子菜单1'
+                        },
+                        {
+                            name: '会员管理子菜单2'
+                        },
+                        {
+                            name: '会员管理子菜单3'
+                        },
+                        {
+                            name: '会员管理子菜单4'
+                        },
+                        {
+                            name: '会员管理子菜单5'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '商品管理',
+                    childArr : [
+                        {
+                            name: '商品管理子菜单1'
+                        },
+                        {
+                            name: '商品管理子菜单2'
+                        },
+                        {
+                            name: '商品管理子菜单3'
+                        },
+                        {
+                            name: '商品管理子菜单4'
+                        },
+                        {
+                            name: '商品管理子菜单5'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '点位管理',
+                    childArr : [
+                        {
+                            name: '子菜单1'
+                        },
+                        {
+                            name: '子菜单2'
+                        },
+                        {
+                            name: '子菜单3'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '设备管理',
+                    childArr : [
+                        {
+                            name: '子菜单1'
+                        },
+                        {
+                            name: '子菜单2'
+                        },
+                        {
+                            name: '子菜单3'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '活动管理',
+                    childArr : [
+                        {
+                            name: '子菜单1'
+                        },
+                        {
+                            name: '子菜单2'
+                        },
+                        {
+                            name: '子菜单3'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '数据分析',
+                    childArr : [
+                        {
+                            name: '子菜单1'
+                        },
+                        {
+                            name: '子菜单2'
+                        },
+                        {
+                            name: '子菜单3'
+                        }
+                    ],
+                    clicked : 0
+                },
+                {
+                    menuTitle : '系统管理',
+                    childArr : [
+                        {
+                            name: '子菜单1'
+                        },
+                        {
+                            name: '子菜单2'
+                        },
+                        {
+                            name: '子菜单3'
+                        }
+                    ],
+                    clicked : 0
+                }
             ]
         }
     },
     methods : {
+        handleScroll () {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+            console.log(scrollTop)
+        },
         logOut() {
             signOut(baseUrl + 'user/sign_out_web').then(res => {
                 console.log("res:::::::")
@@ -159,23 +364,131 @@ export default {
                 })
             })
         },
-       titleClicked() {
-            ++this.count;
-           if(this.count%2 >0) {
-               this.titleTrueClicked = true
-           }else {
-               this.titleTrueClicked = false;
-           }
+       titleClicked(index) {
+        //    let target = ev.target.innerText || ev.srcElement.innerText;
+           console.log(`this.menuList[index].clicked=${this.menuList[index].clicked}`)
+        // let val = ++this.menuList[index].clicked;
+        let item = this.menuList[index];
+           console.log(`item=${item}`)
+        ++item.clicked
+        this.menuList.splice(index,1,item)
+           console.log(`index=${index}`);
+           console.log(`item=${item}`)
+        //    this.menuList.forEach((item,index) => {
+        //        if(item.menuTitle == target) {
+        //         //    debugger
+        //         //    ++item.clicked
+        //            this.splice(this.menuList[index].clicked,1,++this.menuList[index].clicked)
+        //             // switch (target) {
+        //             //     case '概况':
+        //             //             ++this.count;
+        //             //             if(this.count%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //     case '订单管理':
+        //             //             ++this.orderCount;
+        //             //             if(this.orderCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //     case '结算管理':
+        //             //             ++this.settleCount;
+        //             //             if(this.settleCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //     case '会员管理':
+        //             //             ++this.memberCount;
+        //             //             if(this.memberCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //     case '商品管理':
+        //             //             ++this.goodsCount;
+        //             //             if(this.goodsCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //             console.log('商品管理this.menuList:');
+        //             //             console.log(this.menuList);
+        //             //     case '点位管理':
+        //             //             ++this.pointCount;
+        //             //             if(this.pointCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //             console.log('点位管理this.menuList:');
+        //             //             console.log(this.menuList);
+        //             //     case '设备管理':
+        //             //             ++this.deviceCount;
+        //             //             if(this.deviceCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //     case '活动管理':
+        //             //             ++this.activityCount;
+        //             //             if(this.activityCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //             console.log('活动管理this.menuList:');
+        //             //             console.log(this.menuList);
+        //             //     case '数据分析':
+        //             //             ++this.dataCount;
+        //             //             if(this.dataCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             //         default :  //系统设置
+        //             //             ++this.systemCount;
+        //             //             if(this.systemCount%2 >0) {
+        //             //                 this.menuList[index].clicked = true
+        //             //             }else {
+        //             //                 this.menuList[index].clicked = false
+        //             //             };
+        //             // }
+        //        }
+        //     //    else {
+        //     //        item.click = item.clicked;
+        //     //    }
+        //    })
+        //    this.menuList = Object.assign([],this.menuList)
        },
        orderTitleClicked() {
-           ++this.count;
-           if(this.count%2 >0) {
+           ++this.orderCount;
+           if(this.orderCount%2 >0) {
                this.orderTitleTrueClicked = true
            }else {
                this.orderTitleTrueClicked = false;
            }
        }
-    }
+    },
+    mounted () {
+        window.addEventListener('scroll', this.handleScroll);	
+        window.onscroll = function(){
+   		//变量scrollTop是滚动条滚动时，距离顶部的距离
+   		var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+   		//变量windowHeight是可视区的高度
+   		var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+   		//变量scrollHeight是滚动条的总高度
+   		var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+               //滚动条到底部的条件
+               if(scrollTop+windowHeight==scrollHeight){
+                //写后台加载数据的函数
+         	console.log("距顶部"+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
+              }   
+        }
+    },
 }
 </script>
 <style lang="less" scoped>
@@ -198,6 +511,8 @@ export default {
     align-items     : center;
     padding         : 0 30px;
     justify-content : space-between;
+    position : fixed;
+    top:0;
     &-left {
         font-size     : 20px;
         display       : flex;
@@ -303,34 +618,44 @@ export default {
   }
   .body {
       width         : 100vw;
-      height        : 100vh;
+      height        : 100%;
+      min-height:100vh;
       display       : flex;
       flex-direction: row;
+      position:fixed;
+      overflow:auto;
+      top:60px;
         .left-side-con {
             width           : 50px;
-            height          : 100vh;
+            height          : 100%;
             background-color: #08131E;
             text-align      : center;
             display         : flex;
             flex-direction  : column;
             justify-content : center;
-            align-items     : center;
-            .item-con {
-                width           : 40px;
-                height          : 40px;
-                border-radius   : 20px;
-                margin          : 2vh 0;
-                background-color: #08131E;
-                display         : flex;
-                justify-content : center;
-                align-items     : center;
-                transform       : translateY(-500%);
-                .inside-item {
-                    width              : 24px;
-                    height             : 24px;
-                    cursor             : pointer;
-                    background-size    : contain;
-                    background-position: center;
+            // align-items     : center;
+            .left-side-box {
+                // width: 100%;
+                // height:auto;
+                position : fixed;
+                top : 45vh;
+                .item-con {
+                    width           : 40px;
+                    height          : 40px;
+                    border-radius   : 20px;
+                    margin          : 2vh 0;
+                    background-color: #08131E;
+                    display         : flex;
+                    justify-content : center;
+                    align-items     : center;
+                    transform       : translateY(-500%);
+                    .inside-item {
+                        width              : 24px;
+                        height             : 24px;
+                        cursor             : pointer;
+                        background-size    : contain;
+                        background-position: center;
+                    }
                 }
             }
             //被选中
@@ -370,7 +695,8 @@ export default {
         }
         .left-menu-con {
             width           : 160px;
-            height          : 100vh;
+            min-height:100vh;
+            height          : 100%;
             background-color: #DEDEDE;
             text-align      : center;
             .menu-head {
