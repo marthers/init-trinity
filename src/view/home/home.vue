@@ -94,8 +94,7 @@
                     enter-class        = "fade-in-enter"
                     enter-active-class = "fade-in-active"
                     leave-class        = "fade-out-enter"
-                    leave-active-class = "fade-out-active"
-                >
+                    leave-active-class = "fade-out-active">
                     <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow"></no-data-index>
                 </transition>
                 <transition
@@ -103,9 +102,24 @@
                     enter-class        = "fade-in-enter"
                     enter-active-class = "fade-in-active"
                     leave-class        = "fade-out-enter"
-                    leave-active-class = "fade-out-active"
-                >
-                    <h1 v-if = "createPersonalInfoShow">createPersonalInfoShowcreatePersonalInfoShowcreatePersonalInfoShowcreatePersonalInfoShowcreatePersonalInfoShowcreatePersonalInfoShow</h1>
+                    leave-active-class = "fade-out-active">
+                    <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword"></create-person>
+                </transition>
+                <transition
+                    name               = "fade"
+                    enter-class        = "fade-in-enter"
+                    enter-active-class = "fade-in-active"
+                    leave-class        = "fade-out-enter"
+                    leave-active-class = "fade-out-active">
+                    <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal"></create-merchant>
+                </transition>
+                <transition
+                    name               = "fade"
+                    enter-class        = "fade-in-enter"
+                    enter-active-class = "fade-in-active"
+                    leave-class        = "fade-out-enter"
+                    leave-active-class = "fade-out-active">
+                    <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal>
                 </transition>
             </div>
       </div>
@@ -115,7 +129,10 @@
 import {signOut} from '@/api/user.js';
 import baseConfig from '@/config/index';
 const baseUrl = baseConfig.baseUrl.dev;
-import NoDataIndex from '@/view/noData/index'
+import NoDataIndex from '@/view/noData/index';
+import CreatePerson from '@/view/noData/create/CreatePerson';
+import CreateMerchant from '@/view/noData/create/CreateMerchant';
+import CreateLegal from '@/view/noData/create/CreateLegal';
 export default {
     data() {
         return {
@@ -332,12 +349,17 @@ export default {
                     clicked: 0
                 }
             ],
-            NoDataIndexShow       : true,   //没有任何个人数据
-            createPersonalInfoShow: false   //创建个人信息
+            NoDataIndexShow       : true,    //没有任何个人数据
+            createPersonalInfoShow: false,   //创建个人信息
+            createMerchantInfoShow: false,
+            createLegalShow       : false
         }
     },
     components : {
-        NoDataIndex
+        NoDataIndex,
+        CreatePerson,
+        CreateMerchant,
+        CreateLegal
     },
     methods : {
         handleScroll () {
@@ -491,6 +513,38 @@ export default {
                 this.NoDataIndexShow        = false;
                 this.createPersonalInfoShow = true;
             }
+        },
+        personBack() {
+            this.NoDataIndexShow        = true;
+            this.createPersonalInfoShow = false;
+        },
+        personForword() {
+            this.NoDataIndexShow        = false;
+            this.createPersonalInfoShow = false;
+            this.createMerchantInfoShow = true
+        },
+        merchantBack() {
+            this.NoDataIndexShow        = false;
+            this.createPersonalInfoShow = true;
+            this.createMerchantInfoShow = false
+        },
+        legalBack() {
+            this.NoDataIndexShow        = false;
+            this.createPersonalInfoShow = false;
+            this.createMerchantInfoShow = true;
+            this.createLegalShow        = false;
+        },
+        submitCreate () {
+            this.NoDataIndexShow        = true;
+            this.createPersonalInfoShow = false;
+            this.createMerchantInfoShow = false;
+            this.createLegalShow        = false;
+        },
+        toLegal() {
+            this.NoDataIndexShow        = false;
+            this.createPersonalInfoShow = false;
+            this.createMerchantInfoShow = false;
+            this.createLegalShow        = true;
         }
     },
     mounted () {
@@ -720,9 +774,8 @@ export default {
             }
         }
         .content {
-            width     : 100%;
-            height    : 100%;
-            background: pink;
+            width : 100%;
+            height: 100%;
         }
 
         .left-menu-con {

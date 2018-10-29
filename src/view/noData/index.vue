@@ -30,7 +30,6 @@ export default {
 .nodata-index{
     width           : 100%;
     height          : 100%;
-    border          : 10px inset blueviolet;
     display         : flex;
     justify-content : center;
     align-items     : center;
