@@ -25,15 +25,22 @@
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">证件正面照：</p>
-                    <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div>
+                    <img-upload
+                                  @base64   = "frontBase64"
+                                :modalTitle = "frontModalTitle"
+                                :uploadId   = "frontUploadId">
+                    </img-upload>
                 </div>
                 <div class = "face-con">
                     <p class = "info">证件反面照：</p>
-                    <div class = "img-not-uploaded-box">
+                    <!-- <div class = "img-not-uploaded-box">
                         <div class = "img-not-uploaded"></div>
-                    </div>
+                    </div> -->
+                    <img-upload
+                                  @base64   = "versoBase64"
+                                :modalTitle = "frontModalTitle"
+                                :uploadId   = "versoUploadId">
+                    </img-upload>
                 </div>
             </div>
             <footer>
@@ -44,12 +51,20 @@
     </div>
 </template>
 <script>
+const FileUpload = require('vue-upload-component');
+import ImgUpload from '@/components/ImgUpload'
 export default {
     name: 'CreatePerson',
     data() {
         return {
-            userName: '',
-            IDNumber: ''
+            userName       : '',
+            IDNumber       : '',
+            files          : [],
+            frontModalTitle: '身份证正面照',
+            frontBase64Data: '',
+            versoData      : '',
+            versoUploadId  : 'versoUploadId',
+            frontUploadId  : 'frontUploadId'
         }
     },
     methods : {
@@ -58,7 +73,19 @@ export default {
         },
         toMerchant() {
             this.$emit('person-forward')
+        },
+        frontBase64(base64) {
+            console.log('frontBase64:')
+            console.log(base64);
+        },
+        versoBase64(base64) {
+            console.log('versoBase64:')
+            console.log(base64)
         }
+    },
+    components : {
+        FileUpload,
+        ImgUpload
     }
 }
 </script>
