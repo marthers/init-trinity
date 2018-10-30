@@ -26,9 +26,9 @@
                 <div class = "face-con">
                     <p class = "info">证件正面照：</p>
                     <img-upload
-                                  @base64   = "frontBase64"
-                                :modalTitle = "frontModalTitle"
-                                :uploadId   = "frontUploadId">
+                                    @base64   = "frontBase64"
+                                  :modalTitle = "frontModalTitle"
+                                  :uploadId   = "frontUploadId">
                     </img-upload>
                 </div>
                 <div class = "face-con">
@@ -37,9 +37,9 @@
                         <div class = "img-not-uploaded"></div>
                     </div> -->
                     <img-upload
-                                  @base64   = "versoBase64"
-                                :modalTitle = "frontModalTitle"
-                                :uploadId   = "versoUploadId">
+                                    @base64   = "versoBase64"
+                                  :modalTitle = "frontModalTitle"
+                                  :uploadId   = "versoUploadId">
                     </img-upload>
                 </div>
             </div>
@@ -51,7 +51,6 @@
     </div>
 </template>
 <script>
-const FileUpload = require('vue-upload-component');
 import ImgUpload from '@/components/ImgUpload'
 export default {
     name: 'CreatePerson',
@@ -84,7 +83,6 @@ export default {
         }
     },
     components : {
-        FileUpload,
         ImgUpload
     }
 }
