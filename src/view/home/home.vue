@@ -89,38 +89,15 @@
                 </div>
             </div>
             <div class = "content">
-                <transition
-                    name               = "fade"
-                    enter-class        = "fade-in-enter"
-                    enter-active-class = "fade-in-active"
-                    leave-class        = "fade-out-enter"
-                    leave-active-class = "fade-out-active">
-                    <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow"></no-data-index>
-                </transition>
-                <transition
-                    name               = "fade"
-                    enter-class        = "fade-in-enter"
-                    enter-active-class = "fade-in-active"
-                    leave-class        = "fade-out-enter"
-                    leave-active-class = "fade-out-active">
-                    <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword"></create-person>
-                </transition>
-                <transition
-                    name               = "fade"
-                    enter-class        = "fade-in-enter"
-                    enter-active-class = "fade-in-active"
-                    leave-class        = "fade-out-enter"
-                    leave-active-class = "fade-out-active">
-                    <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal"></create-merchant>
-                </transition>
-                <transition
-                    name               = "fade"
-                    enter-class        = "fade-in-enter"
-                    enter-active-class = "fade-in-active"
-                    leave-class        = "fade-out-enter"
-                    leave-active-class = "fade-out-active">
-                    <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal>
-                </transition>
+                <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow"></no-data-index>
+                
+                <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
+                
+                <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal"></create-merchant>
+                
+                <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal>
+
+                <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org>
             </div>
       </div>
   </div>
@@ -133,6 +110,7 @@ import NoDataIndex from '@/view/noData/index';
 import CreatePerson from '@/view/noData/create/CreatePerson';
 import CreateMerchant from '@/view/noData/create/CreateMerchant';
 import CreateLegal from '@/view/noData/create/CreateLegal';
+import JoinInOrg from '@/components/JoinInOrg';
 export default {
     data() {
         return {
@@ -352,14 +330,16 @@ export default {
             NoDataIndexShow       : true,    //没有任何个人数据
             createPersonalInfoShow: false,   //创建个人信息
             createMerchantInfoShow: false,
-            createLegalShow       : false
+            createLegalShow       : false,
+            JoinInOrgShow : true
         }
     },
     components : {
         NoDataIndex,
         CreatePerson,
         CreateMerchant,
-        CreateLegal
+        CreateLegal,
+        JoinInOrg
     },
     methods : {
         handleScroll () {
@@ -512,11 +492,27 @@ export default {
             if(type === 'create') {
                 this.NoDataIndexShow        = false;
                 this.createPersonalInfoShow = true;
+            }else {
+                this.JoinInOrgShow = true;
+                this.NoDataIndexShow = false;
+                this.createPersonalInfoShow = false;
             }
+        },
+        chooseOrgBack() {
+            this.JoinInOrgShow = false;
+            this.NoDataIndexShow = true;
+            this.createPersonalInfoShow = false;
         },
         personBack() {
             this.NoDataIndexShow        = true;
             this.createPersonalInfoShow = false;
+        },
+        createPersonSuccess (user_info) {
+            console.log("user_info:");
+            console.log(user_info);
+            this.NoDataIndexShow        = false;
+            this.createPersonalInfoShow = false;
+            this.createMerchantInfoShow = true
         },
         personForword() {
             this.NoDataIndexShow        = false;

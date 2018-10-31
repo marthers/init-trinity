@@ -138,6 +138,7 @@
         // this.imgLen--;
         this.imgs   = {}
         this.imgLen = 0;
+        this.$emit('deleteBase64')
         // debugger
         // for(let item in this.imgs) {
         //     this.blobToDataURL(this.imgs[item],base64 => {

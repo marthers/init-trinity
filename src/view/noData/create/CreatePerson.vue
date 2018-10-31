@@ -27,6 +27,7 @@
                     <p class = "info">证件正面照：</p>
                     <img-upload
                                                                                           @base64   = "frontBase64"
+                                                                                          @deleteBase64 = "deleteFront"
                                                                                         :modalTitle = "frontModalTitle"
                                                                                         :uploadId   = "frontUploadId">
                     </img-upload>
@@ -38,6 +39,7 @@
                     </div> -->
                     <img-upload
                                                                                           @base64   = "versoBase64"
+                                                                                          @deleteBase64 = "deleteVerso"
                                                                                         :modalTitle = "frontModalTitle"
                                                                                         :uploadId   = "versoUploadId">
                     </img-upload>
@@ -101,7 +103,8 @@ export default {
                                     'priority': 5,
                                     'group'   : 0,
                                     'data'    : {
-                                        'edit_mode'  : this.isEdit ? 0: 1,
+                                        // 'edit_mode'  : this.isEdit ? 0: 1,
+                                        'edit_mode'  : 0,
                                         'need_verify': 1,
                                         'user_info'  : {
                                             'ident_name': this.userName,
@@ -113,16 +116,23 @@ export default {
                                 }
                               )
                                 .then(res => {
+                                    console.log("res:")
                                     console.log(res)
+                                    console.log("res.data:")
+                                    console.log(res.data)
                                     if(res.status && res.status == 200) {
-                                        if(res.data && res.data.code) {
+                                            console.log(`code=${res.data.code}`)
+                                        if(res.data) {
                                             let code = res.data.code;
+                                            console.log(`code=${res.data.code}`)
                                             if(code == 1) {
                                                 this.$Message.info({
                                                     content : "Token因为超时而失效",
                                                     duration: 5,
                                                     closable: true
                                                 });
+                                            }else if(code == 0) {
+                                                this.$emit('createPersonSuccess',res.data.user_info);
                                             }
                                         }
                                     }else {
@@ -171,6 +181,12 @@ export default {
             console.log('frontBase64:')
             // console.log(base64);
             this.frontBase64Data = base64
+        },
+        deleteFront () {
+            this.frontBase64Data = ''
+        },
+        deleteVerso () {
+            this.versoData = ''
         },
         versoBase64(base64) {
             console.log('versoBase64:')
