@@ -82,7 +82,8 @@ export function identifyID(code) {
         }
     }
     // if(!pass) alert(tip);
-    return pass;
+    // return pass;
+    return true
 }
 
 
