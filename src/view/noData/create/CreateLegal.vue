@@ -14,13 +14,16 @@
                     <div class = "img-not-uploaded"></div>
                 </div>
             </div> -->
-            <div class = "con legal-name">
-                <p class = "info">姓名：</p>
-                <input type="text" v-model="userName" class = "input" placeholder="请输入真实姓名"  maxlength = "20"/>
-            </div>
-            <div class = "con id-number">
-                <p class = "info">身份证号：</p>
-                <input type="text" v-model="IDNumber" class = "input" placeholder="请输入身份证号码"  maxlength = "20"/>
+            <div class = "con corp-id">
+                <p class = "info">是否使用我的身份:</p>
+                <RadioGroup v-model="legal">
+                    <Radio label="platform">
+                        <span>使用</span>
+                    </Radio>
+                    <Radio label="org">
+                        <span>不使用</span>
+                    </Radio>
+                </RadioGroup>
             </div>
             <div class = "id-con">
                 <div class = "face-con">
@@ -29,12 +32,34 @@
                         <div class = "img-not-uploaded"></div>
                     </div>
                 </div>
+                <!-- <div class = "face-con">
+                    <p class = "info">证件反面照：</p>
+                    <div class = "img-not-uploaded-box">
+                        <div class = "img-not-uploaded"></div>
+                    </div>
+                </div> -->
+            </div>
+            <div class = "id-con">
+                <!-- <div class = "face-con">
+                    <p class = "info">证件正面照：</p>
+                    <div class = "img-not-uploaded-box">
+                        <div class = "img-not-uploaded"></div>
+                    </div>
+                </div> -->
                 <div class = "face-con">
                     <p class = "info">证件反面照：</p>
                     <div class = "img-not-uploaded-box">
                         <div class = "img-not-uploaded"></div>
                     </div>
                 </div>
+            </div>
+            <div class = "con legal-name">
+                <p class = "info">姓名：</p>
+                <input type="text" v-model="userName" class = "input" placeholder="请输入真实姓名"  maxlength = "20"/>
+            </div>
+            <div class = "con id-number">
+                <p class = "info">身份证号：</p>
+                <input type="text" v-model="IDNumber" class = "input" placeholder="请输入身份证号码"  maxlength = "20"/>
             </div>
             <footer>
                 <div class = "back" @click.stop.prevent = "legalBack">上一步</div>
@@ -49,7 +74,8 @@ export default {
     data() {
         return {
             userName: '',
-            IDNumber: ''
+            IDNumber: '',
+            legal : ''
         }
     },
     methods : {
@@ -124,7 +150,7 @@ export default {
             }
         } */
         .id-con {
-            margin-bottom  : 6vh;
+            margin-bottom  : 4vh;
             display        : flex;
             flex-direction : row;
             justify-content: left;
@@ -139,14 +165,14 @@ export default {
                 height         : 153px;
                 margin-right   : 45px;
                 .info {
-                    width      : 84px;
+                    width      : 140px;
                     height     : 20px;
                     font-size  : 14px;
                     font-family: PingFangSC-Medium;
                     font-weight: 500;
                     color      : rgba(74,74,74,1);
                     line-height: 20px;
-                    text-align : center;
+                    text-align : right;
                 }
                 .img-not-uploaded-box {
                     width        : 240px;
@@ -178,14 +204,14 @@ export default {
             align-items    : center;
             height         : 36px;
             .info {
-                width      : 84px;
+                width      : 140px;
                 height     : 20px;
                 font-size  : 14px;
                 font-family: PingFangSC-Medium;
                 font-weight: 500;
                 color      : rgba(74,74,74,1);
                 line-height: 20px;
-                text-align : center;
+                text-align : right;
             }
             .input {
                 width        : 240px;

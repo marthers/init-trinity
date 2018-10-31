@@ -93,7 +93,7 @@
                 
                 <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
                 
-                <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal"></create-merchant>
+                <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper"></create-merchant>
                 
                 <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal>
 
@@ -541,6 +541,13 @@ export default {
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
             this.createLegalShow        = true;
+        },
+        merchantSelectUpper () {
+            this.JoinInOrgShow = true;
+            this.NoDataIndexShow        = false;
+            this.createPersonalInfoShow = false;
+            this.createMerchantInfoShow = false;
+            this.createLegalShow        = false;
         }
     },
     mounted () {

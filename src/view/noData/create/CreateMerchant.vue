@@ -8,6 +8,10 @@
                     编辑商户
                 </div>
             </header>
+            <div class = "first">
+                <span>若已有上级商户，请选择您的上级商户.</span>
+                <span class = "choose" @click = "chooseUpper">点此选择您的上级商户</span>
+            </div>
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">上传公司证照正面：</p>
@@ -28,9 +32,9 @@
                     <div class = "img-not-uploaded"></div>
                 </div> -->
                 <img-upload
-                                          @base64   = "logoBase64"
-                                        :modalTitle = "logoModalTitle"
-                                        :uploadId   = "logoUploadId">
+                    @base64   = "logoBase64"
+                    :modalTitle = "logoModalTitle"
+                    :uploadId   = "logoUploadId">
                 </img-upload>
             </div>
             <div class = "con corp-name">
@@ -61,15 +65,13 @@
                 </div>
             </div> -->
             <div class = "con corp-id">
-                <p class = "info">选择上级：</p>
+                <p class = "info">选择法人：</p>
                 <RadioGroup v-model="superior" @on-change = "superiorChange">
                     <Radio label="platform">
-                        <Icon type="logo-apple"></Icon>
-                        <span>运营平台（默认）</span>
+                        <span>选择自己（默认）</span>
                     </Radio>
                     <Radio label="org">
-                        <Icon type="logo-android"></Icon>
-                        <span>加入已有组织</span>
+                        <span>新建法人</span>
                     </Radio>
                 </RadioGroup>
             </div>
@@ -79,19 +81,20 @@
             </footer>
         </div>
 
-        <Modal
+        <!-- <Modal
             title   = "Title"
             v-model = "selectOrgShow"
             closable
             @on-ok     = "selectOrgShow = false"
             class-name = "vertical-center-modal">
             <Input search enter-button placeholder="Enter something..." />
-            <div></div>
-        </Modal>
+        </Modal> -->
+        <!-- <join-in-org :JoinInOrgShow = "selectOrgShow"></join-in-org> -->
     </div>
 </template>
 <script>
-import ImgUpload from '@/components/ImgUpload'
+import ImgUpload from '@/components/ImgUpload';
+// import JoinInOrg from '@/components/JoinInOrg';
 export default {
     name: 'CreatePerson',
     data() {
@@ -106,9 +109,15 @@ export default {
         }
     },
     components : {
-        ImgUpload
+        ImgUpload,
+        // JoinInOrg
     },
     methods : {
+        //选择上级商户
+        chooseUpper() {
+            // this.selectOrgShow = true
+            this.$emit('merchant-select-upper')
+        },
         backToPerson() {
             this.$emit('back-to-person')
         },
@@ -123,17 +132,9 @@ export default {
             console.log(this.superior)
             if(this.superior == 'org') {
                 this.selectOrgShow = true
+            }else{
+                this.selectOrgShow = false
             }
-            const p = new Promise((resolve,reject) => {
-                resolve(1);
-                reject(2);
-                resolve(3)
-            })
-            p.then(res => {
-                console.log(`res:${res}`)
-            }).catch(err => {
-                console.log(`err=${err}`)
-            })
         }
     }
 }
@@ -207,6 +208,22 @@ export default {
                     }
                     margin: 18px 16px;
                 }
+            }
+        }
+        .first {
+            width : 100%;
+            height:36px;
+            background:rgba(248,231,28,0.12);
+            border:1px solid;
+            font-size : 14px;
+            text-align : left;
+            line-height : 36px;
+            text-indent : 1em;
+            margin : 20px;
+            .choose {
+                color : #48A8DA;
+                border-bottom :1px solid  #48A8DA;
+                cursor : pointer;
             }
         }
         .id-con {
