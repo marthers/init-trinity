@@ -1,6 +1,9 @@
 import axios from 'axios'
 import store from '@/store'
 import iView from 'iview';
+import router from '@/router';
+import {uuid} from '@/libs/uuid';
+import baseConfig from '@/config/index'
 iView.Message.config({
     top     : 350,
     duration: 2
@@ -81,6 +84,26 @@ class HttpRequest {
                 duration: 5,
                 closable: true
             });
+          }
+          else if(code == 1) {
+            iView.Message.info({
+                content : 'Token因为超时而失效',
+                duration: 5,
+                closable: true
+            });
+            console.log("this:")
+            console.log(this)
+            console.log("router:")
+            console.log(router)
+            if(router.history.current.name) {
+                localStorage.setItem('beforeName',router.history.current.name)
+            }
+            if(localStorage.getItem('Trinity-Token') != null) {
+                localStorage.removeItem('Trinity-Token')
+            }
+            router.push({
+                name: 'login'
+            })
           }
           else if(code == 102) {
             iView.Message.info({

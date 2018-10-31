@@ -27,3 +27,10 @@ export const signOut = (url) => {
     method: 'post'
   })
 }
+export const UserInfoEdit = (url,data) => {
+    return axios.request({
+        url   : url,
+        method: 'post',
+        data
+    })
+}

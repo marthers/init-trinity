@@ -16,19 +16,19 @@
             </div> -->
             <div class = "con username">
                 <p class = "info">姓名：</p>
-                <input type="text" v-model="userName" class = "input" placeholder="请输入真实姓名"  maxlength = "20"/>
+                <input type="text" v-model.trim="userName" class = "input" placeholder="请输入真实姓名"  maxlength = "20" onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5]/g,'')"/>
             </div>
             <div class = "con id-number">
                 <p class = "info">身份证号：</p>
-                <input type="text" v-model="IDNumber" class = "input" placeholder="请输入身份证号码"  maxlength = "20"/>
+                <input type="text" v-model="IDNumber" class = "input" placeholder="请输入身份证号码"  onkeyup="this.value=this.value.replace(/[^\w]/g,'');"/>
             </div>
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">证件正面照：</p>
                     <img-upload
-                                    @base64   = "frontBase64"
-                                  :modalTitle = "frontModalTitle"
-                                  :uploadId   = "frontUploadId">
+                                                                                          @base64   = "frontBase64"
+                                                                                        :modalTitle = "frontModalTitle"
+                                                                                        :uploadId   = "frontUploadId">
                     </img-upload>
                 </div>
                 <div class = "face-con">
@@ -37,9 +37,9 @@
                         <div class = "img-not-uploaded"></div>
                     </div> -->
                     <img-upload
-                                    @base64   = "versoBase64"
-                                  :modalTitle = "frontModalTitle"
-                                  :uploadId   = "versoUploadId">
+                                                                                          @base64   = "versoBase64"
+                                                                                        :modalTitle = "frontModalTitle"
+                                                                                        :uploadId   = "versoUploadId">
                     </img-upload>
                 </div>
             </div>
@@ -51,7 +51,14 @@
     </div>
 </template>
 <script>
-import ImgUpload from '@/components/ImgUpload'
+import ImgUpload from '@/components/ImgUpload';
+import {
+    validateCName,
+    identifyID
+} from '@/libs/validate.js';
+import {UserInfoEdit} from '@/api/user.js';
+import baseConfig from '@/config/index';
+const baseUrl = baseConfig.baseUrl.devHost;
 export default {
     name: 'CreatePerson',
     data() {
@@ -63,7 +70,8 @@ export default {
             frontBase64Data: '',
             versoData      : '',
             versoUploadId  : 'versoUploadId',
-            frontUploadId  : 'frontUploadId'
+            frontUploadId  : 'frontUploadId',
+            isEdit         : false
         }
     },
     methods : {
@@ -71,15 +79,103 @@ export default {
             this.$emit('person-back')
         },
         toMerchant() {
-            this.$emit('person-forward')
+            if(this.userName.length > 0) {
+                if(!validateCName(this.userName)) {
+                    this.$Notice.error({
+                        title: '中文姓名格式有误',
+                        desc : '请仔细检查您所输入的中文姓名'
+                    });
+                    return false
+                }else {
+                    if(this.IDNumber.length > 0) {
+                        if(!identifyID(this.IDNumber)) {
+                            this.$Notice.error({
+                                title: '身份证号格式有误',
+                                desc : '请仔细检查您所输入的身份证号'
+                            });
+                            return false
+                        }else {
+                            if(this.frontBase64Data.length > 0 && this.versoData.length > 0) {
+                                UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
+                                {
+                                    'priority': 5,
+                                    'group'   : 0,
+                                    'data'    : {
+                                        'edit_mode'  : this.isEdit ? 0: 1,
+                                        'need_verify': 1,
+                                        'user_info'  : {
+                                            'ident_name': this.userName,
+                                            'ident_num' : this.IDNumber,
+                                            'ident_up'  : this.frontBase64Data,
+                                            'ident_down': this.versoData
+                                        }
+                                    }
+                                }
+                              )
+                                .then(res => {
+                                    console.log(res)
+                                    if(res.status && res.status == 200) {
+                                        if(res.data && res.data.code) {
+                                            let code = res.data.code;
+                                            if(code == 1) {
+                                                this.$Message.info({
+                                                    content : "Token因为超时而失效",
+                                                    duration: 5,
+                                                    closable: true
+                                                });
+                                            }
+                                        }
+                                    }else {
+                                        this.$Message.error({
+                                            content : '网络异常，请联系管理员及时处理',
+                                            duration: 5,
+                                            closable: true
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log(err)
+                                })
+                                console.log(" this.$emit('person-forward')")
+
+                            }
+                            else {
+                                this.$Notice.error({
+                                    title: '身份证照片缺失',
+                                    desc : '身份证照片缺失'
+                                });
+                                return false
+                            }
+                        }
+                    }else {
+                        if(!validateCName(this.userName)) {
+                            this.$Notice.error({
+                                title: '错误',
+                                desc : '暂未输入身份证号'
+                            });
+                            return false
+                        }
+                    }
+                }
+            }else {
+                if(!validateCName(this.userName)) {
+                    this.$Notice.error({
+                        title: '错误',
+                        desc : '暂未输入姓名'
+                    });
+                    return false
+                }
+            }
+            console.log(identifyID(this.IDNumber))
         },
         frontBase64(base64) {
             console.log('frontBase64:')
-            console.log(base64);
+            // console.log(base64);
+            this.frontBase64Data = base64
         },
         versoBase64(base64) {
             console.log('versoBase64:')
-            console.log(base64)
+            // console.log(base64);
+            this.versoData = base64
         }
     },
     components : {

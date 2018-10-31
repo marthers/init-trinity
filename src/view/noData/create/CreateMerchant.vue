@@ -28,9 +28,9 @@
                     <div class = "img-not-uploaded"></div>
                 </div> -->
                 <img-upload
-                                        @base64   = "logoBase64"
-                                      :modalTitle = "logoModalTitle"
-                                      :uploadId   = "logoUploadId">
+                                          @base64   = "logoBase64"
+                                        :modalTitle = "logoModalTitle"
+                                        :uploadId   = "logoUploadId">
                 </img-upload>
             </div>
             <div class = "con corp-name">
@@ -124,6 +124,16 @@ export default {
             if(this.superior == 'org') {
                 this.selectOrgShow = true
             }
+            const p = new Promise((resolve,reject) => {
+                resolve(1);
+                reject(2);
+                resolve(3)
+            })
+            p.then(res => {
+                console.log(`res:${res}`)
+            }).catch(err => {
+                console.log(`err=${err}`)
+            })
         }
     }
 }
