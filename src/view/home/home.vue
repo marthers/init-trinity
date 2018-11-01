@@ -339,7 +339,7 @@ export default {
                     clicked: 0
                 }
             ],
-            NoDataIndexShow       : true,    //没有任何个人数据
+            NoDataIndexShow       : false,    //没有任何个人数据
             createPersonalInfoShow: false,   //创建个人信息
             createMerchantInfoShow: false,
             createLegalShow       : false,
@@ -569,7 +569,12 @@ export default {
         }
     },
     created () {
-        console.log(this.$route.matched)
+        console.log(this.$route.matched);
+        if(localStorage.getItem('fid_organization') == 0) {
+            this.NoDataIndexShow = true
+        }else {
+            this.NoDataIndexShow = false
+        }
         // this.$route.meta.showName = 'NoDataIndex'
         // this.$delete(this.$route.matched[0].components,'NoDataIndex')
     },

@@ -350,9 +350,17 @@ export default {
                     localStorage.setItem('Trinity-Token',resData.token)
                     localStorage.setItem('password',resData.password);
                     this.user_info = resData.user_info;
+                    console.log(resData.user_info);
+                    for(let item in resData.user_info) {
+                      console.log(item);
+                      localStorage.setItem(item,resData.user_info[item])
+                    }
                     if(resData.user_info.phone) {
                         localStorage.setItem('userPhone',resData.user_info.phone)
                     }
+                    localStorage.setItem('fid_organization',resData.fid_organization);
+                    localStorage.setItem('organization_level',resData.organization_level);
+                    localStorage.setItem('permission',resData.permission);
                     if(!this.notRemember) {
                         localStorage.setItem('rememberPassword',true)
                         localStorage.setItem('password',resData.password);
@@ -501,9 +509,28 @@ export default {
                         localStorage.setItem('Trinity-Token',resData.token)
                         localStorage.setItem('password',resData.password);
                         this.user_info = resData.user_info;
+                        // if(resData.user_info.phone) {
+                        //     localStorage.setItem('userPhone',resData.user_info.phone)
+                        // }
+                        // if(!this.notRemember) {
+                        //     localStorage.setItem('rememberPassword',true)
+                        //     localStorage.setItem('password',resData.password);
+                        // }else{
+                        //     localStorage.setItem('rememberPassword',false);
+                        //     if(localStorage.getItem('password') != null) {
+                        //         localStorage.removeItem('password');
+                        //     }
+                        // }
+                        for(let item in resData.user_info) {
+                          console.log(item);
+                          localStorage.setItem(item,resData.user_info[item])
+                        }
                         if(resData.user_info.phone) {
                             localStorage.setItem('userPhone',resData.user_info.phone)
                         }
+                        localStorage.setItem('fid_organization',resData.fid_organization);
+                        localStorage.setItem('organization_level',resData.organization_level);
+                        localStorage.setItem('permission',resData.permission);
                         if(!this.notRemember) {
                             localStorage.setItem('rememberPassword',true)
                             localStorage.setItem('password',resData.password);
@@ -896,9 +923,32 @@ export default {
                             localStorage.setItem('Trinity-Token',resData.token)
                             localStorage.setItem('password',resData.password);
                             this.user_info = resData.user_info;
+                            // console.log(resData.user_info);
+                            // for(let item in resData.user_info) {
+                            //   console.log(item)
+                            // }
+                            // if(resData.user_info.phone) {
+                            //     localStorage.setItem('userPhone',resData.user_info.phone)
+                            // }
+                            // if(!this.notRemember) {
+                            //     localStorage.setItem('rememberPassword',true)
+                            //     localStorage.setItem('password',resData.password);
+                            // }else{
+                            //     localStorage.setItem('rememberPassword',false);
+                            //     if(localStorage.getItem('password') != null) {
+                            //         localStorage.removeItem('password');
+                            //     }
+                            // }
+                            for(let item in resData.user_info) {
+                              console.log(item);
+                              localStorage.setItem(item,resData.user_info[item])
+                            }
                             if(resData.user_info.phone) {
                                 localStorage.setItem('userPhone',resData.user_info.phone)
                             }
+                            localStorage.setItem('fid_organization',resData.fid_organization);
+                            localStorage.setItem('organization_level',resData.organization_level);
+                            localStorage.setItem('permission',resData.permission);
                             if(!this.notRemember) {
                                 localStorage.setItem('rememberPassword',true)
                                 localStorage.setItem('password',resData.password);
@@ -1041,9 +1091,28 @@ export default {
                         let resData = res.data.data;
                         localStorage.setItem('Trinity-Token',resData.token)
                         this.user_info = resData.user_info;
+                        // if(resData.user_info.phone) {
+                        //     localStorage.setItem('userPhone',resData.user_info.phone)
+                        // }
+                        // if(!this.notRemember) {
+                        //     localStorage.setItem('rememberPassword',true)
+                        //     localStorage.setItem('password',resData.password);
+                        // }else{
+                        //     localStorage.setItem('rememberPassword',false);
+                        //     if(localStorage.getItem('password') != null) {
+                        //         localStorage.removeItem('password');
+                        //     }
+                        // }
+                        for(let item in resData.user_info) {
+                          console.log(item);
+                          localStorage.setItem(item,resData.user_info[item])
+                        }
                         if(resData.user_info.phone) {
                             localStorage.setItem('userPhone',resData.user_info.phone)
                         }
+                        localStorage.setItem('fid_organization',resData.fid_organization);
+                        localStorage.setItem('organization_level',resData.organization_level);
+                        localStorage.setItem('permission',resData.permission);
                         if(!this.notRemember) {
                             localStorage.setItem('rememberPassword',true)
                             localStorage.setItem('password',resData.password);
@@ -1157,7 +1226,7 @@ export default {
             })
         }
         else {
-            debugger
+            // debugger
         }
       }
     },
@@ -1375,12 +1444,13 @@ export default {
         duration: 3
     });
     if(!this.notRemember) {
-        debugger
+        // debugger
         if(localStorage.getItem('password') != null) {
             this.password = localStorage.getItem('password')
         }
         this.rememberedPasswordIsChanged = true
     }
+    console.log(`process.env.NODE_ENV=${process.env.NODE_ENV}`)
   }
 }
 </script>

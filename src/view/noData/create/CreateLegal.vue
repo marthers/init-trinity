@@ -8,19 +8,13 @@
                     编辑法人信息
                 </div>
             </header>
-            <!-- <div class = "logo">
-                <p class = "logo-title">公司Logo: </p>
-                <div class = "img-not-uploaded-box">
-                    <div class = "img-not-uploaded"></div>
-                </div>
-            </div> -->
             <div class = "con corp-id">
                 <p class = "info">是否使用我的身份:</p>
                 <RadioGroup v-model="legal">
-                    <Radio label="platform">
+                    <Radio label="self">
                         <span>使用</span>
                     </Radio>
-                    <Radio label="org">
+                    <Radio label="notSelf">
                         <span>不使用</span>
                     </Radio>
                 </RadioGroup>
@@ -32,20 +26,8 @@
                         <div class = "img-not-uploaded"></div>
                     </div>
                 </div>
-                <!-- <div class = "face-con">
-                    <p class = "info">证件反面照：</p>
-                    <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div>
-                </div> -->
             </div>
             <div class = "id-con">
-                <!-- <div class = "face-con">
-                    <p class = "info">证件正面照：</p>
-                    <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div>
-                </div> -->
                 <div class = "face-con">
                     <p class = "info">证件反面照：</p>
                     <div class = "img-not-uploaded-box">
@@ -54,21 +36,22 @@
                 </div>
             </div>
             <div class = "con legal-name">
-                <p class = "info">姓名：</p>
+                <p class = "info">法人姓名：</p>
                 <input type="text" v-model="userName" class = "input" placeholder="请输入真实姓名"  maxlength = "20"/>
             </div>
             <div class = "con id-number">
-                <p class = "info">身份证号：</p>
+                <p class = "info">法人身份证号：</p>
                 <input type="text" v-model="IDNumber" class = "input" placeholder="请输入身份证号码"  maxlength = "20"/>
             </div>
             <footer>
                 <div class = "back" @click.stop.prevent = "legalBack">上一步</div>
-                <div class = "next" @click = "submitCreate">确认提交信息</div>
+                <div class = "next" @click = "submitCreate">确认并返回</div>
             </footer>
         </div>
     </div>
 </template>
 <script>
+import ImgUpload from '@/components/ImgUpload';
 export default {
     name: 'CreatePerson',
     data() {
@@ -85,6 +68,9 @@ export default {
         submitCreate() {
             this.$emit('submit-create')
         }
+    },
+    components : {
+        ImgUpload
     }
 }
 </script>
@@ -173,6 +159,7 @@ export default {
                     color      : rgba(74,74,74,1);
                     line-height: 20px;
                     text-align : right;
+                    margin-right : 15px;
                 }
                 .img-not-uploaded-box {
                     width        : 240px;
@@ -203,6 +190,9 @@ export default {
             justify-content: left;
             align-items    : center;
             height         : 36px;
+            .ivu-radio-wrapper{
+                margin-right : 60px;
+            }
             .info {
                 width      : 140px;
                 height     : 20px;
@@ -212,6 +202,7 @@ export default {
                 color      : rgba(74,74,74,1);
                 line-height: 20px;
                 text-align : right;
+                margin-right : 15px;
             }
             .input {
                 width        : 240px;

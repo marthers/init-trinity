@@ -16,7 +16,7 @@
     </div> -->
     <div>
         <label class = "upload-con" :for = "uploadId">
-            <div :class = "[imgLen < maxNum ? 'img-not-uploaded' : 'has-uploaded']" ref = "hasUploaded">
+            <div :class = "[ beforeHasData ? 'before-has-data' : imgLen < maxNum ? 'img-not-uploaded' : 'has-uploaded']" ref = "hasUploaded">
                 <input :id= "uploadId" type="file" class="upload-button" @change="addImg" ref="inputer" multiple accept="image/png,image/jpeg,image/jpg"/>
                 <div class = "two-button" v-if = "imgLen >= maxNum">
                     <Icon type="ios-eye-outline" class= "i" @click.stop.prevent = "visible = true"></Icon>
@@ -65,10 +65,19 @@
         uploadId : {
             type   : String,
             defalut: 'upload'
+        },
+        beforeHasData : {
+            type : Boolean,
+            default : true
+        },
+        indentImg : {
+            type : String,
+            default :""
         }
     },
     methods: {
       addImg(event){
+          this.beforeHasData = false
           try {
                                     this.imgLen = 0;
                                 let inputDOM    = this.$refs.inputer;
@@ -146,6 +155,11 @@
         //     })
         // }
       },
+    },
+    mounted() {
+        if(this.beforeHasData) {
+            this.$refs.hasUploaded.style.backgroundImage = 'url(' + 'http://trinity-local.oss-cn-huhehaote.aliyuncs.com' + this.indentImg + ')'
+        }
     }
   }
 </script>
@@ -208,6 +222,27 @@
             .i{
                 visibility: hidden;
                 color     : #111 !important;
+                font-size : 50px !important;
+                cursor    : pointer !important;
+                margin    : 0 2px !important;
+            }
+        }
+    }
+    .before-has-data {
+        width              : 240px !important;
+        height             : 153px !important;
+        background-size    : contain;
+        background-position: center;
+        background-repeat  : no-repeat;
+        .upload-button {
+            visibility: hidden;
+        }
+        .two-button{
+            visibility: hidden;
+            margin-top: 30px;
+            .i{
+                visibility: hidden;
+                color     : yellow !important;
                 font-size : 50px !important;
                 cursor    : pointer !important;
                 margin    : 0 2px !important;

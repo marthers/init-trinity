@@ -16,16 +16,22 @@
             </div> -->
             <div class = "con username">
                 <p class = "info">姓名：</p>
-                <input type="text" v-model.trim="userName" class = "input" placeholder="请输入真实姓名"  maxlength = "20" onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5]/g,'')"/>
+                <input type="text" v-model.trim="userName" class = "input" :placeholder="userNamePlaceholder"  maxlength = "20" onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5]/g,'')"/>
             </div>
             <div class = "con id-number">
                 <p class = "info">身份证号：</p>
-                <input type="text" v-model="IDNumber" class = "input" placeholder="请输入身份证号码"  onkeyup="this.value=this.value.replace(/[^\w]/g,'');"/>
+                <input type="text" v-model="IDNumber" class = "input" :placeholder="IDPlaceholder"  onkeyup="this.value=this.value.replace(/[^\w]/g,'');"/>
             </div>
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">证件正面照：</p>
-                    <img-upload @base64   = "frontBase64" @deleteBase64 = "deleteFront" :modalTitle = "frontModalTitle" :uploadId   = "frontUploadId"></img-upload>
+                    <img-upload 
+                        @base64   = "frontBase64" 
+                        @deleteBase64 = "deleteFront" 
+                        :modalTitle = "frontModalTitle" 
+                        :uploadId   = "frontUploadId"
+                        :beforeHasData = "beforeHasDataUp"
+                        :indentImg = 'indentImgUp'></img-upload>
                 </div>
                 <div class = "face-con">
                     <p class = "info">证件反面照：</p>
@@ -33,10 +39,12 @@
                         <div class = "img-not-uploaded"></div>
                     </div> -->
                     <img-upload
-                                                                                          @base64   = "versoBase64"
-                                                                                          @deleteBase64 = "deleteVerso"
-                                                                                        :modalTitle = "frontModalTitle"
-                                                                                        :uploadId   = "versoUploadId">
+                            @base64   = "versoBase64"
+                            @deleteBase64 = "deleteVerso"
+                        :modalTitle = "frontModalTitle"
+                        :beforeHasData = "beforeHasData"
+                        :indentImg = 'indentImg'
+                        :uploadId   = "versoUploadId">
                     </img-upload>
                 </div>
             </div>
@@ -68,7 +76,13 @@ export default {
             versoData      : '',
             versoUploadId  : 'versoUploadId',
             frontUploadId  : 'frontUploadId',
-            isEdit         : false
+            isEdit         : false,
+            userNamePlaceholder : '请输入真实姓名',
+            IDPlaceholder : '请输入身份证号码',
+            beforeHasData : false,
+            indentImg : '',
+            beforeHasDataUp : false,
+            indentImgUp : ''
         }
     },
     methods : {
@@ -76,101 +90,189 @@ export default {
             this.$emit('person-back')
         },
         toMerchant() {
-            this.$emit('createPersonSuccess');
-            // if(this.userName.length > 0) {
-            //     if(!validateCName(this.userName)) {
-            //         this.$Notice.error({
-            //             title: '中文姓名格式有误',
-            //             desc : '请仔细检查您所输入的中文姓名'
-            //         });
-            //         return false
-            //     }else {
-            //         if(this.IDNumber.length > 0) {
-            //             if(!identifyID(this.IDNumber)) {
-            //                 this.$Notice.error({
-            //                     title: '身份证号格式有误',
-            //                     desc : '请仔细检查您所输入的身份证号'
-            //                 });
-            //                 return false
-            //             }else {
-            //                 if(this.frontBase64Data.length > 0 && this.versoData.length > 0) {
-            //                     UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
-            //                     {
-            //                         'priority': 5,
-            //                         'group'   : 0,
-            //                         'data'    : {
-            //                             // 'edit_mode'  : this.isEdit ? 0: 1,
-            //                             'edit_mode'  : 0,
-            //                             'need_verify': 1,
-            //                             'user_info'  : {
-            //                                 'ident_name': this.userName,
-            //                                 'ident_num' : this.IDNumber,
-            //                                 'ident_up'  : this.frontBase64Data,
-            //                                 'ident_down': this.versoData
-            //                             }
-            //                         }
-            //                     }
-            //                   )
-            //                     .then(res => {
-            //                         console.log("res:")
-            //                         console.log(res)
-            //                         console.log("res.data:")
-            //                         console.log(res.data)
-            //                         if(res.status && res.status == 200) {
-            //                                 console.log(`code=${res.data.code}`)
-            //                             if(res.data) {
-            //                                 let code = res.data.code;
-            //                                 console.log(`code=${res.data.code}`)
-            //                                 if(code == 1) {
-            //                                     this.$Message.info({
-            //                                         content : "Token因为超时而失效",
-            //                                         duration: 5,
-            //                                         closable: true
-            //                                     });
-            //                                 }else if(code == 0) {
-            //                                     this.$emit('createPersonSuccess',res.data.user_info);
-            //                                 }
-            //                             }
-            //                         }else {
-            //                             this.$Message.error({
-            //                                 content : '网络异常，请联系管理员及时处理',
-            //                                 duration: 5,
-            //                                 closable: true
-            //                             })
-            //                         }
-            //                     }).catch(err => {
-            //                         console.log(err)
-            //                     })
-            //                     console.log(" this.$emit('person-forward')")
+            // this.$emit('createPersonSuccess');
+            if(this.userName == localStorage.getItem('ident_name') && this.IDNumber == localStorage.getItem('ident_num') && this.frontBase64Data.length == 0 && localStorage.getItem('ident_down') != null && localStorage.getItem('ident_up') != null && this.versoData.length == 0) {
+                this.$emit('createPersonSuccess',{});
+            }else {
+                if(this.userName != localStorage.getItem('ident_name') && this.IDNumber != localStorage.getItem('ident_num') && this.frontBase64Data.length != 0 && this.versoData.length != 0) {
+                    if(this.userName.length > 0) {
+                        if(!validateCName(this.userName)) {
+                            this.$Notice.error({
+                                title: '中文姓名格式有误',
+                                desc : '请仔细检查您所输入的中文姓名'
+                            });
+                            return false
+                        }else {
+                            if(this.IDNumber.length > 0) {
+                                if(!identifyID(this.IDNumber)) {
+                                    this.$Notice.error({
+                                        title: '身份证号格式有误',
+                                        desc : '请仔细检查您所输入的身份证号'
+                                    });
+                                    return false
+                                }else {
+                                    if(this.frontBase64Data.length > 0 && this.versoData.length > 0) {
+                                        UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
+                                        {
+                                            'priority': 5,
+                                            'group'   : 0,
+                                            'data'    : {
+                                                // 'edit_mode'  : this.isEdit ? 0: 1,
+                                                'edit_mode'  : 0,
+                                                'need_verify': 1,
+                                                'user_info'  : {
+                                                    'ident_name': this.userName,
+                                                    'ident_num' : this.IDNumber,
+                                                    'ident_up'  : this.frontBase64Data,
+                                                    'ident_down': this.versoData
+                                                }
+                                            }
+                                        }
+                                    )
+                                        .then(res => {
+                                            console.log("res:")
+                                            console.log(res)
+                                            console.log("res.data:")
+                                            console.log(res.data)
+                                            if(res.status && res.status == 200) {
+                                                    console.log(`code=${res.data.code}`)
+                                                if(res.data) {
+                                                    let code = res.data.code;
+                                                    console.log(`code=${res.data.code}`)
+                                                    if(code == 1) {
+                                                        this.$Message.info({
+                                                            content : "Token因为超时而失效",
+                                                            duration: 5,
+                                                            closable: true
+                                                        });
+                                                    }else if(code == 0) {
+                                                        this.$emit('createPersonSuccess',res.data.user_info);
+                                                    }
+                                                }
+                                            }else {
+                                                this.$Message.error({
+                                                    content : '网络异常，请联系管理员及时处理',
+                                                    duration: 5,
+                                                    closable: true
+                                                })
+                                            }
+                                        }).catch(err => {
+                                            console.log(err)
+                                        })
+                                        console.log(" this.$emit('person-forward')")
 
-            //                 }
-            //                 else {
-            //                     this.$Notice.error({
-            //                         title: '身份证照片缺失',
-            //                         desc : '身份证照片缺失'
-            //                     });
-            //                     return false
-            //                 }
-            //             }
-            //         }else {
-            //             if(!validateCName(this.userName)) {
-            //                 this.$Notice.error({
-            //                     title: '错误',
-            //                     desc : '暂未输入身份证号'
-            //                 });
-            //                 return false
-            //             }
-            //         }
-            //     }
-            // }else {
-            //     if(!validateCName(this.userName)) {
-            //         this.$Notice.error({
-            //             title: '错误',
-            //             desc : '暂未输入姓名'
-            //         });
-            //         return false
-            //     }
-            // }
+                                    }
+                                    else {
+                                        this.$Notice.error({
+                                            title: '身份证照片缺失',
+                                            desc : '身份证照片缺失'
+                                        });
+                                        return false
+                                    }
+                                }
+                            }else {
+                                if(!validateCName(this.userName)) {
+                                    this.$Notice.error({
+                                        title: '错误',
+                                        desc : '暂未输入身份证号'
+                                    });
+                                    return false
+                                }
+                            }
+                        }
+                    }else {
+                        if(!validateCName(this.userName)) {
+                            this.$Notice.error({
+                                title: '错误',
+                                desc : '暂未输入姓名'
+                            });
+                            return false
+                        }
+                    }
+                }
+                else {
+                    let user_info = {};
+                    if(this.userName != localStorage.getItem('ident_name')) {
+                        user_info.ident_name = this.userName;
+                        if(!validateCName(this.userName)) {
+                            this.$Notice.error({
+                                title: '错误',
+                                desc : '暂未输入姓名'
+                            });
+                            return false
+                        }
+                    }
+                    if(this.IDNumber != localStorage.getItem('ident_num')) {
+                        user_info.ident_num = this.IDNumber;
+                        if(!identifyID(this.IDNumber)) {
+                            this.$Notice.error({
+                                title: '身份证号格式有误',
+                                desc : '请仔细检查您所输入的身份证号'
+                            });
+                            return false
+                        }
+                    }
+                    if(this.frontBase64Data.length != 0) {
+                        user_info.ident_up = this.frontBase64Data
+                    }
+                    if(this.versoData.length != 0) {
+                        user_info.ident_down = this.versoData
+                    };
+                    console.log("user_info:");
+                    console.log(user_info);
+
+                    
+                    UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
+                        {
+                            'priority': 5,
+                            'group'   : 0,
+                            'data'    : {
+                                // 'edit_mode'  : this.isEdit ? 0: 1,
+                                'edit_mode'  : 0,
+                                'need_verify': 1,
+                                'user_info'  : user_info
+                            }
+                        }
+                    )
+                    .then(res => {
+                        console.log("res:")
+                        console.log(res)
+                        console.log("res.data:")
+                        console.log(res.data)
+                        if(res.status && res.status == 200) {
+                                console.log(`code=${res.data.code}`)
+                            if(res.data) {
+                                let code = res.data.code;
+                                console.log(`code=${res.data.code}`)
+                                if(code == 1) {
+                                    this.$Message.info({
+                                        content : "Token因为超时而失效",
+                                        duration: 5,
+                                        closable: true
+                                    });
+                                }else if(code == 0) {
+                                    for(let item in res.data.user_info) {
+                                        localStorage.setItem(item,res.data.user_info[item])
+                                    }
+                                    this.$emit('createPersonSuccess',res.data.user_info);
+                                }
+                            }
+                        }else {
+                            this.$Message.error({
+                                content : '网络异常，请联系管理员及时处理',
+                                duration: 5,
+                                closable: true
+                            })
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                    })
+
+                }
+            }
+
+
+
             console.log(identifyID(this.IDNumber))
         },
         frontBase64(base64) {
@@ -179,15 +281,55 @@ export default {
             this.frontBase64Data = base64
         },
         deleteFront () {
-            this.frontBase64Data = ''
+            this.frontBase64Data = '';
+            if(localStorage.getItem('ident_up') != null && localStorage.getItem('ident_up').length >  0) {
+                localStorage.removeItem('ident_up')
+            }
         },
         deleteVerso () {
-            this.versoData = ''
+            this.versoData = '';
+            if(localStorage.getItem('ident_down') != null && localStorage.getItem('ident_down').length >  0) {
+                localStorage.removeItem('ident_down')
+            }
         },
         versoBase64(base64) {
             console.log('versoBase64:')
             // console.log(base64);
             this.versoData = base64
+        }
+    },
+    created() {
+        if(localStorage.getItem('ident_name') != null && localStorage.getItem('ident_name').length >  0) {
+            this.userNamePlaceholder = localStorage.getItem('ident_name');
+            this.userName = localStorage.getItem('ident_name');
+        }else {
+            this.userNamePlaceholder = '请输入真实姓名'
+            this.userName = ''
+        }
+
+        if(localStorage.getItem('ident_num') != null && localStorage.getItem('ident_num').length >  0) {
+            this.IDPlaceholder = localStorage.getItem('ident_num');
+            this.IDNumber = localStorage.getItem('ident_num');
+        }else {
+            this.IDPlaceholder = '请输入身份证号码';
+            this.IDNumber = ''
+        }
+
+        if(localStorage.getItem('ident_down') != null && localStorage.getItem('ident_down').length >  0) {
+            this.beforeHasData = true;
+            this.indentImg = localStorage.getItem('ident_down');
+
+        }else {
+            this.beforeHasData = false;
+            this.indentImg = ''
+        }
+
+        if(localStorage.getItem('ident_up') != null && localStorage.getItem('ident_up').length >  0) {
+            this.beforeHasDataUp = true;
+            this.indentImgUp = localStorage.getItem('ident_up')
+        }else {
+            this.beforeHasDataUp = false;
+            this.indentImgUp = ''
         }
     },
     components : {
@@ -280,6 +422,7 @@ export default {
                     color      : rgba(74,74,74,1);
                     line-height: 20px;
                     text-align : center;
+                    margin-right : 15px;
                 }
                 .img-not-uploaded-box {
                     width        : 240px;
@@ -319,6 +462,7 @@ export default {
                 color      : rgba(74,74,74,1);
                 line-height: 20px;
                 text-align : center;
+                margin-right : 15px;
             }
             .input {
                 width        : 240px;

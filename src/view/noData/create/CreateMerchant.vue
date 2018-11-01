@@ -54,6 +54,7 @@
                 <p class = "info">公司简要描述：</p>
                 <!-- <input type="text" v-model="IDNumber" class = "input" placeholder="请输入公司简要描述"  maxlength = "20"/> -->
                 <Input v-model="des" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入公司简要描述"/>
+                <!-- <vue-editor v-model="content" @blur = "editorBlur" placeholder = "（选填）" :customToolbar = "customToolbar"></vue-editor> -->
             </div>
             <!-- <div class = "id-con">
                 <div class = "face-con">
@@ -98,6 +99,7 @@
     </div>
 </template>
 <script>
+// import { VueEditor } from "vue2-editor";
 import ImgUpload from '@/components/ImgUpload';
 import JoinInOrg from '@/components/JoinInOrg';
 import {
@@ -117,14 +119,24 @@ export default {
             corpBase64Data : '',//公司证照正面,
             corpModalTitle : '公司证照正面',
             corpUploadId : 'corpUploadId',
-            selectedMerchant : ''
+            selectedMerchant : '',
+            // content : '',
+            // customToolbar: [
+            //     ["bold", "italic", "underline"],
+            //     // [{ list: "ordered" }, { list: "bullet" }],
+            //     // ["image", "code-block"]
+            // ]
         }
     },
     components : {
         ImgUpload,
-        JoinInOrg
+        JoinInOrg,
+        // VueEditor
     },
     methods : {
+        editorBlur(){
+            console.log(this.content)
+        },
         superiorSelected(selectedSuperior){
             console.log(`selectedSuperior=${selectedSuperior}`);
             this.selectedMerchant = selectedSuperior
@@ -237,6 +249,7 @@ export default {
                 color       : rgba(74,74,74,1);
                 line-height : 20px;
                 text-align  : right;
+                margin-right : 15px;
             }
             .img-not-uploaded-box {
                 width        : 96px;
@@ -297,6 +310,7 @@ export default {
                     color      : rgba(74,74,74,1);
                     line-height: 20px;
                     text-align : right;
+                    margin-right : 15px;
                 }
                 .img-not-uploaded-box {
                     width        : 240px;
@@ -336,6 +350,7 @@ export default {
                 color      : rgba(74,74,74,1);
                 line-height: 20px;
                 text-align : right;
+                margin-right : 15px;
             }
             .input {
                 width        : 240px;
