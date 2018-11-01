@@ -90,16 +90,28 @@
             </div>
             <div class = "content">
                 <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow"></no-data-index>
+                <!-- <no-data-index @two-clicked = "twoClicked" v-if = "$route.meta.showName == 'NoDataIndex'"></no-data-index> -->
                 
                 <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
+                <!-- <create-person v-if = "$route.meta.showName != 'NoDataIndex'" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person> -->
                 
                 <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper"></create-merchant>
                 
-                <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal>
+                <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal> -->
 
-                <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org>
+                <!-- <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org> -->
             </div>
       </div>
+        <Modal
+            v-model = "JoinInOrgShow"
+            :closable = "closable"
+            :mask-closable = "maskClosable"
+            width='1000'
+            @on-ok     = "JoinInOrgShow = false"
+            footer-hide
+            class-name = "create-modal">
+            <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org>
+        </Modal>
   </div>
 </template>
 <script>
@@ -331,7 +343,9 @@ export default {
             createPersonalInfoShow: false,   //创建个人信息
             createMerchantInfoShow: false,
             createLegalShow       : false,
-            JoinInOrgShow : true
+            JoinInOrgShow : false,
+            maskClosable : false,
+            closable : false
         }
     },
     components : {
@@ -492,10 +506,13 @@ export default {
             if(type === 'create') {
                 this.NoDataIndexShow        = false;
                 this.createPersonalInfoShow = true;
+                // this.$route.meta.showName = 'CreatePerson'
             }else {
                 this.JoinInOrgShow = true;
                 this.NoDataIndexShow = false;
                 this.createPersonalInfoShow = false;
+                this.createMerchantInfoShow = false;
+                this.createLegalShow        = false;
             }
         },
         chooseOrgBack() {
@@ -505,6 +522,7 @@ export default {
         },
         personBack() {
             this.NoDataIndexShow        = true;
+                // this.$route.meta.showName = 'NoDataIndex'
             this.createPersonalInfoShow = false;
         },
         createPersonSuccess (user_info) {
@@ -550,24 +568,36 @@ export default {
             this.createLegalShow        = false;
         }
     },
-    mounted () {
-        window.addEventListener('scroll', this.handleScroll);
-        window.onscroll = function(){
-   		//变量scrollTop是滚动条滚动时，距离顶部的距离
-   		var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
-   		//变量windowHeight是可视区的高度
-   		var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-   		//变量scrollHeight是滚动条的总高度
-   		var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
-               //滚动条到底部的条件
-               if(scrollTop+windowHeight==scrollHeight){
-                //写后台加载数据的函数
-         	console.log("距顶部"+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
-              }   
-        }
+    created () {
+        console.log(this.$route.matched)
+        // this.$route.meta.showName = 'NoDataIndex'
+        // this.$delete(this.$route.matched[0].components,'NoDataIndex')
     },
 }
 </script>
+<style>
+.create-modal .ivu-modal{
+    display : flex;
+    justify-content : center;
+    align-items : center;
+}
+.create-modal .ivu-modal .ivu-modal-content{
+    width : 80vw !important;
+    height : 90vh !important;
+    overflow : hidden !important;
+}
+.create-modal .ivu-modal .ivu-modal-content .ivu-modal-body{
+    width : 90% !important;
+    height : 90% !important;
+}
+.create-modal .ivu-input-search{
+    background-color : #48A8DA !important;
+    border-color : #48A8DA !important;
+}
+.search .ivu-input{
+    border-color : #48A8DA !important;
+}
+</style>
 <style lang="less" scoped>
 .home {
     .fade-enter-active, .fade-leave-active {

@@ -36,6 +36,7 @@ export default {
         twoClicked(type) {
             console.log(`type=${type}`)
             this.$emit('two-clicked',type)
+            console.log(this.$route.meta)
         }
     }
 }

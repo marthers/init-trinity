@@ -1,6 +1,8 @@
 <template>
   <div id="app">
         <router-view/>
+        <!-- <router-view name = "NoDataIndex" v-if = "$route.meta.NoDataIndex"/> -->
+        <!-- <router-view :name = "$route.meta.contentName" v-if = "$route.meta.contentShow"/> -->
   </div>
 </template>
 

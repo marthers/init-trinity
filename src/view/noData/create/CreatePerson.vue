@@ -25,12 +25,7 @@
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">证件正面照：</p>
-                    <img-upload
-                                                                                          @base64   = "frontBase64"
-                                                                                          @deleteBase64 = "deleteFront"
-                                                                                        :modalTitle = "frontModalTitle"
-                                                                                        :uploadId   = "frontUploadId">
-                    </img-upload>
+                    <img-upload @base64   = "frontBase64" @deleteBase64 = "deleteFront" :modalTitle = "frontModalTitle" :uploadId   = "frontUploadId"></img-upload>
                 </div>
                 <div class = "face-con">
                     <p class = "info">证件反面照：</p>
@@ -81,100 +76,101 @@ export default {
             this.$emit('person-back')
         },
         toMerchant() {
-            if(this.userName.length > 0) {
-                if(!validateCName(this.userName)) {
-                    this.$Notice.error({
-                        title: '中文姓名格式有误',
-                        desc : '请仔细检查您所输入的中文姓名'
-                    });
-                    return false
-                }else {
-                    if(this.IDNumber.length > 0) {
-                        if(!identifyID(this.IDNumber)) {
-                            this.$Notice.error({
-                                title: '身份证号格式有误',
-                                desc : '请仔细检查您所输入的身份证号'
-                            });
-                            return false
-                        }else {
-                            if(this.frontBase64Data.length > 0 && this.versoData.length > 0) {
-                                UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
-                                {
-                                    'priority': 5,
-                                    'group'   : 0,
-                                    'data'    : {
-                                        // 'edit_mode'  : this.isEdit ? 0: 1,
-                                        'edit_mode'  : 0,
-                                        'need_verify': 1,
-                                        'user_info'  : {
-                                            'ident_name': this.userName,
-                                            'ident_num' : this.IDNumber,
-                                            'ident_up'  : this.frontBase64Data,
-                                            'ident_down': this.versoData
-                                        }
-                                    }
-                                }
-                              )
-                                .then(res => {
-                                    console.log("res:")
-                                    console.log(res)
-                                    console.log("res.data:")
-                                    console.log(res.data)
-                                    if(res.status && res.status == 200) {
-                                            console.log(`code=${res.data.code}`)
-                                        if(res.data) {
-                                            let code = res.data.code;
-                                            console.log(`code=${res.data.code}`)
-                                            if(code == 1) {
-                                                this.$Message.info({
-                                                    content : "Token因为超时而失效",
-                                                    duration: 5,
-                                                    closable: true
-                                                });
-                                            }else if(code == 0) {
-                                                this.$emit('createPersonSuccess',res.data.user_info);
-                                            }
-                                        }
-                                    }else {
-                                        this.$Message.error({
-                                            content : '网络异常，请联系管理员及时处理',
-                                            duration: 5,
-                                            closable: true
-                                        })
-                                    }
-                                }).catch(err => {
-                                    console.log(err)
-                                })
-                                console.log(" this.$emit('person-forward')")
+            this.$emit('createPersonSuccess');
+            // if(this.userName.length > 0) {
+            //     if(!validateCName(this.userName)) {
+            //         this.$Notice.error({
+            //             title: '中文姓名格式有误',
+            //             desc : '请仔细检查您所输入的中文姓名'
+            //         });
+            //         return false
+            //     }else {
+            //         if(this.IDNumber.length > 0) {
+            //             if(!identifyID(this.IDNumber)) {
+            //                 this.$Notice.error({
+            //                     title: '身份证号格式有误',
+            //                     desc : '请仔细检查您所输入的身份证号'
+            //                 });
+            //                 return false
+            //             }else {
+            //                 if(this.frontBase64Data.length > 0 && this.versoData.length > 0) {
+            //                     UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
+            //                     {
+            //                         'priority': 5,
+            //                         'group'   : 0,
+            //                         'data'    : {
+            //                             // 'edit_mode'  : this.isEdit ? 0: 1,
+            //                             'edit_mode'  : 0,
+            //                             'need_verify': 1,
+            //                             'user_info'  : {
+            //                                 'ident_name': this.userName,
+            //                                 'ident_num' : this.IDNumber,
+            //                                 'ident_up'  : this.frontBase64Data,
+            //                                 'ident_down': this.versoData
+            //                             }
+            //                         }
+            //                     }
+            //                   )
+            //                     .then(res => {
+            //                         console.log("res:")
+            //                         console.log(res)
+            //                         console.log("res.data:")
+            //                         console.log(res.data)
+            //                         if(res.status && res.status == 200) {
+            //                                 console.log(`code=${res.data.code}`)
+            //                             if(res.data) {
+            //                                 let code = res.data.code;
+            //                                 console.log(`code=${res.data.code}`)
+            //                                 if(code == 1) {
+            //                                     this.$Message.info({
+            //                                         content : "Token因为超时而失效",
+            //                                         duration: 5,
+            //                                         closable: true
+            //                                     });
+            //                                 }else if(code == 0) {
+            //                                     this.$emit('createPersonSuccess',res.data.user_info);
+            //                                 }
+            //                             }
+            //                         }else {
+            //                             this.$Message.error({
+            //                                 content : '网络异常，请联系管理员及时处理',
+            //                                 duration: 5,
+            //                                 closable: true
+            //                             })
+            //                         }
+            //                     }).catch(err => {
+            //                         console.log(err)
+            //                     })
+            //                     console.log(" this.$emit('person-forward')")
 
-                            }
-                            else {
-                                this.$Notice.error({
-                                    title: '身份证照片缺失',
-                                    desc : '身份证照片缺失'
-                                });
-                                return false
-                            }
-                        }
-                    }else {
-                        if(!validateCName(this.userName)) {
-                            this.$Notice.error({
-                                title: '错误',
-                                desc : '暂未输入身份证号'
-                            });
-                            return false
-                        }
-                    }
-                }
-            }else {
-                if(!validateCName(this.userName)) {
-                    this.$Notice.error({
-                        title: '错误',
-                        desc : '暂未输入姓名'
-                    });
-                    return false
-                }
-            }
+            //                 }
+            //                 else {
+            //                     this.$Notice.error({
+            //                         title: '身份证照片缺失',
+            //                         desc : '身份证照片缺失'
+            //                     });
+            //                     return false
+            //                 }
+            //             }
+            //         }else {
+            //             if(!validateCName(this.userName)) {
+            //                 this.$Notice.error({
+            //                     title: '错误',
+            //                     desc : '暂未输入身份证号'
+            //                 });
+            //                 return false
+            //             }
+            //         }
+            //     }
+            // }else {
+            //     if(!validateCName(this.userName)) {
+            //         this.$Notice.error({
+            //             title: '错误',
+            //             desc : '暂未输入姓名'
+            //         });
+            //         return false
+            //     }
+            // }
             console.log(identifyID(this.IDNumber))
         },
         frontBase64(base64) {

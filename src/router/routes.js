@@ -4,8 +4,22 @@ export default [
         name     : 'home',
         // component: () => import('@/view/home/home')
         components : {
-            default : () => import('@/view/home/home')
-        }
+            default : () => import('@/view/home/home'),
+            // NoDataIndex : () => import('@/view/noData')
+        },
+        meta : {
+            // NoDataIndex : true,
+            // contentShow : true,
+            // contentName : 'NoDataIndex'
+            showName : ''
+        },
+        children : [
+            {
+                name : 'NoDataIndex',
+                path : 'NoDataIndex',
+                component : () => import('@/view/noData')
+            }
+        ]
     },
     {
         path: '/login',
@@ -15,5 +29,9 @@ export default [
             hideInMenu: true
         },
         component: () => import('@/view/login/login')
+        // components : {
+        //     default : () => import('@/view/login/login'),
+        //     home : () => import('@/view/home/home')
+        // }
     }
 ]

@@ -198,6 +198,11 @@ class HttpRequest {
     }, error => {
       this.destroy(url)
       // addErrorLog(error.response)
+      iView.Message.error({
+          content : '网络异常',
+          duration: 5,
+          closable: true
+      });
       return Promise.reject(error)
     })
   }

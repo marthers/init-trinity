@@ -9,15 +9,19 @@
                 </div>
             </header>
             <div class = "first">
-                <span>若已有上级商户，请选择您的上级商户.</span>
+                <span v-if = "selectedMerchant.length > 0">
+                    您已经选择{{selectedMerchant}}。
+                </span>
+                <span v-else>若已有上级商户，请选择您的上级商户。</span>
                 <span class = "choose" @click = "chooseUpper">点此选择您的上级商户</span>
             </div>
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">上传公司证照正面：</p>
-                    <div class = "img-not-uploaded-box">
+                    <!-- <div class = "img-not-uploaded-box">
                         <div class = "img-not-uploaded"></div>
-                    </div>
+                    </div> -->
+                    <img-upload @base64   = "corpBase64" @deleteBase64 = "deleteCorp" :modalTitle = "corpModalTitle" :uploadId   = "corpUploadId"></img-upload>
                 </div>
                 <!-- <div class = "face-con">
                     <p class = "info">证件反面照：</p>
@@ -31,11 +35,12 @@
                 <!-- <div class = "img-not-uploaded-box">
                     <div class = "img-not-uploaded"></div>
                 </div> -->
-                <img-upload
+                <!-- <img-upload
                     @base64   = "logoBase64"
                     :modalTitle = "logoModalTitle"
                     :uploadId   = "logoUploadId">
-                </img-upload>
+                </img-upload> -->
+                <img-upload @base64   = "logoBase64" @deleteBase64 = "deleteLogo" :modalTitle = "logoModalTitle" :uploadId   = "logoUploadId"></img-upload>
             </div>
             <div class = "con corp-name">
                 <p class = "info">公司注册名称：</p>
@@ -64,7 +69,7 @@
                     </div>
                 </div>
             </div> -->
-            <div class = "con corp-id">
+            <!-- <div class = "con corp-id">
                 <p class = "info">选择法人：</p>
                 <RadioGroup v-model="superior" @on-change = "superiorChange">
                     <Radio label="platform">
@@ -74,27 +79,30 @@
                         <span>新建法人</span>
                     </Radio>
                 </RadioGroup>
-            </div>
+            </div> -->
             <footer>
                 <div class = "back" @click.stop.prevent = "backToPerson">上一步</div>
                 <div class = "next" @click = "toEditLegalPerson">下一步： 编辑法人信息</div>
             </footer>
         </div>
 
-        <!-- <Modal
-            title   = "Title"
+        <Modal
             v-model = "selectOrgShow"
             closable
+            width='1000'
             @on-ok     = "selectOrgShow = false"
-            class-name = "vertical-center-modal">
-            <Input search enter-button placeholder="Enter something..." />
-        </Modal> -->
-        <!-- <join-in-org :JoinInOrgShow = "selectOrgShow"></join-in-org> -->
+            footer-hide
+            class-name = "create-modal">
+            <join-in-org :JoinInOrgShow = "selectOrgShow" @chooseOrgBack = "chooseOrgBack" @superior-selected = "superiorSelected"></join-in-org>
+        </Modal>
     </div>
 </template>
 <script>
 import ImgUpload from '@/components/ImgUpload';
-// import JoinInOrg from '@/components/JoinInOrg';
+import JoinInOrg from '@/components/JoinInOrg';
+import {
+    validateCName
+} from '@/libs/validate.js';
 export default {
     name: 'CreatePerson',
     data() {
@@ -105,18 +113,29 @@ export default {
             logoUploadId  : 'logoUploadId',
             des           : '',
             superior      : 'superior',
-            selectOrgShow : false
+            selectOrgShow : false,
+            corpBase64Data : '',//公司证照正面,
+            corpModalTitle : '公司证照正面',
+            corpUploadId : 'corpUploadId',
+            selectedMerchant : ''
         }
     },
     components : {
         ImgUpload,
-        // JoinInOrg
+        JoinInOrg
     },
     methods : {
+        superiorSelected(selectedSuperior){
+            console.log(`selectedSuperior=${selectedSuperior}`);
+            this.selectedMerchant = selectedSuperior
+        },
+        chooseOrgBack() {
+            this.selectOrgShow = false;
+        },
         //选择上级商户
         chooseUpper() {
-            // this.selectOrgShow = true
-            this.$emit('merchant-select-upper')
+            this.selectOrgShow = true
+            // this.$emit('merchant-select-upper')
         },
         backToPerson() {
             this.$emit('back-to-person')
@@ -126,19 +145,47 @@ export default {
         },
         logoBase64(base64) {
             console.log('logoBase64_base64:');
-            console.log(base64)
+            console.log(base64);
+            this.logoBase64Data = base64;
         },
         superiorChange() {
             console.log(this.superior)
-            if(this.superior == 'org') {
-                this.selectOrgShow = true
-            }else{
-                this.selectOrgShow = false
-            }
+            // if(this.superior == 'org') {
+            //     this.selectOrgShow = true
+            // }else{
+            //     this.selectOrgShow = false
+            // }
+        },
+        corpBase64(base64) {
+            console.log('corpBase64_base64:')
+            console.log(base64);
+            this.corpBase64Data = base64
+        },
+        deleteCorp() {
+            this.corpBase64Data = ''
+        },
+        deleteLogo() {
+            this.logoBase64Data = ''
         }
     }
 }
 </script>
+<style>
+.create-modal .ivu-modal{
+    display : flex;
+    justify-content : center;
+    align-items : center;
+}
+.create-modal .ivu-modal .ivu-modal-content{
+    width : 80vw !important;
+    height : 90vh !important;
+    overflow : hidden !important;
+}
+.create-modal .ivu-modal .ivu-modal-content .ivu-modal-body{
+    width : 90% !important;
+    height : 90% !important;
+}
+</style>
 <style lang= "less" scoped>
 .create{
     width  : 100%;

@@ -1,5 +1,5 @@
 <template>
-    <div class = "orgs-con" v-show = "JoinInOrgShow">
+    <div class = "orgs-con" v-if = "JoinInOrgShow">
         <header class = "header">
             <div class = "left"></div>
             <div class="right">
@@ -8,6 +8,15 @@
                 }}
             </div>
         </header>
+        <Input 
+            search 
+            enter-button 
+            v-model.trim = "searchContent"
+            placeholder="搜索您想选择的商户关键字" 
+            @on-enter = "searchEnter"
+            @on-search = "searchEnter"
+            @on-keyup = "searchContent=searchContent.replace(/(^\s+)|(\s+$)/g,'')"
+            class = "search"/>
         <div class = "list-con">
             <div :class = "[index%2 == 0 ? 'single' : 'double',selectedIndex == index ? 'selected' : 'not-selected' ,'item-con']" v-for = "(item,index) in orgList" :key = "index" @click.stop.prevent = "selectedIndex = index">
                 {{
@@ -107,7 +116,8 @@
                   name : 'sss回家看大厦的世界开始的机会'
               }
           ],
-          selectedIndex : -1
+          selectedIndex : -1,
+          searchContent : ''
       }
     },
     props : {
@@ -117,11 +127,22 @@
         }
     },
     methods: {
+        searchEnter() {
+            console.log(`this.searchContent=${this.searchContent}`)
+        },
         backToIndex() {
             this.$emit('chooseOrgBack')
+            this.selectedIndex = -1;
+            this.searchContent = ''
         },
         submitChoose() {
-
+            console.log(`this.selectedIndex=${this.selectedIndex}`);
+            if(this.selectedIndex != -1) {
+                this.$emit('superior-selected',this.orgList[this.selectedIndex].name)
+            }
+            this.selectedIndex = -1;
+            this.searchContent = ''
+            this.$emit('chooseOrgBack')
         }
     },
     mounted() {
@@ -158,6 +179,12 @@
             height     : 36px;
             line-height: 36px;
             text-align : center;
+        }
+    }
+    .search {
+        margin : 20px 0;
+        .ivu-input-search{
+            background-color : #48A8DA !important;
         }
     }
     .list-con {
