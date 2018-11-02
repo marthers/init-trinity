@@ -9,6 +9,8 @@ import 'babel-polyfill';
 import 'es6-promise/auto';
 // import importDirective from './directives/index';
 console.log(iView)
+import VueScroller from 'vue-scroller'
+Vue.use(VueScroller)
 Vue.use(iView);
 import VueParticles from 'vue-particles'
 Vue.use(VueParticles)

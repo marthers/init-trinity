@@ -17,13 +17,20 @@
             @on-search = "searchEnter"
             @on-keyup = "searchContent=searchContent.replace(/(^\s+)|(\s+$)/g,'')"
             class = "search"/>
-        <div class = "list-con">
-            <div :class = "[index%2 == 0 ? 'single' : 'double',selectedIndex == index ? 'selected' : 'not-selected' ,'item-con']" v-for = "(item,index) in orgList" :key = "index" @click.stop.prevent = "selectedIndex = index">
-                {{
-                    item.name
-                }}
+        <scroller 
+            :on-refresh="pulldown"
+            height = "80%"
+            :on-infinite="pullup"
+            class="wrapper" ref="scrollWrapper">
+            <div class = "list-con">
+                <div :class = "[index%2 == 0 ? 'single' : 'double',selectedIndex == index ? 'selected' : 'not-selected' ,'item-con']" v-for = "(item,index) in orgList" :key = "index" @click.stop.prevent = "selectedIndex = index">
+                    {{
+                        item.name
+                    }}
+                </div>
             </div>
-        </div>
+        </scroller>
+        <!-- <div :pullup = "pullup" :pulldown = "pulldown"> -->
         <footer>
             <div class = "back" @click.stop.prevent = "backToIndex">返回</div>
             <div class = "submit" @click = "submitChoose">确定</div>
@@ -31,6 +38,7 @@
     </div>
 </template>
 <script>
+// import VueScroller from 'vue-scroller'
   export default {
     data() {
       return {
@@ -127,6 +135,12 @@
         }
     },
     methods: {
+        pullup () {
+            console.log(this.$refs.scrollWrapper)
+        },
+        pulldown () {
+            console.log(this.$refs.scrollWrapper);
+        },
         searchEnter() {
             console.log(`this.searchContent=${this.searchContent}`)
         },
@@ -145,13 +159,16 @@
             this.$emit('chooseOrgBack')
         }
     },
+    components : {
+        // VueScroller
+    },
     mounted() {
         this.onlyChooseOrg = true;
         if(this.onlyChooseOrg) {
             this.title = '选择加盟商户（平台和大商户）'
         }else{
             this.title = '选择加入商户（平台、大商户、商户所有'
-        }
+        };
     }
   }
 </script>
@@ -187,54 +204,61 @@
             background-color : #48A8DA !important;
         }
     }
-    .list-con {
-        width : 100%;
-        height : 80%;
+    .wrapper {
+        width : 100% !important;
+        height : 80% !important;
         overflow : hidden;
-        overflow-y : auto;
-        border : 1px solid #DEDEDE;
-        .item-con {
+        position : unset;
+        /* overflow-y : auto; */
+        .list-con {
             width : 100%;
-            height : 48px;
-            line-height : 48px;
-            text-align : left;
-            text-indent : 60px;
-            cursor : pointer;
-            color : #4A4A4A;
+            height : 100%;
+            overflow : hidden;
+            overflow-y : auto;
+            border : 1px solid #DEDEDE;
+            .item-con {
+                width : 100%;
+                height : 48px;
+                line-height : 48px;
+                text-align : left;
+                text-indent : 60px;
+                cursor : pointer;
+                color : #4A4A4A;
+            }
+            /* .item-con:hover {
+                background:rgba(72,168,218,1);
+                color : #fff;
+            } */
+            .selected {
+                background:rgba(72,168,218,1) !important;
+                color : #fff !important;
+            }
+            .single {
+                background : #FFF;
+            }
+            .double {
+                background:rgba(222,222,222,0.2);
+            }
         }
-        /* .item-con:hover {
+        .list-con::-webkit-scrollbar {/*滚动条整体样式*/
+            width:6px;
+            height:6px;
+            background:rgba(222,222,222,1);
+            border-radius:6px;
+        }
+        .list-con::-webkit-scrollbar-thumb {
+            width:39px;
+            /* height:6px; */
             background:rgba(72,168,218,1);
-            color : #fff;
-        } */
-        .selected {
-            background:rgba(72,168,218,1) !important;
-            color : #fff !important;
+            border-radius:3px;
         }
-        .single {
-            background : #FFF;
+        /*滚动条里面轨道*/
+        .list-con::-webkit-scrollbar-track {
+            width:6px;
+            /* height:100%; */
+            background:rgba(222,222,222,1);
+            border-radius:6px;
         }
-        .double {
-            background:rgba(222,222,222,0.2);
-        }
-    }
-    .list-con::-webkit-scrollbar {/*滚动条整体样式*/
-        width:6px;
-        height:6px;
-        background:rgba(222,222,222,1);
-        border-radius:6px;
-    }
-    .list-con::-webkit-scrollbar-thumb {
-        width:39px;
-        /* height:6px; */
-        background:rgba(72,168,218,1);
-        border-radius:3px;
-    }
-    /*滚动条里面轨道*/
-    .list-con::-webkit-scrollbar-track {
-        width:6px;
-        /* height:100%; */
-        background:rgba(222,222,222,1);
-        border-radius:6px;
     }
 
     footer{
