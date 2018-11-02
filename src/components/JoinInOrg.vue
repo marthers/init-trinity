@@ -25,7 +25,7 @@
             <div class = "list-con">
                 <div :class = "[index%2 == 0 ? 'single' : 'double',selectedIndex == index ? 'selected' : 'not-selected' ,'item-con']" v-for = "(item,index) in orgList" :key = "index" @click.stop.prevent = "selectedIndex = index">
                     {{
-                        item.name
+                        item.organization_name
                     }}
                 </div>
             </div>
@@ -38,105 +38,105 @@
     </div>
 </template>
 <script>
-// import VueScroller from 'vue-scroller'
+import {getOrgList} from '@/api/org/org.js';
+import baseConfig from '@/config/index';
+const baseUrl = baseConfig.baseUrl.devHost;
   export default {
     data() {
       return {
-          title : '',
-          onlyChooseOrg : false,
-          orgList : [
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              },
-              {
-                  name : 'sss回家看大厦的世界开始的机会'
-              }
-          ],
-          selectedIndex : -1,
-          searchContent : ''
+            title : '',
+            onlyChooseOrg : false,
+            selectedIndex : -1,
+            searchContent : '',
+            orgList : [],
+            page_index : 1,
+            page_size : 20,
+            total_pages : 0
       }
     },
     props : {
         JoinInOrgShow : {
             type : Boolean,
-            default : true
-        }
+            default : false
+        },
+        // orgList : {
+        //     type : [Object,Array],
+        //     default : () => {
+        //         return []
+        //     }
+        // },
+        // page_index : {
+        //     type : Number,
+        //     default : 1
+        // },
+        // total_pages : {
+        //     type : Number,
+        //     default : 10000
+        // }
     },
     methods: {
         pullup () {
-            console.log(this.$refs.scrollWrapper)
+            console.log(`this.total_pages=${this.total_pages}`);
+            console.log(this.$refs.scrollWrapper);
+            if(this.page_index < this.total_pages) {
+                // debugger
+                // debugger
+                console.log(`this.page_index=${this.page_index}`)
+                ++this.page_index
+                // debugger
+                console.log(`this.page_index=${this.page_index}`)
+                // debugger
+                // if(this.page_index > 1) {
+                //     this.$emit('pullup',this.page_index);
+                // }
+                // this.$refs.scrollWrapper.resize()
+                let self = this
+                this.$nextTick(() => {
+                    getOrgList(baseUrl + '/trinity-backstage/organization/list',
+                    {
+                        'priority': 5,
+                        'group'   : 0,
+                        'data'    : {
+                            'page_index' :this.page_index,
+                            'page_size' : this.page_size
+                        }
+                    })
+                    .then(res => {
+                        console.log(res)
+                        if(res.status && res.status == 200 && res.data.code == 0) {
+                            console.log("res.data:");
+                            console.log(res.data)
+                            let data = res.data.data;
+                            self.orgList = self.orgList.concat(data.organization_list);
+                            // data.organization_list.forEach((item,index) => {
+                            //     this.orgList.push(item)
+                            // })
+                            // this.orgList = Object.assign({},this.orgList.concat(data.organization_list));
+                            // this.$refs.scrollWrapper.finishInfinite(false)
+                            // this.total_pages = data.page.total_pages
+                        }
+                        else{
+                            this.$Message.error({
+                                content : '网络异常，请联系管理员及时处理',
+                                duration: 5,
+                                closable: true
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        this.$Message.error({
+                            content : '网络异常，请联系管理员及时处理',
+                            duration: 5,
+                            closable: true
+                        })
+                    })
+                })
+            }
+            else {
+                // debugger
+                this.$refs.scrollWrapper.finishInfinite(true);
+            }
         },
         pulldown () {
             console.log(this.$refs.scrollWrapper);
@@ -162,6 +162,9 @@
     components : {
         // VueScroller
     },
+    created() {
+        // console.log(`baseUrl=${baseUrl}`)
+    },
     mounted() {
         this.onlyChooseOrg = true;
         if(this.onlyChooseOrg) {
@@ -169,6 +172,48 @@
         }else{
             this.title = '选择加入商户（平台、大商户、商户所有'
         };
+        // setTimeout(() => {
+        //     // if(this.JoinInOrgShow) {
+        //         // this.$nextTick(() => {
+        //             getOrgList(baseUrl + '/trinity-backstage/organization/list',
+        //             {
+        //                 'priority': 5,
+        //                 'group'   : 0,
+        //                 'data'    : {
+        //                     'page_index' :1,
+        //                     'page_size' : 20
+        //                 }
+        //             })
+        //             .then(res => {
+        //                 console.log(res)
+        //                 if(res.status && res.status == 200 && res.data.code == 0) {
+        //                     console.log("res.data:");
+        //                     console.log(res.data)
+        //                     let data = res.data.data;
+        //                     this.orgList = Object.assign({},data.organization_list);
+        //                     // this.$refs.scrollWrapper.getPosition();
+        //                     // this.$refs.scrollWrapper.resize();
+        //                     this.total_pages = data.page.total_pages
+        //                 }
+        //                 else{
+        //                     this.$Message.error({
+        //                         content : '网络异常，请联系管理员及时处理',
+        //                         duration: 5,
+        //                         closable: true
+        //                     })
+        //                 }
+        //             })
+        //             .catch(err => {
+        //                 console.log(err);
+        //                 this.$Message.error({
+        //                     content : '网络异常，请联系管理员及时处理',
+        //                     duration: 5,
+        //                     closable: true
+        //                 })
+        //             })
+        //         // })
+        //     // }
+        // },1000)
     }
   }
 </script>

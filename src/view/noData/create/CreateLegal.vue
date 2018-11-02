@@ -94,7 +94,20 @@ export default {
             this.$emit('back-to-merchant')
         },
         submitCreate() {
-            this.$emit('submit-create')
+            if(this.legal == 'self') {
+                this.$emit('submit-create',{
+                    'is_select_me' : 1
+                })
+            }
+            else {
+                this.$emit('submit-create',{
+                    'is_select_me' : 0,
+                    'corporate_name' : this.userName,
+                    'corporate_ident' : this.IDNumber,
+                    'corporate_card_up' : this.corporate_card_up,
+                    'corporate_card_down' : this.versoLegalBase64Data
+                })
+            }
         },
         radioChange() {
             console.log(`this.legal=${this.legal}`);
@@ -121,7 +134,7 @@ export default {
         frontBase64(base64) {
             console.log('frontBase64:')
             // console.log(base64);
-            this.frontBase64Data = base64
+            this.corporate_card_up = base64
         },
         versoLegalBase64(base64) {
             this.versoLegalBase64Data = base64

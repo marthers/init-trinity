@@ -116,6 +116,7 @@
 </template>
 <script>
 import {signOut} from '@/api/user.js';
+import {orgEdit} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
 const baseUrl = baseConfig.baseUrl.dev;
 import NoDataIndex from '@/view/noData/index';
@@ -345,7 +346,8 @@ export default {
             createLegalShow       : false,
             JoinInOrgShow : false,
             maskClosable : false,
-            closable : false
+            closable : false,
+            merchantData : {}
         }
     },
     components : {
@@ -550,17 +552,50 @@ export default {
             this.createMerchantInfoShow = true;
             this.createLegalShow        = false;
         },
-        submitCreate () {
+        submitCreate (legalData) {
             this.NoDataIndexShow        = true;
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
             this.createLegalShow        = false;
+            let reqData = {}
+            if(legalData.is_select_me > 0) {
+                reqData = {
+                    'is_select_me' : legalData.is_select_me,
+                    'logo' : this.merchantData.logoBase64Data,
+                    'organization_name' : this.merchantData.corpName,
+                    'organization_num' : this.merchantData.IDNumber,
+                    'organization_license_up' : this.merchantData.corpBase64Data,
+                    'organization_desc' : this.merchantData.des ? this.merchantData.des : '',
+                    'parent_id_organization' : this.merchantData.selectedMerchant
+                }
+            }
+            orgEdit('http://192.168.50.154:8091/trinity-backstage/organization/edit_info',
+                {
+                    'priority': 5,
+                    'group'   : 0,
+                    'data'    : {
+                        'edit_mode'  : 0,
+                        'organization_info'    : reqData
+                    }
+                }
+            )
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+            console.log("reqData:")
+            console.log(reqData)
         },
-        toLegal() {
+        toLegal(data) {
             this.NoDataIndexShow        = false;
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
             this.createLegalShow        = true;
+            this.merchantData = data;
+            console.log("this.merchantData:")
+            console.log(this.merchantData)
         },
         merchantSelectUpper () {
             this.JoinInOrgShow = true;

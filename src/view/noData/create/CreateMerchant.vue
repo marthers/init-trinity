@@ -18,28 +18,11 @@
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">上传公司证照正面：</p>
-                    <!-- <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div> -->
                     <img-upload @base64   = "corpBase64" @deleteBase64 = "deleteCorp" :modalTitle = "corpModalTitle" :uploadId   = "corpUploadId"></img-upload>
                 </div>
-                <!-- <div class = "face-con">
-                    <p class = "info">证件反面照：</p>
-                    <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div>
-                </div> -->
             </div>
             <div class = "logo">
                 <p class = "logo-title">公司Logo: </p>
-                <!-- <div class = "img-not-uploaded-box">
-                    <div class = "img-not-uploaded"></div>
-                </div> -->
-                <!-- <img-upload
-                    @base64   = "logoBase64"
-                    :modalTitle = "logoModalTitle"
-                    :uploadId   = "logoUploadId">
-                </img-upload> -->
                 <img-upload @base64   = "logoBase64" @deleteBase64 = "deleteLogo" :modalTitle = "logoModalTitle" :uploadId   = "logoUploadId"></img-upload>
             </div>
             <div class = "con corp-name">
@@ -52,35 +35,8 @@
             </div>
             <div class = "con corp-id">
                 <p class = "info">公司简要描述：</p>
-                <!-- <input type="text" v-model="IDNumber" class = "input" placeholder="请输入公司简要描述"  maxlength = "20"/> -->
                 <Input v-model="des" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入公司简要描述(选填)" @on-keyup="des=des.replace(/[^\u4E00-\u9FA5|,|.]/g,'')"/>
-                <!-- <vue-editor v-model="content" @blur = "editorBlur" placeholder = "（选填）" :customToolbar = "customToolbar"></vue-editor> -->
             </div>
-            <!-- <div class = "id-con">
-                <div class = "face-con">
-                    <p class = "info">上传公司证照正面：</p>
-                    <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div>
-                </div>
-                <div class = "face-con">
-                    <p class = "info">证件反面照：</p>
-                    <div class = "img-not-uploaded-box">
-                        <div class = "img-not-uploaded"></div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- <div class = "con corp-id">
-                <p class = "info">选择法人：</p>
-                <RadioGroup v-model="superior" @on-change = "superiorChange">
-                    <Radio label="platform">
-                        <span>选择自己（默认）</span>
-                    </Radio>
-                    <Radio label="org">
-                        <span>新建法人</span>
-                    </Radio>
-                </RadioGroup>
-            </div> -->
             <footer>
                 <div class = "back" @click.stop.prevent = "backToPerson">上一步</div>
                 <div class = "next" @click = "toEditLegalPerson">下一步： 编辑法人信息</div>
@@ -94,7 +50,10 @@
             @on-ok     = "selectOrgShow = false"
             footer-hide
             class-name = "create-modal">
-            <join-in-org :JoinInOrgShow = "selectOrgShow" @chooseOrgBack = "chooseOrgBack" @superior-selected = "superiorSelected"></join-in-org>
+            <join-in-org 
+                :JoinInOrgShow = "selectOrgShow" 
+                @chooseOrgBack = "chooseOrgBack" 
+                @superior-selected = "superiorSelected" ></join-in-org>
         </Modal>
     </div>
 </template>
@@ -102,6 +61,7 @@
 // import { VueEditor } from "vue2-editor";
 import ImgUpload from '@/components/ImgUpload';
 import JoinInOrg from '@/components/JoinInOrg';
+// import CreateLegal from './CreateLegal';
 import {
     validateCName
 } from '@/libs/validate.js';
@@ -123,7 +83,11 @@ export default {
             corpModalTitle : '公司证照正面',
             corpUploadId : 'corpUploadId',
             selectedMerchant : '',
-            logoBase64Data : ''
+            logoBase64Data : '',
+            orgList : [],
+            page_index : 1,
+            page_size : 20,
+            total_pages : 1000,
             // content : '',
             // customToolbar: [
             //     ["bold", "italic", "underline"],
@@ -134,7 +98,7 @@ export default {
     },
     components : {
         ImgUpload,
-        JoinInOrg,
+        JoinInOrg
         // VueEditor
     },
     methods : {
@@ -145,25 +109,65 @@ export default {
             console.log(`selectedSuperior=${selectedSuperior}`);
             this.selectedMerchant = selectedSuperior
         },
+        pullup(page_index) {
+            // debugger
+            console.log(`this.page_index=${page_index}`)
+            // this.page_index = page_index;
+            // this.getOrg(false); 
+            getOrgList(baseUrl + '/trinity-backstage/organization/list',
+            {
+                'priority': 5,
+                'group'   : 0,
+                'data'    : {
+                    'page_index' :page_index,
+                    'page_size' : this.page_size
+                }
+            })
+            .then(res => {
+                console.log(res)
+                if(res.status && res.status == 200 && res.data.code == 0) {
+                    console.log("res.data:");
+                    console.log(res.data)
+                    let data = res.data.data;
+                    this.orgList = this.orgList.concat(data.organization_list);
+                }
+                else{
+                    this.$Message.error({
+                        content : '网络异常，请联系管理员及时处理',
+                        duration: 5,
+                        closable: true
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                this.$Message.error({
+                    content : '网络异常，请联系管理员及时处理',
+                    duration: 5,
+                    closable: true
+                })
+            })
+        },
         chooseOrgBack() {
             this.selectOrgShow = false;
         },
         //选择上级商户
         chooseUpper() {
-            this.selectOrgShow = true
-            // this.$emit('merchant-select-upper')
+            this.selectOrgShow = true;
+            // this.getOrg(true)
+            // // this.$emit('merchant-select-upper')
         },
         backToPerson() {
             this.$emit('back-to-person')
         },
         toEditLegalPerson() {
-            if(this.selectedMerchant.length == 0) {
-                this.$Notice.error({
-                    title: '您暂未选择任何上级组织',
-                    desc : '请先选择您的上级组织'
-                });
-                return false
-            }
+            // if(this.selectedMerchant.length == 0) {
+            //     this.$Notice.error({
+            //         title: '您暂未选择任何上级组织',
+            //         desc : '请先选择您的上级组织'
+            //     });
+            //     return false
+            // }
             if(this.logoBase64Data.length == 0) {
                 this.$Notice.error({
                     title: 'Logo照片暂未上传',
@@ -181,6 +185,14 @@ export default {
             if(this.des.replace(/s+/g,'').length > 0) {
                 console.log(`filterStr(this.des)=${filterStr(this.des)}`);
             }
+            this.$emit('to-legal',{
+                'selectedMerchant' : this.selectedMerchant,
+                'logoBase64Data' : this.logoBase64Data,
+                'corpBase64Data' : this.corpBase64Data,
+                'IDNumber' : this.IDNumber,
+                'corpName' : this.userName,
+                'des' : this.des
+            })
         },
         logoBase64(base64) {
             console.log('logoBase64_base64:');
