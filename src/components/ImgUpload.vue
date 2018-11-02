@@ -68,7 +68,7 @@
         },
         beforeHasData : {
             type : Boolean,
-            default : true
+            default : false
         },
         indentImg : {
             type : String,

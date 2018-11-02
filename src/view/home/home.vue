@@ -508,11 +508,13 @@ export default {
                 this.createPersonalInfoShow = true;
                 // this.$route.meta.showName = 'CreatePerson'
             }else {
-                this.JoinInOrgShow = true;
-                this.NoDataIndexShow = false;
-                this.createPersonalInfoShow = false;
-                this.createMerchantInfoShow = false;
-                this.createLegalShow        = false;
+                // this.JoinInOrgShow = true;
+                // this.NoDataIndexShow = false;
+                // this.createPersonalInfoShow = false;
+                // this.createMerchantInfoShow = false;
+                // this.createLegalShow        = false;
+                this.NoDataIndexShow        = false;
+                this.createPersonalInfoShow = true;
             }
         },
         chooseOrgBack() {
@@ -577,7 +579,20 @@ export default {
         }
         // this.$route.meta.showName = 'NoDataIndex'
         // this.$delete(this.$route.matched[0].components,'NoDataIndex')
-    },
+        'use strict';
+        var person = {
+            name : 'sss',
+            age : 18,
+            child : {
+                name : 'childP',
+                age : 2
+            }
+        };
+        console.log(Object.getOwnPropertyDescriptor(person,'child'));
+        console.log(Object.getOwnPropertyDescriptor(person,'name'))
+        console.log(Object.getOwnPropertyDescriptor(person,'dwjkhhjdwhdwa'));
+        console.log(Object.getOwnPropertyDescriptor(person,'age'));
+    }
 }
 </script>
 <style>

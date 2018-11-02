@@ -53,7 +53,7 @@
             <div class = "con corp-id">
                 <p class = "info">公司简要描述：</p>
                 <!-- <input type="text" v-model="IDNumber" class = "input" placeholder="请输入公司简要描述"  maxlength = "20"/> -->
-                <Input v-model="des" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入公司简要描述"/>
+                <Input v-model="des" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入公司简要描述(选填)" @on-keyup="des=des.replace(/[^\u4E00-\u9FA5|,|.]/g,'')"/>
                 <!-- <vue-editor v-model="content" @blur = "editorBlur" placeholder = "（选填）" :customToolbar = "customToolbar"></vue-editor> -->
             </div>
             <!-- <div class = "id-con">
@@ -105,6 +105,9 @@ import JoinInOrg from '@/components/JoinInOrg';
 import {
     validateCName
 } from '@/libs/validate.js';
+import {
+    filterStr
+} from '@/libs/filter.js';
 export default {
     name: 'CreatePerson',
     data() {
@@ -120,6 +123,7 @@ export default {
             corpModalTitle : '公司证照正面',
             corpUploadId : 'corpUploadId',
             selectedMerchant : '',
+            logoBase64Data : ''
             // content : '',
             // customToolbar: [
             //     ["bold", "italic", "underline"],
@@ -135,7 +139,7 @@ export default {
     },
     methods : {
         editorBlur(){
-            console.log(this.content)
+            console.log(this.content);
         },
         superiorSelected(selectedSuperior){
             console.log(`selectedSuperior=${selectedSuperior}`);
@@ -153,7 +157,30 @@ export default {
             this.$emit('back-to-person')
         },
         toEditLegalPerson() {
-            this.$emit('to-legal')
+            if(this.selectedMerchant.length == 0) {
+                this.$Notice.error({
+                    title: '您暂未选择任何上级组织',
+                    desc : '请先选择您的上级组织'
+                });
+                return false
+            }
+            if(this.logoBase64Data.length == 0) {
+                this.$Notice.error({
+                    title: 'Logo照片暂未上传',
+                    desc : '请先上传Logo照片'
+                });
+                return false
+            }
+            if(this.corpBase64Data.length == 0) {
+                this.$Notice.error({
+                    title: '公司营业执照照片暂未上传',
+                    desc : '请先上传公司营业执照照片'
+                });
+                return false
+            }
+            if(this.des.replace(/s+/g,'').length > 0) {
+                console.log(`filterStr(this.des)=${filterStr(this.des)}`);
+            }
         },
         logoBase64(base64) {
             console.log('logoBase64_base64:');
