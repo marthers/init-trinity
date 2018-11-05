@@ -9,8 +9,8 @@
                 </div>
             </header>
             <div class = "first">
-                <span v-if = "selectedMerchant.length > 0">
-                    您已经选择{{selectedMerchant}}。
+                <span v-if = "selectedMerchant.organization_name && selectedMerchant.organization_name.length > 0">
+                    您已经选择{{selectedMerchant.organization_name}}。
                 </span>
                 <span v-else>若已有上级商户，请选择您的上级商户。</span>
                 <span class = "choose" @click = "chooseUpper">点此选择您的上级商户</span>
@@ -52,7 +52,9 @@
             class-name = "create-modal">
             <join-in-org 
                 :JoinInOrgShow = "selectOrgShow" 
+                :orgList = "orgList"
                 @chooseOrgBack = "chooseOrgBack" 
+                :total_pages = "total_pages"
                 @superior-selected = "superiorSelected" ></join-in-org>
         </Modal>
     </div>
@@ -68,6 +70,9 @@ import {
 import {
     filterStr
 } from '@/libs/filter.js';
+import {getOrgList} from '@/api/org/org.js';
+import baseConfig from '@/config/index';
+const baseUrl = baseConfig.baseUrl.devHost;
 export default {
     name: 'CreatePerson',
     data() {
@@ -82,7 +87,7 @@ export default {
             corpBase64Data : '',//公司证照正面,
             corpModalTitle : '公司证照正面',
             corpUploadId : 'corpUploadId',
-            selectedMerchant : '',
+            selectedMerchant : {},
             logoBase64Data : '',
             orgList : [],
             page_index : 1,
@@ -156,6 +161,45 @@ export default {
             this.selectOrgShow = true;
             // this.getOrg(true)
             // // this.$emit('merchant-select-upper')
+            this.$nextTick(() => {
+                getOrgList(baseUrl + '/trinity-backstage/organization/list',
+                {
+                    'priority': 5,
+                    'group'   : 0,
+                    'data'    : {
+                        'page_index' :1,
+                        'page_size' : 20
+                    }
+                })
+                .then(res => {
+                    console.log(res)
+                    if(res.status && res.status == 200 && res.data.code == 0) {
+                        console.log("res.data:");
+                        console.log(res.data)
+                        let data = res.data.data;
+                        // this.orgList = Object.assign({},data.organization_list);
+                        this.orgList = data.organization_list
+                        // this.$refs.scrollWrapper.getPosition();
+                        // this.$refs.scrollWrapper.resize();
+                        this.total_pages = data.page.total_pages
+                    }
+                    else{
+                        this.$Message.error({
+                            content : '网络异常，请联系管理员及时处理',
+                            duration: 5,
+                            closable: true
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.$Message.error({
+                        content : '网络异常，请联系管理员及时处理',
+                        duration: 5,
+                        closable: true
+                    })
+                })
+            })
         },
         backToPerson() {
             this.$emit('back-to-person')
@@ -186,7 +230,7 @@ export default {
                 console.log(`filterStr(this.des)=${filterStr(this.des)}`);
             }
             this.$emit('to-legal',{
-                'selectedMerchant' : this.selectedMerchant,
+                'selectedMerchant' : JSON.stringify(this.selectedMerchant),
                 'logoBase64Data' : this.logoBase64Data,
                 'corpBase64Data' : this.corpBase64Data,
                 'IDNumber' : this.IDNumber,

@@ -34,17 +34,17 @@ export default [
         //     home : () => import('@/view/home/home')
         // }
     },
-    // {
-    //     path: '/abc',
-    //     name: 'abc',
-    //     meta: {
-    //         title     : 'Login - 登录',
-    //         hideInMenu: true
-    //     },
-    //     component: () => import('@/view/login/abc')
-    //     // components : {
-    //     //     default : () => import('@/view/login/login'),
-    //     //     home : () => import('@/view/home/home')
-    //     // }
-    // }
+    {
+        path: '/abc',
+        name: 'abc',
+        meta: {
+            title     : 'Login - 登录',
+            hideInMenu: true
+        },
+        component: () => import('@/view/login/abc')
+        // components : {
+        //     default : () => import('@/view/login/login'),
+        //     home : () => import('@/view/home/home')
+        // }
+    }
 ]

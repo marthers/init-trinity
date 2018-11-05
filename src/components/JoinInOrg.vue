@@ -41,6 +41,9 @@
 import {getOrgList} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
 const baseUrl = baseConfig.baseUrl.devHost;
+import {
+    filterStr
+} from '@/libs/filter.js';
   export default {
     data() {
       return {
@@ -48,10 +51,10 @@ const baseUrl = baseConfig.baseUrl.devHost;
             onlyChooseOrg : false,
             selectedIndex : -1,
             searchContent : '',
-            orgList : [],
+            // orgList : [],
             page_index : 1,
             page_size : 20,
-            total_pages : 0
+            // total_pages : 100
       }
     },
     props : {
@@ -59,37 +62,30 @@ const baseUrl = baseConfig.baseUrl.devHost;
             type : Boolean,
             default : false
         },
-        // orgList : {
-        //     type : [Object,Array],
-        //     default : () => {
-        //         return []
-        //     }
-        // },
+        orgList : {
+            type : [Object,Array],
+            default : () => {
+                return []
+            }
+        },
         // page_index : {
         //     type : Number,
         //     default : 1
         // },
-        // total_pages : {
-        //     type : Number,
-        //     default : 10000
-        // }
+        total_pages : {
+            type : Number,
+            default : 10000
+        }
     },
     methods: {
         pullup () {
             console.log(`this.total_pages=${this.total_pages}`);
+            console.log(`this.page_index =${this.page_index }`)
             console.log(this.$refs.scrollWrapper);
             if(this.page_index < this.total_pages) {
-                // debugger
-                // debugger
                 console.log(`this.page_index=${this.page_index}`)
-                ++this.page_index
-                // debugger
+                this.page_index++
                 console.log(`this.page_index=${this.page_index}`)
-                // debugger
-                // if(this.page_index > 1) {
-                //     this.$emit('pullup',this.page_index);
-                // }
-                // this.$refs.scrollWrapper.resize()
                 let self = this
                 this.$nextTick(() => {
                     getOrgList(baseUrl + '/trinity-backstage/organization/list',
@@ -107,13 +103,10 @@ const baseUrl = baseConfig.baseUrl.devHost;
                             console.log("res.data:");
                             console.log(res.data)
                             let data = res.data.data;
+                            console.log("this.orgList:")
+                            console.log(this.orgList)
                             self.orgList = self.orgList.concat(data.organization_list);
-                            // data.organization_list.forEach((item,index) => {
-                            //     this.orgList.push(item)
-                            // })
-                            // this.orgList = Object.assign({},this.orgList.concat(data.organization_list));
-                            // this.$refs.scrollWrapper.finishInfinite(false)
-                            // this.total_pages = data.page.total_pages
+                            this.$refs.scrollWrapper.finishInfinite(true);
                         }
                         else{
                             this.$Message.error({
@@ -140,9 +133,99 @@ const baseUrl = baseConfig.baseUrl.devHost;
         },
         pulldown () {
             console.log(this.$refs.scrollWrapper);
+            this.page_index = 1;
+            getOrgList(baseUrl + '/trinity-backstage/organization/list',
+            {
+                'priority': 5,
+                'group'   : 0,
+                'data'    : {
+                    'page_index' :this.page_index,
+                    'page_size' : this.page_size
+                }
+            })
+            .then(res => {
+                console.log(res)
+                if(res.status && res.status == 200 && res.data.code == 0) {
+                    // this.$refs.scrollWrapper.triggerPullToRefresh()
+                    console.log("res.data:");
+                    console.log(res.data)
+                    let data = res.data.data;
+                    console.log("this.orgList:")
+                    console.log(this.orgList)
+                    self.orgList = data.organization_list
+                    // this.$refs.scrollWrapper.finishInfinite(false);
+                    setTimeout(() => {
+                        this.$refs.scrollWrapper.finishPullToRefresh();
+                    },200)
+                }
+                else{
+                    this.$Message.error({
+                        content : '网络异常，请联系管理员及时处理',
+                        duration: 5,
+                        closable: true
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                this.$Message.error({
+                    content : '网络异常，请联系管理员及时处理',
+                    duration: 5,
+                    closable: true
+                })
+            })
         },
         searchEnter() {
-            console.log(`this.searchContent=${this.searchContent}`)
+            this.searchContent = filterStr(this.searchContent).replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/\s/g,'');
+            console.log(`this.searchContent=${this.searchContent}`);
+            let filters = [{
+                'key' : 'organizationName',
+                'operator' : ':',
+                'value' : this.searchContent,
+                'join'  : 'and'
+            }];
+            getOrgList(baseUrl + '/trinity-backstage/organization/list',
+            {
+                'priority': 5,
+                'group'   : 0,
+                'data'    : {
+                    'page_index' :1,
+                    'page_size' : this.page_size,
+                    'filters' : filters
+                }
+            })
+            .then(res => {
+                console.log(res)
+                if(res.status && res.status == 200 && res.data.code == 0) {
+                    // this.$refs.scrollWrapper.triggerPullToRefresh()
+                    console.log("res.data:");
+                    console.log(res.data)
+                    let data = res.data.data;
+                    console.log("this.orgList:")
+                    console.log(this.orgList)
+                    this.orgList = []
+                    this.orgList = data.organization_list
+                    // this.$refs.scrollWrapper.finishInfinite(false);
+                    // setTimeout(() => {
+                    //     this.$refs.scrollWrapper.finishPullToRefresh();
+                    // },200)
+                }
+                else{
+                    this.$Message.error({
+                        content : '网络异常，请联系管理员及时处理',
+                        duration: 5,
+                        closable: true
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                this.$Message.error({
+                    content : '网络异常，请联系管理员及时处理',
+                    duration: 5,
+                    closable: true
+                })
+            })
         },
         backToIndex() {
             this.$emit('chooseOrgBack')
@@ -151,12 +234,13 @@ const baseUrl = baseConfig.baseUrl.devHost;
         },
         submitChoose() {
             console.log(`this.selectedIndex=${this.selectedIndex}`);
+            console.log(this.orgList)
             if(this.selectedIndex != -1) {
-                this.$emit('superior-selected',this.orgList[this.selectedIndex].name)
+                this.$emit('superior-selected',this.orgList[this.selectedIndex]);
             }
             this.selectedIndex = -1;
-            this.searchContent = ''
-            this.$emit('chooseOrgBack')
+            this.searchContent = '';
+            this.$emit('chooseOrgBack');
         }
     },
     components : {
@@ -173,50 +257,28 @@ const baseUrl = baseConfig.baseUrl.devHost;
             this.title = '选择加入商户（平台、大商户、商户所有'
         };
         // setTimeout(() => {
-        //     // if(this.JoinInOrgShow) {
-        //         // this.$nextTick(() => {
-        //             getOrgList(baseUrl + '/trinity-backstage/organization/list',
-        //             {
-        //                 'priority': 5,
-        //                 'group'   : 0,
-        //                 'data'    : {
-        //                     'page_index' :1,
-        //                     'page_size' : 20
-        //                 }
-        //             })
-        //             .then(res => {
-        //                 console.log(res)
-        //                 if(res.status && res.status == 200 && res.data.code == 0) {
-        //                     console.log("res.data:");
-        //                     console.log(res.data)
-        //                     let data = res.data.data;
-        //                     this.orgList = Object.assign({},data.organization_list);
-        //                     // this.$refs.scrollWrapper.getPosition();
-        //                     // this.$refs.scrollWrapper.resize();
-        //                     this.total_pages = data.page.total_pages
-        //                 }
-        //                 else{
-        //                     this.$Message.error({
-        //                         content : '网络异常，请联系管理员及时处理',
-        //                         duration: 5,
-        //                         closable: true
-        //                     })
-        //                 }
-        //             })
-        //             .catch(err => {
-        //                 console.log(err);
-        //                 this.$Message.error({
-        //                     content : '网络异常，请联系管理员及时处理',
-        //                     duration: 5,
-        //                     closable: true
-        //                 })
-        //             })
-        //         // })
-        //     // }
+            // if(this.JoinInOrgShow) {
+            // }
         // },1000)
     }
   }
 </script>
+
+<style lang = "scss" scoped>
+$oneWidth: 10px;
+$twoWidth: 40px;
+ 
+@function widthFn($n) {
+  @return $n * $twoWidth + ($n - 1) * $oneWidth;
+}
+ 
+.func { 
+	width: widthFn(5);
+    height : widthFn(6);
+    background : blueviolet;
+}
+</style>
+
 <style lang = "less" scoped>
 .orgs-con {
     width : 100%;
