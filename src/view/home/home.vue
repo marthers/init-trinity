@@ -95,7 +95,7 @@
                 <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
                 <!-- <create-person v-if = "$route.meta.showName != 'NoDataIndex'" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person> -->
                 
-                <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper"></create-merchant>
+                <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper" @selectedSuperior = "selectedSuperior"></create-merchant>
                 
                 <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal> 
 
@@ -125,6 +125,7 @@ import CreatePerson from '@/view/noData/create/CreatePerson';
 import CreateMerchant from '@/view/noData/create/CreateMerchant';
 import CreateLegal from '@/view/noData/create/CreateLegal';
 import JoinInOrg from '@/components/JoinInOrg';
+import {getOrgDetail} from '@/api/login.js';
 export default {
     data() {
         return {
@@ -159,6 +160,7 @@ export default {
                     name: '概况5'
                 }
             ],
+            seletedUpper : {},
             menuList : [
                 {
                     menuTitle: '概况',
@@ -560,6 +562,7 @@ export default {
             this.createLegalShow        = false;
             let reqData = {}
             if(legalData.is_select_me > 0) {
+                console.log(`this.merchantData.id_organization=${this.merchantData.id_organization}`);
                 reqData = {
                     'is_select_me' : legalData.is_select_me,
                     'logo' : this.merchantData.logoBase64Data,
@@ -567,7 +570,8 @@ export default {
                     'organization_num' : this.merchantData.IDNumber,
                     'organization_license_up' : this.merchantData.corpBase64Data,
                     'organization_desc' : this.merchantData.des ? this.merchantData.des : '',
-                    'parent_id_organization' : this.merchantData.id_organization
+                    // 'parent_id_organization' : this.merchantData.id_organization ? this.merchantData.id_organization : 1
+                    'parent_id_organization' : this.selectedUpper.id_organization ? this.selectedUpper.id_organization : 1
                 }
             }
             orgEdit(localOrgHost + '/trinity-backstage/organization/edit_info',
@@ -583,7 +587,25 @@ export default {
             .then(res => {
                 console.log(res)
                 if(res.status&& res.status == 200) {
-                    debugger
+                    console.log(res.data)
+                    localStorage.setItem('Trinity-Token',res.data.data.token)
+                    getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization',
+                    {
+                        'Content-Type'    : 'application/json; charset=utf-8',
+                        'Trinity-Token'   : res.data.data.token,
+                        'Request-Datatime': new Date().getTime()
+                    })
+                    .then (res => {
+                        console.log(res);
+                    })
+                    .catch(err => {
+                    console.log(err)
+                    this.$Message.error({
+                        content : err.msg ? err.msg :'网络错误',
+                        duration: 5,
+                        closable: true
+                    });
+                    })
                 }else {
                     this.$Message.error({
                         content : res.msg ? res.msg :'网络异常，请联系管理员及时处理',
@@ -618,6 +640,9 @@ export default {
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
             this.createLegalShow        = false;
+        },
+        selectedSuperior(data) {
+            this.seletedUpper = data
         }
     },
     created () {
@@ -642,6 +667,7 @@ export default {
         console.log(Object.getOwnPropertyDescriptor(person,'name'))
         console.log(Object.getOwnPropertyDescriptor(person,'dwjkhhjdwhdwa'));
         console.log(Object.getOwnPropertyDescriptor(person,'age'));
+        // localStorage.clear();
     }
 }
 </script>

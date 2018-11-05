@@ -7,9 +7,10 @@ export const getDragList = () => {
     method: 'get'
   })
 }
-export const getOrgDetail = url => {
+export const getOrgDetail = (url,headers) => {
   return axios.request({
     url : url,
+    headers : headers,
     method : 'post'
   })
 }

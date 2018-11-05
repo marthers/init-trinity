@@ -112,7 +112,8 @@ export default {
         },
         superiorSelected(selectedSuperior){
             console.log(selectedSuperior);
-            this.selectedMerchant = selectedSuperior
+            this.selectedMerchant = selectedSuperior;
+            this.$emit('selectedSuperior',selectedSuperior)
         },
         pullup(page_index) {
             // debugger
