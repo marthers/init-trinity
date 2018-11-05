@@ -25,7 +25,7 @@
             <div class = "list-con">
                 <div :class = "[index%2 == 0 ? 'single' : 'double',selectedIndex == index ? 'selected' : 'not-selected' ,'item-con']" v-for = "(item,index) in orgList" :key = "index" @click.stop.prevent = "selectedIndex = index">
                     {{
-                        item.organization_name
+                        item.organizationName
                     }}
                 </div>
             </div>
@@ -40,7 +40,7 @@
 <script>
 import {getOrgList} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
-const baseUrl = baseConfig.baseUrl.devHost;
+const baseUrl = baseConfig.baseUrl.localOrgHost;
 import {
     filterStr
 } from '@/libs/filter.js';
@@ -83,8 +83,8 @@ import {
             console.log(`this.page_index =${this.page_index }`)
             console.log(this.$refs.scrollWrapper);
             if(this.page_index < this.total_pages) {
+                ++this.page_index
                 console.log(`this.page_index=${this.page_index}`)
-                this.page_index++
                 console.log(`this.page_index=${this.page_index}`)
                 let self = this
                 this.$nextTick(() => {
@@ -106,7 +106,7 @@ import {
                             console.log("this.orgList:")
                             console.log(this.orgList)
                             self.orgList = self.orgList.concat(data.organization_list);
-                            this.$refs.scrollWrapper.finishInfinite(true);
+                            self.$refs.scrollWrapper.finishInfinite(false);
                         }
                         else{
                             this.$Message.error({
@@ -134,6 +134,7 @@ import {
         pulldown () {
             console.log(this.$refs.scrollWrapper);
             this.page_index = 1;
+            let self = this
             getOrgList(baseUrl + '/trinity-backstage/organization/list',
             {
                 'priority': 5,
@@ -153,7 +154,7 @@ import {
                     console.log("this.orgList:")
                     console.log(this.orgList)
                     self.orgList = data.organization_list
-                    // this.$refs.scrollWrapper.finishInfinite(false);
+                    this.$refs.scrollWrapper.finishInfinite(false);
                     setTimeout(() => {
                         this.$refs.scrollWrapper.finishPullToRefresh();
                     },200)
@@ -184,48 +185,48 @@ import {
                 'value' : this.searchContent,
                 'join'  : 'and'
             }];
-            getOrgList(baseUrl + '/trinity-backstage/organization/list',
-            {
-                'priority': 5,
-                'group'   : 0,
-                'data'    : {
-                    'page_index' :1,
-                    'page_size' : this.page_size,
-                    'filters' : filters
-                }
-            })
-            .then(res => {
-                console.log(res)
-                if(res.status && res.status == 200 && res.data.code == 0) {
-                    // this.$refs.scrollWrapper.triggerPullToRefresh()
-                    console.log("res.data:");
-                    console.log(res.data)
-                    let data = res.data.data;
-                    console.log("this.orgList:")
-                    console.log(this.orgList)
-                    this.orgList = []
-                    this.orgList = data.organization_list
-                    // this.$refs.scrollWrapper.finishInfinite(false);
-                    // setTimeout(() => {
-                    //     this.$refs.scrollWrapper.finishPullToRefresh();
-                    // },200)
-                }
-                else{
-                    this.$Message.error({
-                        content : '网络异常，请联系管理员及时处理',
-                        duration: 5,
-                        closable: true
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                this.$Message.error({
-                    content : '网络异常，请联系管理员及时处理',
-                    duration: 5,
-                    closable: true
-                })
-            })
+            // getOrgList(baseUrl + '/trinity-backstage/organization/list',
+            // {
+            //     'priority': 5,
+            //     'group'   : 0,
+            //     'data'    : {
+            //         'page_index' :1,
+            //         'page_size' : this.page_size,
+            //         'filters' : filters
+            //     }
+            // })
+            // .then(res => {
+            //     console.log(res)
+            //     if(res.status && res.status == 200 && res.data.code == 0) {
+            //         // this.$refs.scrollWrapper.triggerPullToRefresh()
+            //         console.log("res.data:");
+            //         console.log(res.data)
+            //         let data = res.data.data;
+            //         console.log("this.orgList:")
+            //         console.log(this.orgList)
+            //         this.orgList = []
+            //         this.orgList = data.organization_list
+            //         // this.$refs.scrollWrapper.finishInfinite(false);
+            //         setTimeout(() => {
+            //             this.$refs.scrollWrapper.finishPullToRefresh();
+            //         },200)
+            //     }
+            //     else{
+            //         this.$Message.error({
+            //             content : '网络异常，请联系管理员及时处理',
+            //             duration: 5,
+            //             closable: true
+            //         })
+            //     }
+            // })
+            // .catch(err => {
+            //     console.log(err);
+            //     this.$Message.error({
+            //         content : '网络异常，请联系管理员及时处理',
+            //         duration: 5,
+            //         closable: true
+            //     })
+            // })
         },
         backToIndex() {
             this.$emit('chooseOrgBack')
@@ -256,28 +257,9 @@ import {
         }else{
             this.title = '选择加入商户（平台、大商户、商户所有'
         };
-        // setTimeout(() => {
-            // if(this.JoinInOrgShow) {
-            // }
-        // },1000)
     }
   }
 </script>
-
-<style lang = "scss" scoped>
-$oneWidth: 10px;
-$twoWidth: 40px;
- 
-@function widthFn($n) {
-  @return $n * $twoWidth + ($n - 1) * $oneWidth;
-}
- 
-.func { 
-	width: widthFn(5);
-    height : widthFn(6);
-    background : blueviolet;
-}
-</style>
 
 <style lang = "less" scoped>
 .orgs-con {

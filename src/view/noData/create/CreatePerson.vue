@@ -63,7 +63,7 @@ import {
 } from '@/libs/validate.js';
 import {UserInfoEdit} from '@/api/user.js';
 import baseConfig from '@/config/index';
-const baseUrl = baseConfig.baseUrl.devHost;
+const baseUrl = baseConfig.baseUrl.localOrgHost;
 export default {
     name: 'CreatePerson',
     data() {

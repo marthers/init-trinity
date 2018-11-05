@@ -9,10 +9,10 @@
                 </div>
             </header>
             <div class = "first">
-                <span v-if = "selectedMerchant.organization_name && selectedMerchant.organization_name.length > 0">
-                    您已经选择{{selectedMerchant.organization_name}}。
+                <span v-show = "selectedMerchant.organizationName && selectedMerchant.organizationName.length > 0">
+                    您已经选择{{selectedMerchant.organizationName}}。
                 </span>
-                <span v-else>若已有上级商户，请选择您的上级商户。</span>
+                <span v-show = "!selectedMerchant.organizationName">若已有上级商户，请选择您的上级商户。</span>
                 <span class = "choose" @click = "chooseUpper">点此选择您的上级商户</span>
             </div>
             <div class = "id-con">
@@ -52,7 +52,7 @@
             class-name = "create-modal">
             <join-in-org 
                 :JoinInOrgShow = "selectOrgShow" 
-                :orgList = "orgList"
+                :orgList.sync = "orgList"
                 @chooseOrgBack = "chooseOrgBack" 
                 :total_pages = "total_pages"
                 @superior-selected = "superiorSelected" ></join-in-org>
@@ -72,7 +72,7 @@ import {
 } from '@/libs/filter.js';
 import {getOrgList} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
-const baseUrl = baseConfig.baseUrl.devHost;
+const baseUrl = baseConfig.baseUrl.localOrgHost;
 export default {
     name: 'CreatePerson',
     data() {
@@ -111,7 +111,7 @@ export default {
             console.log(this.content);
         },
         superiorSelected(selectedSuperior){
-            console.log(`selectedSuperior=${selectedSuperior}`);
+            console.log(selectedSuperior);
             this.selectedMerchant = selectedSuperior
         },
         pullup(page_index) {
@@ -158,7 +158,6 @@ export default {
         },
         //选择上级商户
         chooseUpper() {
-            this.selectOrgShow = true;
             // this.getOrg(true)
             // // this.$emit('merchant-select-upper')
             this.$nextTick(() => {
@@ -177,11 +176,11 @@ export default {
                         console.log("res.data:");
                         console.log(res.data)
                         let data = res.data.data;
-                        // this.orgList = Object.assign({},data.organization_list);
                         this.orgList = data.organization_list
-                        // this.$refs.scrollWrapper.getPosition();
-                        // this.$refs.scrollWrapper.resize();
-                        this.total_pages = data.page.total_pages
+                        this.total_pages = data.page.total_pages;
+                        // setTimeout(() => {
+                            this.selectOrgShow = true;
+                        // },500)                    
                     }
                     else{
                         this.$Message.error({

@@ -15,7 +15,7 @@ export default {
   baseUrl: {
     // dev: 'http://39.104.203.178:8090/pages/viewpage.action?pageId=327726',
     dev    : 'http://192.168.50.154:8090/trinity-backstage-account/',
-    devHost: 'http://192.168.50.154:8091',
+    localOrgHost: 'http://192.168.50.154:8091',
     pro    : 'https://produce.com'
   },
   /**

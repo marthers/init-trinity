@@ -119,6 +119,7 @@ import {signOut} from '@/api/user.js';
 import {orgEdit} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
 const baseUrl = baseConfig.baseUrl.dev;
+const localOrgHost = baseConfig.baseUrl.localOrgHost
 import NoDataIndex from '@/view/noData/index';
 import CreatePerson from '@/view/noData/create/CreatePerson';
 import CreateMerchant from '@/view/noData/create/CreateMerchant';
@@ -566,10 +567,10 @@ export default {
                     'organization_num' : this.merchantData.IDNumber,
                     'organization_license_up' : this.merchantData.corpBase64Data,
                     'organization_desc' : this.merchantData.des ? this.merchantData.des : '',
-                    'parent_id_organization' : this.merchantData.selectedMerchant
+                    'parent_id_organization' : this.merchantData.id_organization
                 }
             }
-            orgEdit('http://192.168.50.154:8091/trinity-backstage/organization/edit_info',
+            orgEdit(localOrgHost + '/trinity-backstage/organization/edit_info',
                 {
                     'priority': 5,
                     'group'   : 0,
@@ -581,9 +582,23 @@ export default {
             )
             .then(res => {
                 console.log(res)
+                if(res.status&& res.status == 200) {
+                    debugger
+                }else {
+                    this.$Message.error({
+                        content : res.msg ? res.msg :'网络异常，请联系管理员及时处理',
+                        duration: 5,
+                        closable: true
+                    })
+                }
             })
             .catch(err => {
-                console.log(err)
+                console.log(err);
+                this.$Message.error({
+                    content : '网络异常，请联系管理员及时处理',
+                    duration: 5,
+                    closable: true
+                })
             })
             console.log("reqData:")
             console.log(reqData)

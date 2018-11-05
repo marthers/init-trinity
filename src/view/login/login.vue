@@ -174,6 +174,7 @@ import { mapActions } from 'vuex';
 const TIME_COUNT = 60;
 import {_debounce,_throttle} from './../../libs/debounce';
 import {uuid} from './../../libs/uuid';
+import {getOrgDetail} from '@/api/login.js';
 export default {
   components: {
     // LoginForm,
@@ -299,7 +300,7 @@ export default {
         //账号密码登录合法
         if (validateMobilephone(this.userName)) {
           console.log(`this.$refs.loginPassword.value=${this.$refs.loginPassword.value}`);
-          if (this.rememberedPasswordIsChanged) {
+          if (!this.rememberedPasswordIsChanged) {
               if (!validatePassword(this.$refs.loginPassword.value)) {
                 this.$Message.error({
                 content : '密码不正确，须输入8-16位数字字母',
@@ -377,9 +378,24 @@ export default {
                         desc    : '欢迎进入Trinity Tech Saas',
                         duration: 6
                     });
+                    if(resData.fid_organization != 0) {
+                      console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
+                      getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                      .then (res => {
+                          console.log(res);
+                      })
+                      .catch(err => {
+                        console.log(err)
+                        this.$Message.error({
+                            content : err.msg ? err.msg :'网络错误',
+                            duration: 5,
+                            closable: true
+                        });
+                      })
+                    }
                     this.$router.push({
-                    name  : 'home',
-                    params: resData
+                      name  : 'home',
+                      params: resData
                     });
                 }
                 else {
@@ -529,6 +545,21 @@ export default {
                             localStorage.setItem('userPhone',resData.user_info.phone)
                         }
                         localStorage.setItem('fid_organization',resData.fid_organization);
+                        if(resData.fid_organization != 0) {
+                          console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
+                          getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                          .then (res => {
+                              console.log(res);
+                          })
+                          .catch(err => {
+                            console.log(err)
+                            this.$Message.error({
+                                content : err.msg ? err.msg :'网络错误',
+                                duration: 5,
+                                closable: true
+                            });
+                          })
+                        }
                         localStorage.setItem('organization_level',resData.organization_level);
                         localStorage.setItem('permission',resData.permission);
                         if(!this.notRemember) {
@@ -947,6 +978,21 @@ export default {
                                 localStorage.setItem('userPhone',resData.user_info.phone)
                             }
                             localStorage.setItem('fid_organization',resData.fid_organization);
+                            if(resData.fid_organization != 0) {
+                              console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
+                              getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                              .then (res => {
+                                  console.log(res);
+                              })
+                              .catch(err => {
+                                console.log(err)
+                                this.$Message.error({
+                                    content : err.msg ? err.msg :'网络错误',
+                                    duration: 5,
+                                    closable: true
+                                });
+                              })
+                            }
                             localStorage.setItem('organization_level',resData.organization_level);
                             localStorage.setItem('permission',resData.permission);
                             if(!this.notRemember) {
@@ -1111,6 +1157,21 @@ export default {
                             localStorage.setItem('userPhone',resData.user_info.phone)
                         }
                         localStorage.setItem('fid_organization',resData.fid_organization);
+                        if(resData.fid_organization != 0) {
+                          console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
+                          getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                          .then (res => {
+                              console.log(res);
+                          })
+                          .catch(err => {
+                            console.log(err)
+                            this.$Message.error({
+                                content : err.msg ? err.msg :'网络错误',
+                                duration: 5,
+                                closable: true
+                            });
+                          })
+                        }
                         localStorage.setItem('organization_level',resData.organization_level);
                         localStorage.setItem('permission',resData.permission);
                         if(!this.notRemember) {
@@ -1438,18 +1499,28 @@ export default {
       }
     },200)
   },
+  created() {
+    // if(localStorage.getItem('rememberPassword') != null) {
+    //   this.notRemember = !localStorage.getItem('rememberPassword')
+    // }else{
+    //   this.notRemember = true
+    // }
+  },
   mounted() {
     this.$Message.config({
         top     : 389,
         duration: 3
     });
-    if(!this.notRemember) {
+    // if(!this.notRemember) {
         // debugger
         if(localStorage.getItem('password') != null) {
             this.password = localStorage.getItem('password')
+            this.notRemember = !localStorage.getItem('rememberPassword')
+        }else {
+            this.notRemember = true
         }
-        this.rememberedPasswordIsChanged = true
-    }
+        this.rememberedPasswordIsChanged = localStorage.getItem('rememberPassword') != null ? localStorage.getItem('rememberPassword') : false
+    // }
     console.log(`process.env.NODE_ENV=${process.env.NODE_ENV}`)
   }
 }
