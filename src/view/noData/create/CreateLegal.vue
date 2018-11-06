@@ -100,13 +100,15 @@ export default {
                 })
             }
             else {
-                this.$emit('submit-create',{
+                let o = {
                     'is_select_me' : 0,
                     'corporate_name' : this.userName,
                     'corporate_ident' : this.IDNumber,
                     'corporate_card_up' : this.corporate_card_up,
                     'corporate_card_down' : this.versoLegalBase64Data
-                })
+                }
+                console.log(o)
+                this.$emit('submit-create',o)
             }
         },
         radioChange() {

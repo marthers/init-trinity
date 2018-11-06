@@ -1,11 +1,16 @@
 <template>
-    <div class = "scss-func">
+    <div class = "my-org">
         <div class = "child"></div>
     </div>
 </template>
 <script>
   export default {
-      
+      name : 'MyOrg',
+      data() {
+          return {
+              
+          }
+      }
   }
 </script>
 <style lang = "scss" scoped>
@@ -15,7 +20,7 @@
 @function vw($width) {
     @return ($width/1920*100) + vw;
 }
-.scss-func{
+.my-org{
     width : vw(1440);
     height : vh(272);
     background:rgba(255,255,255,1);

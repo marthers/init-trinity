@@ -6,6 +6,7 @@ export default [
         components : {
             default : () => import('@/view/home/home'),
             // NoDataIndex : () => import('@/view/noData')
+            // MyOrg : () => import('@/view/myOrg/MyOrg')
         },
         meta : {
             // NoDataIndex : true,
@@ -18,7 +19,12 @@ export default [
                 name : 'NoDataIndex',
                 path : 'NoDataIndex',
                 component : () => import('@/view/noData')
-            }
+            },
+            // {
+            //     name : 'MyOrg',
+            //     path : 'MyOrg',
+            //     component : () => import('@/view/myOrg/MyOrg')
+            // }
         ]
     },
     {

@@ -68,7 +68,7 @@
         </vue-password>
         <div v-else class = "login-get-verify">
             <!-- <Input v-model="loginVerify" placeholder="请输入验证码" number autofocus :maxlength="11" class = "login-verify"/> -->
-            <input type="text" v-model="loginVerify" @input="num = $event.target.value.replace(/[^\d]/g,'');$event.target.value = num" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
+            <input type="text" v-model="loginVerify" @input="loginVerify = loginVerify.replace(/[^\d]/g,'')" class = "login-verify" placeholder="请输入验证码"  maxlength = "6"/>
             <a :class = "[ countDown ? 'count-down-button' : '','get-login-verify-button']" @click="getVerify">
               {{
                 getVerifyCode
@@ -301,14 +301,14 @@ export default {
         if (validateMobilephone(this.userName)) {
           console.log(`this.$refs.loginPassword.value=${this.$refs.loginPassword.value}`);
           if (!this.rememberedPasswordIsChanged) {
-              if (!validatePassword(this.$refs.loginPassword.value)) {
-                this.$Message.error({
-                content : '密码不正确，须输入8-16位数字字母',
-                duration: 5,
-                closable: true
-                });
-                return false
-              }
+              // if (!validatePassword(this.$refs.loginPassword.value)) {
+              //   this.$Message.error({
+              //   content : '密码不正确，须输入8-16位数字字母',
+              //   duration: 5,
+              //   closable: true
+              //   });
+              //   return false
+              // }
           }
           
         console.log('baseConfig:')
@@ -379,10 +379,37 @@ export default {
                         duration: 6
                     });
                     if(resData.fid_organization != 0) {
-                      console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
-                      getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                      console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/detail')
+                      getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/detail')
                       .then (res => {
+                          // debugger
                           console.log(res);
+                          if(res.status && res.status == 200) {
+                            // debugger
+                            if(res.data.success && res.data.code == 0) {
+                              if(res.data.data) {
+                                // debugger;
+                                let data = res.data.data;
+                                // for(let item in data) {
+                                localStorage.setItem('org_detail_obj' , JSON.stringify(data))
+                                // }
+                                // debugger
+                              }
+                            }else {
+                              this.$Message.error({
+                                  content : err.msg ? err.msg :'网络错误',
+                                  duration: 5,
+                                  closable: true
+                              });
+                            }
+                          }
+                          else {
+                            this.$Message.error({
+                                content : err.msg ? err.msg :'网络错误',
+                                duration: 5,
+                                closable: true
+                            });
+                          }
                       })
                       .catch(err => {
                         console.log(err)
@@ -546,10 +573,36 @@ export default {
                         }
                         localStorage.setItem('fid_organization',resData.fid_organization);
                         if(resData.fid_organization != 0) {
-                          console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
-                          getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                          console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/detail')
+                          getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/detail')
                           .then (res => {
                               console.log(res);
+                              if(res.status && res.status == 200) {
+                                // debugger
+                                if(res.data.success && res.data.code == 0) {
+                                  if(res.data.data) {
+                                    // debugger;
+                                    let data = res.data.data;
+                                    // for(let item in data) {
+                                    localStorage.setItem('org_detail_obj' , JSON.stringify(data))
+                                    // }
+                                    // debugger
+                                  }
+                                }else {
+                                  this.$Message.error({
+                                      content : err.msg ? err.msg :'网络错误',
+                                      duration: 5,
+                                      closable: true
+                                  });
+                                }
+                              }
+                              else {
+                                this.$Message.error({
+                                    content : err.msg ? err.msg :'网络错误',
+                                    duration: 5,
+                                    closable: true
+                                });
+                              }
                           })
                           .catch(err => {
                             console.log(err)
@@ -979,10 +1032,36 @@ export default {
                             }
                             localStorage.setItem('fid_organization',resData.fid_organization);
                             if(resData.fid_organization != 0) {
-                              console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
-                              getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                              console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/detail')
+                              getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/detail')
                               .then (res => {
                                   console.log(res);
+                                  if(res.status && res.status == 200) {
+                                    // debugger
+                                    if(res.data.success && res.data.code == 0) {
+                                      if(res.data.data) {
+                                        // debugger;
+                                        let data = res.data.data;
+                                        // for(let item in data) {
+                                        localStorage.setItem('org_detail_obj' , JSON.stringify(data))
+                                        // }
+                                        // debugger
+                                      }
+                                    }else {
+                                      this.$Message.error({
+                                          content : err.msg ? err.msg :'网络错误',
+                                          duration: 5,
+                                          closable: true
+                                      });
+                                    }
+                                  }
+                                  else {
+                                    this.$Message.error({
+                                        content : err.msg ? err.msg :'网络错误',
+                                        duration: 5,
+                                        closable: true
+                                    });
+                                  }
                               })
                               .catch(err => {
                                 console.log(err)
@@ -1158,10 +1237,36 @@ export default {
                         }
                         localStorage.setItem('fid_organization',resData.fid_organization);
                         if(resData.fid_organization != 0) {
-                          console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/find_organization')
-                          getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization')
+                          console.log(baseConfig.baseUrl.localOrgHost + 'trinity-backstage/organization/detail')
+                          getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/detail')
                           .then (res => {
                               console.log(res);
+                              if(res.status && res.status == 200) {
+                                // debugger
+                                if(res.data.success && res.data.code == 0) {
+                                  if(res.data.data) {
+                                    // debugger;
+                                    let data = res.data.data;
+                                    // for(let item in data) {
+                                    localStorage.setItem('org_detail_obj' , JSON.stringify(data))
+                                    // }
+                                    // debugger
+                                  }
+                                }else {
+                                  this.$Message.error({
+                                      content : err.msg ? err.msg :'网络错误',
+                                      duration: 5,
+                                      closable: true
+                                  });
+                                }
+                              }
+                              else {
+                                this.$Message.error({
+                                    content : err.msg ? err.msg :'网络错误',
+                                    duration: 5,
+                                    closable: true
+                                });
+                              }
                           })
                           .catch(err => {
                             console.log(err)

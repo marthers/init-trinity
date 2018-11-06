@@ -89,15 +89,18 @@
                 </div>
             </div>
             <div class = "content">
+                <!-- <h2>User {{ $route.params.id }}</h2> -->
+                <!-- <router-view></router-view> -->
+                <!-- <router-view class="view" :name="contentRouterView"></router-view> -->
                 <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow"></no-data-index>
                 <!-- <no-data-index @two-clicked = "twoClicked" v-if = "$route.meta.showName == 'NoDataIndex'"></no-data-index> -->
                 
-                <create-person  v-if = "createPersonalInfoShow" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
+                <create-person  v-if = "createPersonalInfoShow && fidOrg == 0" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
                 <!-- <create-person v-if = "$route.meta.showName != 'NoDataIndex'" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person> -->
                 
-                <create-merchant  v-if = "createMerchantInfoShow" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper" @selectedSuperior = "selectedSuperior"></create-merchant>
+                <create-merchant  v-if = "createMerchantInfoShow && fidOrg == 0" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper" @selectedSuperior = "selectedSuperiorMethod"></create-merchant>
                 
-                <create-legal  v-if = "createLegalShow" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal> 
+                <create-legal  v-if = "createLegalShow && fidOrg == 0" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal> 
 
                 <!-- <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org> -->
             </div>
@@ -160,7 +163,9 @@ export default {
                     name: '概况5'
                 }
             ],
-            seletedUpper : {},
+            fidOrg : -2,
+            contentRouterView : 'MyOrg',
+            selectedSuperior : {},
             menuList : [
                 {
                     menuTitle: '概况',
@@ -560,20 +565,33 @@ export default {
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
             this.createLegalShow        = false;
-            let reqData = {}
-            if(legalData.is_select_me > 0) {
-                console.log(`this.merchantData.id_organization=${this.merchantData.id_organization}`);
-                reqData = {
-                    'is_select_me' : legalData.is_select_me,
-                    'logo' : this.merchantData.logoBase64Data,
-                    'organization_name' : this.merchantData.corpName,
-                    'organization_num' : this.merchantData.IDNumber,
-                    'organization_license_up' : this.merchantData.corpBase64Data,
-                    'organization_desc' : this.merchantData.des ? this.merchantData.des : '',
-                    // 'parent_id_organization' : this.merchantData.id_organization ? this.merchantData.id_organization : 1
-                    'parent_id_organization' : this.selectedUpper.id_organization ? this.selectedUpper.id_organization : 1
-                }
+            let reqData =  {
+                'is_select_me' : legalData.is_select_me,
+                'logo' : this.merchantData.logoBase64Data,
+                'organization_name' : this.merchantData.corpName,
+                'organization_num' : this.merchantData.IDNumber,
+                'organization_license_up' : this.merchantData.corpBase64Data,
+                'organization_desc' : this.merchantData.des ? this.merchantData.des : '',
+                // 'parent_id_organization' : this.merchantData.id_organization ? this.merchantData.id_organization : 1
+                'parent_id_organization' : this.selectedSuperior.id_organization ? this.selectedSuperior.id_organization : 1
             }
+            console.log('this.selectedSuperior:')
+            console.log(this.selectedSuperior)
+            console.log('this.merchantData:')
+            console.log(this.merchantData)
+            console.log('legalData:')
+            console.log(legalData)
+            if(legalData.is_select_me == 0) {
+                console.log(`this.selectedSuperior.id_organization=${this.selectedSuperior.id_organization}`);
+                reqData.corporate_name = legalData.corporate_name;
+                reqData.corporate_ident = legalData.corporate_ident;
+                reqData.corporate_card_up = legalData.corporate_card_up;
+                reqData.corporate_card_up = legalData.corporate_card_down;
+            }
+            // debugger
+            console.log('reqData:')
+            console.log(reqData)
+            // debugger
             orgEdit(localOrgHost + '/trinity-backstage/organization/edit_info',
                 {
                     'priority': 5,
@@ -589,7 +607,7 @@ export default {
                 if(res.status&& res.status == 200) {
                     console.log(res.data)
                     localStorage.setItem('Trinity-Token',res.data.data.token)
-                    getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/find_organization',
+                    getOrgDetail(baseConfig.baseUrl.localOrgHost + '/trinity-backstage/organization/detail',
                     {
                         'Content-Type'    : 'application/json; charset=utf-8',
                         'Trinity-Token'   : res.data.data.token,
@@ -597,6 +615,32 @@ export default {
                     })
                     .then (res => {
                         console.log(res);
+                        if(res.status && res.status == 200) {
+                        // debugger
+                        if(res.data.success && res.data.code == 0) {
+                            if(res.data.data) {
+                            // debugger;
+                            let data = res.data.data;
+                            // for(let item in data) {
+                            localStorage.setItem('org_detail_obj' , JSON.stringify(data))
+                            // }
+                            // debugger
+                            }
+                        }else {
+                            this.$Message.error({
+                                content : err.msg ? err.msg :'网络错误',
+                                duration: 5,
+                                closable: true
+                            });
+                        }
+                        }
+                        else {
+                        this.$Message.error({
+                            content : err.msg ? err.msg :'网络错误',
+                            duration: 5,
+                            closable: true
+                        });
+                        }
                     })
                     .catch(err => {
                     console.log(err)
@@ -641,8 +685,9 @@ export default {
             this.createMerchantInfoShow = false;
             this.createLegalShow        = false;
         },
-        selectedSuperior(data) {
-            this.seletedUpper = data
+        selectedSuperiorMethod(data) {
+            console.log(data);
+            this.selectedSuperior = data
         }
     },
     created () {
@@ -668,6 +713,21 @@ export default {
         console.log(Object.getOwnPropertyDescriptor(person,'dwjkhhjdwhdwa'));
         console.log(Object.getOwnPropertyDescriptor(person,'age'));
         // localStorage.clear();
+        this.fidOrg = localStorage.getItem('fid_organization')
+    },
+    mounted() {
+        // debugger
+        // try{
+        //     if(this.$route.matched[0].components.MyOrg) {
+        //         debugger
+        //         // this.$route.matched[0].components.MyOrg = ''
+        //     }
+        // }catch(err) {
+        //     console.log(err)
+        // }
+        // console.log(this.$router);
+        console.log(this.$route);
+        // console.log(this)
     }
 }
 </script>
