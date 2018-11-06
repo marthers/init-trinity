@@ -25,13 +25,13 @@
             <div class = "id-con">
                 <div class = "face-con">
                     <p class = "info">证件正面照：</p>
-                    <img-upload 
-                        @base64   = "frontBase64" 
-                        @deleteBase64 = "deleteFront" 
-                        :modalTitle = "frontModalTitle" 
-                        :uploadId   = "frontUploadId"
-                        :beforeHasData = "beforeHasDataUp"
-                        :indentImg = 'indentImgUp'></img-upload>
+                    <img-upload
+                                                                                                @base64       = "frontBase64"
+                                                                                                @deleteBase64 = "deleteFront"
+                                                                                              :modalTitle     = "frontModalTitle"
+                                                                                              :uploadId       = "frontUploadId"
+                                                                                              :beforeHasData  = "beforeHasDataUp"
+                                                                                              :indentImg      = 'indentImgUp'></img-upload>
                 </div>
                 <div class = "face-con">
                     <p class = "info">证件反面照：</p>
@@ -39,55 +39,89 @@
                         <div class = "img-not-uploaded"></div>
                     </div> -->
                     <img-upload
-                            @base64   = "versoBase64"
-                            @deleteBase64 = "deleteVerso"
-                        :modalTitle = "frontModalTitle"
-                        :beforeHasData = "beforeHasData"
-                        :indentImg = 'indentImg'
-                        :uploadId   = "versoUploadId">
+                                                                                                    @base64       = "versoBase64"
+                                                                                                    @deleteBase64 = "deleteVerso"
+                                                                                                  :modalTitle     = "frontModalTitle"
+                                                                                                  :beforeHasData  = "beforeHasData"
+                                                                                                  :indentImg      = 'indentImg'
+                                                                                                  :uploadId       = "versoUploadId">
                     </img-upload>
                 </div>
             </div>
+            <div class = "first" v-if= "!createShow">
+                <span v-show = "selectedMerchant.organizationName && selectedMerchant.organizationName.length > 0" class = "chosen-org">
+                    您已经选择{{selectedMerchant.organizationName}}。
+                </span>
+                <span v-show = "!selectedMerchant.organizationName">请选择您要加入的上级商户。</span>
+                <span class = "choose" @click = "chooseUpper">点此选择您的上级商户</span>
+            </div>
             <footer>
                 <div class = "back" @click.stop.prevent = "backToIndex">返回</div>
-                <div class = "next" @click = "toMerchant">下一步：商户信息</div>
+                <div class = "next" @click.stop.prevent = "toMerchant" v-if = "createShow">下一步：商户信息</div>
+                <div class = "next"   @click.stop.prevent = "chooseUpper" v-else>确定</div>
             </footer>
         </div>
+        <Modal
+            v-model = "selectOrgShow"
+            closable
+            width  = '1000'
+            @on-ok = "selectOrgShow = false"
+            footer-hide
+            class-name = "create-modal">
+            <join-in-org
+                :JoinInOrgShow       = "selectOrgShow"
+                :orgList.sync        = "orgList"
+                  @chooseOrgBack     = "chooseOrgBack"
+                :total_pages         = "total_pages"
+                  @superior-selected = "superiorSelected" ></join-in-org>
+        </Modal>
     </div>
 </template>
 <script>
-import ImgUpload from '@/components/ImgUpload';
 import {
     validateCName,
     identifyID
 } from '@/libs/validate.js';
 import {UserInfoEdit} from '@/api/user.js';
+import ImgUpload from '@/components/ImgUpload';
+import JoinInOrg from '@/components/JoinInOrg';
+import {
+    filterStr
+} from '@/libs/filter.js';
+import {getOrgList} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
 const baseUrl = baseConfig.baseUrl.localOrgHost;
 export default {
     name: 'CreatePerson',
     data() {
         return {
-            userName       : '',
-            IDNumber       : '',
-            files          : [],
-            frontModalTitle: '身份证正面照',
-            frontBase64Data: '',
-            versoData      : '',
-            versoUploadId  : 'versoUploadId',
-            frontUploadId  : 'frontUploadId',
-            isEdit         : false,
-            userNamePlaceholder : '请输入真实姓名',
-            IDPlaceholder : '请输入身份证号码',
-            beforeHasData : false,
-            indentImg : '',
-            beforeHasDataUp : false,
-            indentImgUp : ''
+            selectedMerchant   : {},
+            userName           : '',
+            IDNumber           : '',
+            files              : [],
+            frontModalTitle    : '身份证正面照',
+            frontBase64Data    : '',
+            versoData          : '',
+            versoUploadId      : 'versoUploadId',
+            frontUploadId      : 'frontUploadId',
+            isEdit             : false,
+            userNamePlaceholder: '请输入真实姓名',
+            IDPlaceholder      : '请输入身份证号码',
+            beforeHasData      : false,
+            indentImg          : '',
+            beforeHasDataUp    : false,
+            indentImgUp        : '',
+            selectOrgShow      : false,
+            orgList            : [],
+            total_pages        : 1000,
         }
     },
     methods : {
         backToIndex() {
             this.$emit('person-back')
+        },
+        chooseOrgBack() {
+            this.selectOrgShow = false;
         },
         toMerchant() {
             // this.$emit('createPersonSuccess');
@@ -221,7 +255,7 @@ export default {
                     console.log("user_info:");
                     console.log(user_info);
 
-                    
+
                     UserInfoEdit(baseUrl + '/trinity-backstage/user/edit_info',
                         {
                             'priority': 5,
@@ -296,44 +330,110 @@ export default {
             console.log('versoBase64:')
             // console.log(base64);
             this.versoData = base64
-        }
+        },
+        //选择上级商户
+        chooseUpper() {
+            // this.getOrg(true)
+            // // this.$emit('merchant-select-upper')
+            this.$nextTick(() => {
+                getOrgList(baseUrl + '/trinity-backstage/organization/list',
+                {
+                    'priority': 5,
+                    'group'   : 0,
+                    'data'    : {
+                        'page_index': 1,
+                        'page_size' : 20,
+                        // "filters"   : [
+                        //     {"key":"idOrganization","operator":"=","value":1,"join":"or"},
+                        //     {"key":"parentIdOrganization","operator":"=","value":1,"join":"and"}
+                        // ]
+                    }
+                })
+                .then(res => {
+                    console.log(res)
+                    if(res.status && res.status == 200 && res.data.code == 0) {
+                        console.log("res.data:");
+                        console.log(res.data)
+                        let data             = res.data.data;
+                            this.orgList     = data.organization_list
+                            this.total_pages = data.page.total_pages;
+                        // setTimeout(() => {
+                            this.selectOrgShow = true;
+                        // },500)
+                    }
+                    else{
+                        this.$Message.error({
+                            content : '网络异常，请联系管理员及时处理',
+                            duration: 5,
+                            closable: true
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.$Message.error({
+                        content : '网络异常，请联系管理员及时处理',
+                        duration: 5,
+                        closable: true
+                    })
+                })
+            })
+        },
+        superiorSelected(selectedSuperior){
+            console.log(selectedSuperior);
+            this.selectedMerchant = selectedSuperior;
+            this.$emit('selectedSuperior',selectedSuperior)
+        },
     },
     created() {
+        // console.log(`localStorage.getItem('create')=${localStorage.getItem('create')}`)
+        // if(localStorage.getItem('create') != null) {
+        //     this.createShow = localStorage.getItem('create')
+        // // }
+        // else {
+        //     this.createShow = false
+        // }
         if(localStorage.getItem('ident_name') != null && localStorage.getItem('ident_name').length >  0) {
             this.userNamePlaceholder = localStorage.getItem('ident_name');
-            this.userName = localStorage.getItem('ident_name');
+            this.userName            = localStorage.getItem('ident_name');
         }else {
             this.userNamePlaceholder = '请输入真实姓名'
-            this.userName = ''
+            this.userName            = ''
         }
 
         if(localStorage.getItem('ident_num') != null && localStorage.getItem('ident_num').length >  0) {
             this.IDPlaceholder = localStorage.getItem('ident_num');
-            this.IDNumber = localStorage.getItem('ident_num');
+            this.IDNumber      = localStorage.getItem('ident_num');
         }else {
             this.IDPlaceholder = '请输入身份证号码';
-            this.IDNumber = ''
+            this.IDNumber      = ''
         }
 
         if(localStorage.getItem('ident_down') != null && localStorage.getItem('ident_down').length >  0) {
             this.beforeHasData = true;
-            this.indentImg = localStorage.getItem('ident_down');
+            this.indentImg     = localStorage.getItem('ident_down');
 
         }else {
             this.beforeHasData = false;
-            this.indentImg = ''
+            this.indentImg     = ''
         }
 
         if(localStorage.getItem('ident_up') != null && localStorage.getItem('ident_up').length >  0) {
             this.beforeHasDataUp = true;
-            this.indentImgUp = localStorage.getItem('ident_up')
+            this.indentImgUp     = localStorage.getItem('ident_up')
         }else {
             this.beforeHasDataUp = false;
-            this.indentImgUp = ''
+            this.indentImgUp     = ''
+        }
+    },
+    props : {
+        createShow : {
+            type   : Boolean,
+            default: true
         }
     },
     components : {
-        ImgUpload
+        ImgUpload,JoinInOrg
     }
 }
 </script>
@@ -414,15 +514,15 @@ export default {
                 height         : 153px;
                 margin-right   : 45px;
                 .info {
-                    width      : 84px;
-                    height     : 20px;
-                    font-size  : 14px;
-                    font-family: PingFangSC-Medium;
-                    font-weight: 500;
-                    color      : rgba(74,74,74,1);
-                    line-height: 20px;
-                    text-align : center;
-                    margin-right : 15px;
+                    width       : 84px;
+                    height      : 20px;
+                    font-size   : 14px;
+                    font-family : PingFangSC-Medium;
+                    font-weight : 500;
+                    color       : rgba(74,74,74,1);
+                    line-height : 20px;
+                    text-align  : center;
+                    margin-right: 15px;
                 }
                 .img-not-uploaded-box {
                     width        : 240px;
@@ -454,15 +554,15 @@ export default {
             align-items    : center;
             height         : 36px;
             .info {
-                width      : 84px;
-                height     : 20px;
-                font-size  : 14px;
-                font-family: PingFangSC-Medium;
-                font-weight: 500;
-                color      : rgba(74,74,74,1);
-                line-height: 20px;
-                text-align : center;
-                margin-right : 15px;
+                width       : 84px;
+                height      : 20px;
+                font-size   : 14px;
+                font-family : PingFangSC-Medium;
+                font-weight : 500;
+                color       : rgba(74,74,74,1);
+                line-height : 20px;
+                text-align  : center;
+                margin-right: 15px;
             }
             .input {
                 width        : 240px;
@@ -478,12 +578,41 @@ export default {
             }
         }
 
+        .first {
+            width          : 100%;
+            height         : 36px;
+            background     : rgba(248,231,28,0.12);
+            border         : 1px solid;
+            font-size      : 14px;
+            text-align     : left;
+            line-height    : 36px;
+            text-indent    : 1em;
+            margin         : 20px 0;
+            display        : flex;
+            justify-content: left;
+            align-items    : center;
+            span{
+                display: inline-block;
+            }
+            .choose {
+                color        : #48A8DA;
+                border-bottom: 1px solid  #48A8DA;
+                cursor       : pointer;
+            }
+            .chosen-org {
+                max-width    : 600px;
+                overflow     : hidden;
+                white-space  : nowrap;
+                text-overflow: ellipsis;
+            }
+        }
         footer {
             display        : flex;
             flex-direction : row;
             justify-content: left;
             width          : 100%;
             height         : 36px;
+            align-items    : center;
             div {
                 cursor       : pointer;
                 height       : 100%;

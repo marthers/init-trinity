@@ -13,7 +13,7 @@
                     您已经选择{{selectedMerchant.organizationName}}。
                 </span>
                 <span v-show = "!selectedMerchant.organizationName">若已有上级商户，请选择您的上级商户。</span>
-                <span class = "choose" @click = "chooseUpper">点此选择您的上级商户</span>
+                <span class = "choose" @click.stop.prevent = "chooseUpper">点此选择您的上级商户</span>
             </div>
             <div class = "id-con">
                 <div class = "face-con">
@@ -46,16 +46,16 @@
         <Modal
             v-model = "selectOrgShow"
             closable
-            width='1000'
-            @on-ok     = "selectOrgShow = false"
+            width  = '1000'
+            @on-ok = "selectOrgShow = false"
             footer-hide
             class-name = "create-modal">
-            <join-in-org 
-                :JoinInOrgShow = "selectOrgShow" 
-                :orgList.sync = "orgList"
-                @chooseOrgBack = "chooseOrgBack" 
-                :total_pages = "total_pages"
-                @superior-selected = "superiorSelected" ></join-in-org>
+            <join-in-org
+                :JoinInOrgShow       = "selectOrgShow"
+                :orgList.sync        = "orgList"
+                  @chooseOrgBack     = "chooseOrgBack"
+                :total_pages         = "total_pages"
+                  @superior-selected = "superiorSelected" ></join-in-org>
         </Modal>
     </div>
 </template>
@@ -77,22 +77,22 @@ export default {
     name: 'CreatePerson',
     data() {
         return {
-            userName      : '',
-            IDNumber      : '',
-            logoModalTitle: '公司Logo',
-            logoUploadId  : 'logoUploadId',
-            des           : '',
-            superior      : 'superior',
-            selectOrgShow : false,
-            corpBase64Data : '',//公司证照正面,
-            corpModalTitle : '公司证照正面',
-            corpUploadId : 'corpUploadId',
-            selectedMerchant : {},
-            logoBase64Data : '',
-            orgList : [],
-            page_index : 1,
-            page_size : 20,
-            total_pages : 1000,
+            userName        : '',
+            IDNumber        : '',
+            logoModalTitle  : '公司Logo',
+            logoUploadId    : 'logoUploadId',
+            des             : '',
+            superior        : 'superior',
+            selectOrgShow   : false,
+            corpBase64Data  : '',               //公司证照正面,
+            corpModalTitle  : '公司证照正面',
+            corpUploadId    : 'corpUploadId',
+            selectedMerchant: {},
+            logoBase64Data  : '',
+            orgList         : [],
+            page_index      : 1,
+            page_size       : 20,
+            total_pages     : 1000,
             // content : '',
             // customToolbar: [
             //     ["bold", "italic", "underline"],
@@ -119,13 +119,13 @@ export default {
             // debugger
             console.log(`this.page_index=${page_index}`)
             // this.page_index = page_index;
-            // this.getOrg(false); 
+            // this.getOrg(false);
             getOrgList(baseUrl + '/trinity-backstage/organization/list',
             {
                 'priority': 5,
                 'group'   : 0,
                 'data'    : {
-                    'page_index' :page_index,
+                    'page_index': page_index,
                     'page_size' : this.page_size
                 }
             })
@@ -134,8 +134,8 @@ export default {
                 if(res.status && res.status == 200 && res.data.code == 0) {
                     console.log("res.data:");
                     console.log(res.data)
-                    let data = res.data.data;
-                    this.orgList = this.orgList.concat(data.organization_list);
+                    let data         = res.data.data;
+                        this.orgList = this.orgList.concat(data.organization_list);
                 }
                 else{
                     this.$Message.error({
@@ -167,8 +167,12 @@ export default {
                     'priority': 5,
                     'group'   : 0,
                     'data'    : {
-                        'page_index' :1,
-                        'page_size' : 20
+                        'page_index': 1,
+                        'page_size' : 20,
+                        "filters"   : [
+                            {"key":"idOrganization","operator":"=","value":1,"join":"or"},
+                            {"key":"parentIdOrganization","operator":"=","value":1,"join":"and"}
+                        ]
                     }
                 })
                 .then(res => {
@@ -176,12 +180,12 @@ export default {
                     if(res.status && res.status == 200 && res.data.code == 0) {
                         console.log("res.data:");
                         console.log(res.data)
-                        let data = res.data.data;
-                        this.orgList = data.organization_list
-                        this.total_pages = data.page.total_pages;
+                        let data             = res.data.data;
+                            this.orgList     = data.organization_list
+                            this.total_pages = data.page.total_pages;
                         // setTimeout(() => {
                             this.selectOrgShow = true;
-                        // },500)                    
+                        // },500)
                     }
                     else{
                         this.$Message.error({
@@ -230,12 +234,12 @@ export default {
                 console.log(`filterStr(this.des)=${filterStr(this.des)}`);
             }
             this.$emit('to-legal',{
-                'selectedMerchant' : JSON.stringify(this.selectedMerchant),
-                'logoBase64Data' : this.logoBase64Data,
-                'corpBase64Data' : this.corpBase64Data,
-                'IDNumber' : this.IDNumber,
-                'corpName' : this.userName,
-                'des' : this.des
+                'selectedMerchant': JSON.stringify(this.selectedMerchant),
+                'logoBase64Data'  : this.logoBase64Data,
+                'corpBase64Data'  : this.corpBase64Data,
+                'IDNumber'        : this.IDNumber,
+                'corpName'        : this.userName,
+                'des'             : this.des
             })
         },
         logoBase64(base64) {
@@ -267,18 +271,18 @@ export default {
 </script>
 <style>
 .create-modal .ivu-modal{
-    display : flex;
-    justify-content : center;
-    align-items : center;
+    display        : flex;
+    justify-content: center;
+    align-items    : center;
 }
 .create-modal .ivu-modal .ivu-modal-content{
-    width : 80vw !important;
-    height : 90vh !important;
-    overflow : hidden !important;
+    width   : 80vw !important;
+    height  : 90vh !important;
+    overflow: hidden !important;
 }
 .create-modal .ivu-modal .ivu-modal-content .ivu-modal-body{
     width : 90% !important;
-    height : 90% !important;
+    height: 90% !important;
 }
 </style>
 <style lang= "less" scoped>
@@ -332,7 +336,7 @@ export default {
                 color       : rgba(74,74,74,1);
                 line-height : 20px;
                 text-align  : right;
-                margin-right : 15px;
+                margin-right: 15px;
             }
             .img-not-uploaded-box {
                 width        : 96px;
@@ -354,19 +358,19 @@ export default {
             }
         }
         .first {
-            width : 100%;
-            height:36px;
-            background:rgba(248,231,28,0.12);
-            border:1px solid;
-            font-size : 14px;
+            width      : 100%;
+            height     : 36px;
+            background : rgba(248,231,28,0.12);
+            border     : 1px solid;
+            font-size  : 14px;
             text-align : left;
-            line-height : 36px;
-            text-indent : 1em;
-            margin : 20px;
+            line-height: 36px;
+            text-indent: 1em;
+            margin     : 20px;
             .choose {
-                color : #48A8DA;
-                border-bottom :1px solid  #48A8DA;
-                cursor : pointer;
+                color        : #48A8DA;
+                border-bottom: 1px solid  #48A8DA;
+                cursor       : pointer;
             }
         }
         .id-con {
@@ -385,15 +389,15 @@ export default {
                 height      : 153px;
                 margin-right: 45px;
                 .info {
-                    width      : 140px;
-                    height     : 20px;
-                    font-size  : 14px;
-                    font-family: PingFangSC-Medium;
-                    font-weight: 500;
-                    color      : rgba(74,74,74,1);
-                    line-height: 20px;
-                    text-align : right;
-                    margin-right : 15px;
+                    width       : 140px;
+                    height      : 20px;
+                    font-size   : 14px;
+                    font-family : PingFangSC-Medium;
+                    font-weight : 500;
+                    color       : rgba(74,74,74,1);
+                    line-height : 20px;
+                    text-align  : right;
+                    margin-right: 15px;
                 }
                 .img-not-uploaded-box {
                     width        : 240px;
@@ -425,15 +429,15 @@ export default {
             align-items    : center;
             height         : 36px;
             .info {
-                width      : 140px;
-                height     : 20px;
-                font-size  : 14px;
-                font-family: PingFangSC-Medium;
-                font-weight: 500;
-                color      : rgba(74,74,74,1);
-                line-height: 20px;
-                text-align : right;
-                margin-right : 15px;
+                width       : 140px;
+                height      : 20px;
+                font-size   : 14px;
+                font-family : PingFangSC-Medium;
+                font-weight : 500;
+                color       : rgba(74,74,74,1);
+                line-height : 20px;
+                text-align  : right;
+                margin-right: 15px;
             }
             .input {
                 width        : 240px;

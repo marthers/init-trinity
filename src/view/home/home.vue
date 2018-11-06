@@ -1,116 +1,96 @@
 <template>
   <div class = "home">
-      <!-- 头部 -->
-      <div class = "header">
-
-          <div class = "header-left">
-                <div class = "header-left-logo"></div>
-                <div class = "header-left-slogan">自助设备运营管理平台</div>
-                <!-- <Dropdown class = "header-left-dropdown">
-                    <DropdownMenu slot="list">
-                        <DropdownItem>驴打滚</DropdownItem>
-                        <DropdownItem>炸酱面</DropdownItem>
-                        <DropdownItem>豆汁儿</DropdownItem>
-                        <Dropdown placement="right-start">
-                            <DropdownItem>
-                                北京烤鸭
-                                <Icon type="ios-arrow-forward"></Icon>
-                            </DropdownItem>
-                            <DropdownMenu slot="list">
-                                <DropdownItem>挂炉烤鸭</DropdownItem>
-                                <DropdownItem>焖炉烤鸭</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                        <DropdownItem>冰糖葫芦</DropdownItem>
-                    </DropdownMenu>
-                </Dropdown> -->
-                <div class = "header-left-dropdown">北京</div>
-          </div>
-          <div class = "header-right">
-            <div class = "header-right-search-con">
-                <input placeholder="Enter text" style="width: auto" class = "header-right-search" />
+        <!-- 头部 -->
+        <div class = "header">
+            <div class = "header-left">
+                    <div class = "header-left-logo"></div>
+                    <div class = "header-left-slogan">自助设备运营管理平台</div>
+                    <div class = "header-left-dropdown">北京</div>
             </div>
-            <!-- <Icon type="ios-search-outline" slot = "suffix"/> -->
-            <div class= "header-right-line"></div>
-            <div class= "header-right-group">
-                <div class= "header-right-group-icon"></div>
-                <div class= "header-right-group-number">
-                    {{
-                        groupNumber
-                    }}
+            <div class = "header-right">
+                <div class = "header-right-search-con">
+                    <input placeholder="Enter text" style="width: auto" class = "header-right-search" />
                 </div>
-            </div>
-            <div class= "header-right-Personal" @click = "logOut"></div>
-          </div>
-      </div>
-      <div class = "body">
-            <div class = "left-side-con" id = "left-side-main">
-                <div class= "left-side-box">
-                    <div :class = "[leftSideSelected == 'back-to-main'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'back-to-main'">
-                        <div class = "back-to-main inside-item"></div>
-                    </div>
-                    <div :class = "[leftSideSelected == 'statistics'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'statistics'">
-                        <div class = "statistics inside-item"></div>
-                    </div>
-                    <div :class = "[leftSideSelected == 'menu'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'menu'">
-                        <div class = "menu inside-item"></div>
-                    </div>
-                    <div :class = "[leftSideSelected == 'briefcase'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'briefcase'">
-                        <div class = "briefcase inside-item"></div>
-                    </div>
-                    <div :class = "[leftSideSelected == 'settings'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'settings'">
-                        <div class = "settings inside-item"></div>
-                    </div>
-                </div>
-            </div>
-            <div class = "left-menu-con" v-if = "leftSideSelected == 'menu'">
-                <div class = "menu-head">管理平台</div>
-                <button class = "back">返回</button>
-                <div class = "survey-menu-con menu-con" v-for = "(item,index) in menuList" :key = "index">
-                    <div class= "title-con">
-                        <!-- <button class = "title" @click = "titleClicked"> -->
-                        <button class = "title" @click.stop.prevent = "titleClicked(index)">
-                            <!-- <div :class = "[titleTrueClicked ? 'triangle-down' :'triangle-up']"></div> -->
-                            <div :class = "[item.clicked%2 > 0 ? 'triangle-down' :'triangle-up']"></div>
-                            <a class = "title-name">
-                                {{
-                                    item.menuTitle
-                                }}
-                            </a>
-                        </button>
-                    </div>
-                    <!-- <a class = "menu-child" v-for = "(i,key) in surveyArr" :key = "key" v-show = "titleTrueClicked"> -->
-                    <!-- <a class = "menu-child" v-for = "(i,key) in surveyArr" :key = "key" v-if = "item.clicked"> -->
-                    <a class = "menu-child" v-for = "(i,key) in item.childArr" :key = "key" v-if = "item.clicked%2 > 0">
+                <div class= "header-right-line"></div>
+                <div class= "header-right-group">
+                    <div class= "header-right-group-icon"></div>
+                    <div class= "header-right-group-number">
                         {{
-                            i.name
+                            groupNumber
                         }}
-                    </a>
+                    </div>
                 </div>
+                <div class= "header-right-Personal" @click = "logOut"></div>
             </div>
-            <div class = "content">
-                <!-- <h2>User {{ $route.params.id }}</h2> -->
-                <!-- <router-view></router-view> -->
-                <!-- <router-view class="view" :name="contentRouterView"></router-view> -->
-                <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow"></no-data-index>
-                <!-- <no-data-index @two-clicked = "twoClicked" v-if = "$route.meta.showName == 'NoDataIndex'"></no-data-index> -->
-                
-                <create-person  v-if = "createPersonalInfoShow && fidOrg == 0" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person>
-                <!-- <create-person v-if = "$route.meta.showName != 'NoDataIndex'" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person> -->
-                
-                <create-merchant  v-if = "createMerchantInfoShow && fidOrg == 0" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper" @selectedSuperior = "selectedSuperiorMethod"></create-merchant>
-                
-                <create-legal  v-if = "createLegalShow && fidOrg == 0" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal> 
+        </div>
+        <div class = "body">
+                <div class = "left-side-con" id = "left-side-main">
+                    <div class= "left-side-box">
+                        <div :class = "[leftSideSelected == 'back-to-main'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'back-to-main'">
+                            <div class = "back-to-main inside-item"></div>
+                        </div>
+                        <div :class = "[leftSideSelected == 'statistics'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'statistics'">
+                            <div class = "statistics inside-item"></div>
+                        </div>
+                        <div :class = "[leftSideSelected == 'menu'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'menu'">
+                            <div class = "menu inside-item"></div>
+                        </div>
+                        <div :class = "[leftSideSelected == 'briefcase'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'briefcase'">
+                            <div class = "briefcase inside-item"></div>
+                        </div>
+                        <div :class = "[leftSideSelected == 'settings'? 'left-side-selected' :'','item-con']" @click = "leftSideSelected = 'settings'">
+                            <div class = "settings inside-item"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class = "left-menu-con" v-if = "leftSideSelected == 'menu'">
+                    <div class = "menu-head">管理平台</div>
+                    <button class = "back">返回</button>
+                    <div class = "survey-menu-con menu-con" v-for = "(item,index) in menuList" :key = "index">
+                        <div class= "title-con">
+                            <!-- <button class = "title" @click = "titleClicked"> -->
+                            <button class = "title" @click.stop.prevent = "titleClicked(index)">
+                                <!-- <div :class = "[titleTrueClicked ? 'triangle-down' :'triangle-up']"></div> -->
+                                <div :class = "[item.clicked%2 > 0 ? 'triangle-down' :'triangle-up']"></div>
+                                <a class = "title-name">
+                                    {{
+                                        item.menuTitle
+                                    }}
+                                </a>
+                            </button>
+                        </div>
+                        <!-- <a class = "menu-child" v-for = "(i,key) in surveyArr" :key = "key" v-show = "titleTrueClicked"> -->
+                        <!-- <a class = "menu-child" v-for = "(i,key) in surveyArr" :key = "key" v-if = "item.clicked"> -->
+                        <a class = "menu-child" v-for = "(i,key) in item.childArr" :key = "key" v-if = "item.clicked%2 > 0">
+                            {{
+                                i.name
+                            }}
+                        </a>
+                    </div>
+                </div>
+                <div class = "content">
+                    <!-- <h2>User {{ $route.params.id }}</h2> -->
+                    <!-- <router-view></router-view> -->
+                    <!-- <router-view class="view" :name="contentRouterView"></router-view> -->
+                    <no-data-index @two-clicked = "twoClicked" v-if = "NoDataIndexShow && fidOrg == 0"></no-data-index>
+                    <!-- <no-data-index @two-clicked = "twoClicked" v-if = "$route.meta.showName == 'NoDataIndex'"></no-data-index> -->
 
-                <!-- <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org> -->
-            </div>
-      </div>
+                    <create-person  v-if = "createPersonalInfoShow && fidOrg == 0" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess" :createShow = "createShow"></create-person>
+                    <!-- <create-person v-if = "$route.meta.showName != 'NoDataIndex'" @person-back = "personBack" @person-forward = "personForword" @createPersonSuccess = "createPersonSuccess"></create-person> -->
+
+                    <create-merchant  v-if = "createMerchantInfoShow && fidOrg == 0" @back-to-person = "merchantBack" @to-legal = "toLegal" @merchant-select-upper = "merchantSelectUpper" @selectedSuperior = "selectedSuperiorMethod"></create-merchant>
+
+                    <create-legal  v-if = "createLegalShow && fidOrg == 0" @back-to-merchant = "legalBack" @submit-create = "submitCreate"></create-legal>
+
+                    <!-- <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org> -->
+                </div>
+        </div>
         <Modal
-            v-model = "JoinInOrgShow"
-            :closable = "closable"
-            :mask-closable = "maskClosable"
-            width='1000'
-            @on-ok     = "JoinInOrgShow = false"
+                    v-model      = "JoinInOrgShow"
+                  :closable      = "closable"
+                  :mask-closable = "maskClosable"
+                    width        = '1000'
+                    @on-ok       = "JoinInOrgShow = false"
             footer-hide
             class-name = "create-modal">
             <join-in-org :JoinInOrgShow = "JoinInOrgShow" @chooseOrgBack = "chooseOrgBack"></join-in-org>
@@ -121,7 +101,7 @@
 import {signOut} from '@/api/user.js';
 import {orgEdit} from '@/api/org/org.js';
 import baseConfig from '@/config/index';
-const baseUrl = baseConfig.baseUrl.dev;
+const baseUrl      = baseConfig.baseUrl.dev;
 const localOrgHost = baseConfig.baseUrl.localOrgHost
 import NoDataIndex from '@/view/noData/index';
 import CreatePerson from '@/view/noData/create/CreatePerson';
@@ -132,6 +112,7 @@ import {getOrgDetail} from '@/api/login.js';
 export default {
     data() {
         return {
+            createShow           : true,
             leftSideSelected     : 'menu',
             groupNumber          : 20,
             titleTrueClicked     : false,
@@ -163,10 +144,10 @@ export default {
                     name: '概况5'
                 }
             ],
-            fidOrg : -2,
-            contentRouterView : 'MyOrg',
+            fidOrg           : -2,
+            contentRouterView: 'MyOrg',
             selectedSuperior : {},
-            menuList : [
+            menuList         : [
                 {
                     menuTitle: '概况',
                     childArr : [
@@ -348,14 +329,14 @@ export default {
                     clicked: 0
                 }
             ],
-            NoDataIndexShow       : false,    //没有任何个人数据
+            NoDataIndexShow       : false,   //没有任何个人数据
             createPersonalInfoShow: false,   //创建个人信息
             createMerchantInfoShow: false,
             createLegalShow       : false,
-            JoinInOrgShow : false,
-            maskClosable : false,
-            closable : false,
-            merchantData : {}
+            JoinInOrgShow         : false,
+            maskClosable          : false,
+            closable              : false,
+            merchantData          : {}
         }
     },
     components : {
@@ -516,8 +497,12 @@ export default {
             if(type === 'create') {
                 this.NoDataIndexShow        = false;
                 this.createPersonalInfoShow = true;
+                this.createShow             = true
+                // localStorage.setItem('create',true)
                 // this.$route.meta.showName = 'CreatePerson'
             }else {
+                this.createShow = false
+                // localStorage.setItem('create',false)
                 // this.JoinInOrgShow = true;
                 // this.NoDataIndexShow = false;
                 // this.createPersonalInfoShow = false;
@@ -528,12 +513,12 @@ export default {
             }
         },
         chooseOrgBack() {
-            this.JoinInOrgShow = false;
-            this.NoDataIndexShow = true;
+            this.JoinInOrgShow          = false;
+            this.NoDataIndexShow        = true;
             this.createPersonalInfoShow = false;
         },
         personBack() {
-            this.NoDataIndexShow        = true;
+            this.NoDataIndexShow = true;
                 // this.$route.meta.showName = 'NoDataIndex'
             this.createPersonalInfoShow = false;
         },
@@ -561,19 +546,19 @@ export default {
             this.createLegalShow        = false;
         },
         submitCreate (legalData) {
-            this.NoDataIndexShow        = true;
-            this.createPersonalInfoShow = false;
-            this.createMerchantInfoShow = false;
-            this.createLegalShow        = false;
-            let reqData =  {
-                'is_select_me' : legalData.is_select_me,
-                'logo' : this.merchantData.logoBase64Data,
-                'organization_name' : this.merchantData.corpName,
-                'organization_num' : this.merchantData.IDNumber,
-                'organization_license_up' : this.merchantData.corpBase64Data,
-                'organization_desc' : this.merchantData.des ? this.merchantData.des : '',
+                            this.NoDataIndexShow        = true;
+                            this.createPersonalInfoShow = false;
+                            this.createMerchantInfoShow = false;
+                            this.createLegalShow        = false;
+                        let reqData                     = {
+                'is_select_me'           : legalData.is_select_me,
+                'logo'                   : this.merchantData.logoBase64Data,
+                'organization_name'      : this.merchantData.corpName,
+                'organization_num'       : this.merchantData.IDNumber,
+                'organization_license_up': this.merchantData.corpBase64Data,
+                'organization_desc'      : this.merchantData.des ? this.merchantData.des: '',
                 // 'parent_id_organization' : this.merchantData.id_organization ? this.merchantData.id_organization : 1
-                'parent_id_organization' : this.selectedSuperior.id_organization ? this.selectedSuperior.id_organization : 1
+                'parent_id_organization': this.selectedSuperior.id_organization ? this.selectedSuperior.id_organization: 1
             }
             console.log('this.selectedSuperior:')
             console.log(this.selectedSuperior)
@@ -583,8 +568,8 @@ export default {
             console.log(legalData)
             if(legalData.is_select_me == 0) {
                 console.log(`this.selectedSuperior.id_organization=${this.selectedSuperior.id_organization}`);
-                reqData.corporate_name = legalData.corporate_name;
-                reqData.corporate_ident = legalData.corporate_ident;
+                reqData.corporate_name    = legalData.corporate_name;
+                reqData.corporate_ident   = legalData.corporate_ident;
                 reqData.corporate_card_up = legalData.corporate_card_up;
                 reqData.corporate_card_up = legalData.corporate_card_down;
             }
@@ -597,8 +582,8 @@ export default {
                     'priority': 5,
                     'group'   : 0,
                     'data'    : {
-                        'edit_mode'  : 0,
-                        'organization_info'    : reqData
+                        'edit_mode'        : 0,
+                        'organization_info': reqData
                     }
                 }
             )
@@ -628,7 +613,7 @@ export default {
                             }
                         }else {
                             this.$Message.error({
-                                content : err.msg ? err.msg :'网络错误',
+                                content : err.msg ? err.msg: '网络错误',
                                 duration: 5,
                                 closable: true
                             });
@@ -636,7 +621,7 @@ export default {
                         }
                         else {
                         this.$Message.error({
-                            content : err.msg ? err.msg :'网络错误',
+                            content : err.msg ? err.msg: '网络错误',
                             duration: 5,
                             closable: true
                         });
@@ -645,14 +630,14 @@ export default {
                     .catch(err => {
                     console.log(err)
                     this.$Message.error({
-                        content : err.msg ? err.msg :'网络错误',
+                        content : err.msg ? err.msg: '网络错误',
                         duration: 5,
                         closable: true
                     });
                     })
                 }else {
                     this.$Message.error({
-                        content : res.msg ? res.msg :'网络异常，请联系管理员及时处理',
+                        content : res.msg ? res.msg: '网络异常，请联系管理员及时处理',
                         duration: 5,
                         closable: true
                     })
@@ -674,12 +659,12 @@ export default {
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
             this.createLegalShow        = true;
-            this.merchantData = data;
+            this.merchantData           = data;
             console.log("this.merchantData:")
             console.log(this.merchantData)
         },
         merchantSelectUpper () {
-            this.JoinInOrgShow = true;
+            this.JoinInOrgShow          = true;
             this.NoDataIndexShow        = false;
             this.createPersonalInfoShow = false;
             this.createMerchantInfoShow = false;
@@ -702,9 +687,9 @@ export default {
         'use strict';
         var person = {
             name : 'sss',
-            age : 18,
-            child : {
-                name : 'childP',
+            age  : 18,
+            child: {
+                name: 'childP',
                 age : 2
             }
         };
@@ -733,25 +718,25 @@ export default {
 </script>
 <style>
 .create-modal .ivu-modal{
-    display : flex;
-    justify-content : center;
-    align-items : center;
+    display        : flex;
+    justify-content: center;
+    align-items    : center;
 }
 .create-modal .ivu-modal .ivu-modal-content{
-    width : 80vw !important;
-    height : 90vh !important;
-    overflow : hidden !important;
+    width   : 80vw !important;
+    height  : 90vh !important;
+    overflow: hidden !important;
 }
 .create-modal .ivu-modal .ivu-modal-content .ivu-modal-body{
     width : 90% !important;
-    height : 90% !important;
+    height: 90% !important;
 }
 .create-modal .ivu-input-search{
-    background-color : #48A8DA !important;
-    border-color : #48A8DA !important;
+    background-color: #48A8DA !important;
+    border-color    : #48A8DA !important;
 }
 .search .ivu-input{
-    border-color : #48A8DA !important;
+    border-color: #48A8DA !important;
 }
 </style>
 <style lang="less" scoped>

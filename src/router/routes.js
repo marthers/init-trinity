@@ -1,24 +1,25 @@
 export default [
     {
-        path     : '/',
-        name     : 'home',
+        path: '/',
+        name: 'home',
         // component: () => import('@/view/home/home')
         components : {
-            default : () => import('@/view/home/home'),
+            default: () => import('@/view/home/home'),
             // NoDataIndex : () => import('@/view/noData')
-            // MyOrg : () => import('@/view/myOrg/MyOrg')
+            // MyOrg : () => import('@/view/myOrg/MyOrg'),
+            // CommonHeader : () => import('@/view/home/namedRoutes/header')
         },
         meta : {
             // NoDataIndex : true,
             // contentShow : true,
             // contentName : 'NoDataIndex'
-            showName : ''
+            showName: ''
         },
         children : [
             {
-                name : 'NoDataIndex',
-                path : 'NoDataIndex',
-                component : () => import('@/view/noData')
+                name     : 'NoDataIndex',
+                path     : 'NoDataIndex',
+                component: () => import('@/view/noData')
             },
             // {
             //     name : 'MyOrg',
